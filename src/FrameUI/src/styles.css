@@ -1,0 +1,6 @@
+/* You can add global styles to this file, and also import other style files */
+
+bs-modal-container.modal.fade.in {
+    margin: 40px auto;
+    width: 600px;
+}

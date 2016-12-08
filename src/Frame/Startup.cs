@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Frame.Data;
 using Frame.Models;
 using Frame.Services;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Frame
 {
@@ -22,7 +23,9 @@ namespace Frame
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                //.AddEnvironmentVariables()
+                ;
 
             if (env.IsDevelopment())
             {
@@ -50,9 +53,13 @@ namespace Frame
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders(
+                );
 
             services.AddMvc();
+
+            //another client domain
+            services.AddCors();
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -86,12 +93,22 @@ namespace Frame
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
+            app.UseCors(builder =>
+                builder
+                .WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
+                //.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+            );
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "api/{controller=Home}/{action=Index}/{id?}");
             });
+            
         }
     }
 }

@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var common_1 = require('@angular/common'); //TODO: new forms
+var forms_1 = require('@angular/forms');
 var router_1 = require('@angular/router');
 var user_1 = require('../../models/user');
 var operationResult_1 = require('../../models/operationResult');
@@ -49,10 +50,13 @@ var Login = (function () {
             selector: 'login',
             providers: [membershipService_1.MembershipService, notificationService_1.NotificationService],
             templateUrl: './app/components/account/login.html',
-            directives: [common_1.CORE_DIRECTIVES, common_1.FORM_DIRECTIVES, router_1.ROUTER_DIRECTIVES]
+            directives: [common_1.CORE_DIRECTIVES,
+                //FORM_DIRECTIVES
+                forms_1.provideForms, router_1.ROUTER_DIRECTIVES]
         }), 
         __metadata('design:paramtypes', [membershipService_1.MembershipService, notificationService_1.NotificationService, router_1.ActivatedRoute, router_1.Router])
     ], Login);
     return Login;
 }());
 exports.Login = Login;
+//# sourceMappingURL=login.js.map

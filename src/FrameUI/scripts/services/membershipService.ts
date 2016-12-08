@@ -1,5 +1,6 @@
 ﻿import { Http, Response, Request } from '@angular/http';
 import { Injectable, Inject } from '@angular/core';
+import { API } from '../routes';
 import { DataService } from './dataService';
 import { Registration } from '../models/registration';
 import { User } from '../models/user';
@@ -10,10 +11,11 @@ import { User } from '../models/user';
 @Injectable()
 export class MembershipService {
 
-    private accountRegisterAPI: string = 'api/account/register/';
-    private accountLoginAPI: string = 'api/account/authenticate/';
-    private accountLogoutAPI: string = 'api/account/logout/';
-
+    private action = '/account'
+    private accountRegisterAPI = API.AUTH + this.action + '/register';
+    private accountLoginAPI = API.AUTH + this.action + '/testlogin';
+    private accountLogoutAPI = API.AUTH + this.action + '/logout';
+    
     //inject data service
     constructor(private accountService: DataService) {
     }

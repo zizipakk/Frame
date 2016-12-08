@@ -3,7 +3,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "module": "commonjs",
-    //"module": "system",
     "noEmitOnError": false,
     "noImplicitAny": false,
     "outDir": "../wwwroot/app/",
@@ -11,7 +10,6 @@
     "sourceMap": true,
     "target": "es5",
     "moduleResolution": "node"
-    //"compileOnSave":  "true"
   },
   "exclude": [
     "wwwroot",

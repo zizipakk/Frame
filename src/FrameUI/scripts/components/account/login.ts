@@ -1,8 +1,13 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { CORE_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common'; //TODO: new forms
+import { CORE_DIRECTIVES
+    //, FORM_DIRECTIVES
+} from '@angular/common'; //TODO: new forms
+import { provideForms } from '@angular/forms';
 import { Router, ActivatedRoute, ROUTER_DIRECTIVES } from '@angular/router';
+
 import { User } from '../../models/user';
 import { OperationResult } from '../../models/operationResult';
+
 import { MembershipService } from '../../services/membershipService';
 import { NotificationService } from '../../services/notificationService';
 
@@ -10,7 +15,9 @@ import { NotificationService } from '../../services/notificationService';
     selector: 'login',
     providers: [MembershipService, NotificationService],
     templateUrl: './app/components/account/login.html',
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES]
+    directives: [CORE_DIRECTIVES,
+        //FORM_DIRECTIVES
+        provideForms, ROUTER_DIRECTIVES]
 })
 export class Login implements OnInit {
 

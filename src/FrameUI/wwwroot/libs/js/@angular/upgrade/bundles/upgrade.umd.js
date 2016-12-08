@@ -1,14 +1,14 @@
 /**
- * @license Angular 2.0.0-rc.4
+ * @license Angular v2.2.1
  * (c) 2010-2016 Google, Inc. https://angular.io/
  * License: MIT
  */
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/platform-browser'), require('@angular/platform-browser-dynamic'), require('@angular/compiler')) :
-        typeof define === 'function' && define.amd ? define(['exports', '@angular/core', '@angular/platform-browser', '@angular/platform-browser-dynamic', '@angular/compiler'], factory) :
-            (factory((global.ng = global.ng || {}, global.ng.upgrade = global.ng.upgrade || {}), global.ng.core, global.ng.platformBrowser, global.ng.platformBrowserDynamic, global.ng.compiler));
-}(this, function (exports, _angular_core, _angular_platformBrowser, _angular_platformBrowserDynamic, _angular_compiler) {
-    'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/platform-browser-dynamic'), require('@angular/compiler')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@angular/core', '@angular/platform-browser-dynamic', '@angular/compiler'], factory) :
+    (factory((global.ng = global.ng || {}, global.ng.upgrade = global.ng.upgrade || {}),global.ng.core,global.ng.platformBrowserDynamic,global.ng.compiler));
+}(this, function (exports,_angular_core,_angular_platformBrowserDynamic,_angular_compiler) { 'use strict';
+
     /**
      * @license
      * Copyright Google Inc. All Rights Reserved.
@@ -16,6 +16,7 @@
      * Use of this source code is governed by an MIT-style license that can be
      * found in the LICENSE file at https://angular.io/license
      */
+    ;
     function noNg() {
         throw new Error('AngularJS v1.x is not loaded!');
     }
@@ -37,6 +38,7 @@
     var bootstrap = angular.bootstrap;
     var module$1 = angular.module;
     var element = angular.element;
+
     /**
      * @license
      * Copyright Google Inc. All Rights Reserved.
@@ -58,6 +60,7 @@
     var NG1_TEMPLATE_CACHE = '$templateCache';
     var NG1_TESTABILITY = '$$testability';
     var REQUIRE_INJECTOR = '?^' + NG2_INJECTOR;
+
     var INITIAL_VALUE = {
         __UNINITIALIZED__: true
     };
@@ -91,7 +94,7 @@
         DowngradeNg2ComponentAdapter.prototype.setupInputs = function () {
             var _this = this;
             var attrs = this.attrs;
-            var inputs = this.info.inputs;
+            var inputs = this.info.inputs || [];
             for (var i = 0; i < inputs.length; i++) {
                 var input = inputs[i];
                 var expr = null;
@@ -123,13 +126,15 @@
                     expr = attrs[input.bracketParenAttr];
                 }
                 if (expr != null) {
-                    var watchFn = (function (prop /** TODO #9100 */) { return function (value /** TODO #9100 */, prevValue /** TODO #9100 */) {
-                        if (_this.inputChanges != null) {
-                            _this.inputChangeCount++;
-                            _this.inputChanges[prop] = new Ng1Change(prevValue, value);
-                        }
-                        _this.component[prop] = value;
-                    }; })(input.prop);
+                    var watchFn = (function (prop /** TODO #9100 */) {
+                        return function (value /** TODO #9100 */, prevValue /** TODO #9100 */) {
+                            if (_this.inputChanges != null) {
+                                _this.inputChangeCount++;
+                                _this.inputChanges[prop] = new Ng1Change(prevValue, value);
+                            }
+                            _this.component[prop] = value;
+                        };
+                    })(input.prop);
                     this.componentScope.$watch(expr, watchFn);
                 }
             }
@@ -157,7 +162,7 @@
         DowngradeNg2ComponentAdapter.prototype.setupOutputs = function () {
             var _this = this;
             var attrs = this.attrs;
-            var outputs = this.info.outputs;
+            var outputs = this.info.outputs || [];
             for (var j = 0; j < outputs.length; j++) {
                 var output = outputs[j];
                 var expr = null;
@@ -191,7 +196,9 @@
                         emitter.subscribe({
                             next: assignExpr ?
                                 (function (setter) { return function (v /** TODO #9100 */) { return setter(_this.scope, v); }; })(setter) :
-                                (function (getter) { return function (v /** TODO #9100 */) { return getter(_this.scope, { $event: v }); }; })(getter)
+                                (function (getter) { return function (v /** TODO #9100 */) {
+                                    return getter(_this.scope, { $event: v });
+                                }; })(getter)
                         });
                     }
                     else {
@@ -217,6 +224,7 @@
         Ng1Change.prototype.isFirstChange = function () { return this.previousValue === this.currentValue; };
         return Ng1Change;
     }());
+
     var COMPONENT_SELECTOR = /^[\w|-]*$/;
     var SKEWER_CASE = /-(\w)/g;
     var directiveResolver = new _angular_compiler.DirectiveResolver();
@@ -226,7 +234,7 @@
         if (!selector.match(COMPONENT_SELECTOR)) {
             throw new Error('Only selectors matching element names are supported, got: ' + selector);
         }
-        var selector = selector.replace(SKEWER_CASE, function (all /** TODO #9100 */, letter) { return letter.toUpperCase(); });
+        selector = selector.replace(SKEWER_CASE, function (all /** TODO #9100 */, letter) { return letter.toUpperCase(); });
         return {
             type: type,
             selector: selector,
@@ -256,6 +264,7 @@
         }
         return attrProps;
     }
+
     function onError(e) {
         // TODO: (misko): We seem to not have a stack trace here!
         console.log(e, e.stack);
@@ -264,6 +273,7 @@
     function controllerKey(name) {
         return '$' + name + 'Controller';
     }
+
     var CAMEL_CASE = /([A-Z])/g;
     var INITIAL_VALUE$1 = {
         __UNINITIALIZED__: true
@@ -325,16 +335,18 @@
             }
             var context = (btcIsObject) ? this.directive.bindToController : this.directive.scope;
             if (typeof context == 'object') {
-                for (var name in context) {
-                    if (context.hasOwnProperty(name)) {
-                        var localName = context[name];
+                for (var name_1 in context) {
+                    if (context.hasOwnProperty(name_1)) {
+                        var localName = context[name_1];
                         var type = localName.charAt(0);
-                        localName = localName.substr(1) || name;
-                        var outputName = 'output_' + name;
-                        var outputNameRename = outputName + ': ' + name;
-                        var outputNameRenameChange = outputName + ': ' + name + 'Change';
-                        var inputName = 'input_' + name;
-                        var inputNameRename = inputName + ': ' + name;
+                        var typeOptions = localName.charAt(1);
+                        localName = typeOptions === '?' ? localName.substr(2) : localName.substr(1);
+                        localName = localName || name_1;
+                        var outputName = 'output_' + name_1;
+                        var outputNameRename = outputName + ': ' + name_1;
+                        var outputNameRenameChange = outputName + ': ' + name_1 + 'Change';
+                        var inputName = 'input_' + name_1;
+                        var inputNameRename = inputName + ': ' + name_1;
                         switch (type) {
                             case '=':
                                 this.propertyOutputs.push(outputName);
@@ -373,20 +385,20 @@
                     this.directive.template);
             }
             else if (this.directive.templateUrl) {
-                var url = typeof this.directive.templateUrl === 'function' ? this.directive.templateUrl() :
+                var url_1 = typeof this.directive.templateUrl === 'function' ? this.directive.templateUrl() :
                     this.directive.templateUrl;
-                var html = templateCache.get(url);
+                var html = templateCache.get(url_1);
                 if (html !== undefined) {
                     this.linkFn = compileHtml(html);
                 }
                 else {
                     return new Promise(function (resolve, err) {
-                        httpBackend('GET', url, null, function (status /** TODO #9100 */, response /** TODO #9100 */) {
+                        httpBackend('GET', url_1, null, function (status /** TODO #9100 */, response /** TODO #9100 */) {
                             if (status == 200) {
-                                resolve(_this.linkFn = compileHtml(templateCache.put(url, response)));
+                                resolve(_this.linkFn = compileHtml(templateCache.put(url_1, response)));
                             }
                             else {
-                                err("GET " + url + " returned " + status + ": " + response);
+                                err("GET " + url_1 + " returned " + status + ": " + response);
                             }
                         });
                     });
@@ -402,15 +414,18 @@
                 return compile(div.childNodes);
             }
         };
+        /**
+         * Upgrade ng1 components into Angular 2.
+         */
         UpgradeNg1ComponentAdapterBuilder.resolve = function (exportedComponents, injector) {
             var promises = [];
             var compile = injector.get(NG1_COMPILE);
             var templateCache = injector.get(NG1_TEMPLATE_CACHE);
             var httpBackend = injector.get(NG1_HTTP_BACKEND);
             var $controller = injector.get(NG1_CONTROLLER);
-            for (var name in exportedComponents) {
-                if (exportedComponents.hasOwnProperty(name)) {
-                    var exportedComponent = exportedComponents[name];
+            for (var name_2 in exportedComponents) {
+                if (exportedComponents.hasOwnProperty(name_2)) {
+                    var exportedComponent = exportedComponents[name_2];
                     exportedComponent.directive = exportedComponent.extractDirective(injector);
                     exportedComponent.$controller = $controller;
                     exportedComponent.extractBindings();
@@ -451,7 +466,9 @@
             }
             for (var j = 0; j < outputs.length; j++) {
                 var emitter = this[outputs[j]] = new _angular_core.EventEmitter();
-                this.setComponentProperty(outputs[j], (function (emitter /** TODO #9100 */) { return function (value /** TODO #9100 */) { return emitter.emit(value); }; })(emitter));
+                this.setComponentProperty(outputs[j], (function (emitter /** TODO #9100 */) { return function (value /** TODO #9100 */) {
+                    return emitter.emit(value);
+                }; })(emitter));
             }
             for (var k = 0; k < propOuts.length; k++) {
                 this[propOuts[k]] = new _angular_core.EventEmitter();
@@ -490,10 +507,10 @@
             }
         };
         UpgradeNg1ComponentAdapter.prototype.ngOnChanges = function (changes) {
-            for (var name in changes) {
-                if (changes.hasOwnProperty(name)) {
-                    var change = changes[name];
-                    this.setComponentProperty(name, change.currentValue);
+            for (var name_3 in changes) {
+                if (changes.hasOwnProperty(name_3)) {
+                    var change = changes[name_3];
+                    this.setComponentProperty(name_3, change.currentValue);
                 }
             }
         };
@@ -530,24 +547,23 @@
                 return undefined;
             }
             else if (typeof require == 'string') {
-                var name = require;
+                var name_4 = require;
                 var isOptional = false;
                 var startParent = false;
                 var searchParents = false;
-                var ch;
-                if (name.charAt(0) == '?') {
+                if (name_4.charAt(0) == '?') {
                     isOptional = true;
-                    name = name.substr(1);
+                    name_4 = name_4.substr(1);
                 }
-                if (name.charAt(0) == '^') {
+                if (name_4.charAt(0) == '^') {
                     searchParents = true;
-                    name = name.substr(1);
+                    name_4 = name_4.substr(1);
                 }
-                if (name.charAt(0) == '^') {
+                if (name_4.charAt(0) == '^') {
                     startParent = true;
-                    name = name.substr(1);
+                    name_4 = name_4.substr(1);
                 }
-                var key = controllerKey(name);
+                var key = controllerKey(name_4);
                 if (startParent)
                     $element = $element.parent();
                 var dep = searchParents ? $element.inheritedData(key) : $element.data(key);
@@ -567,6 +583,7 @@
         };
         return UpgradeNg1ComponentAdapter;
     }());
+
     var upgradeCount = 0;
     /**
      * Use `UpgradeAdapter` to allow AngularJS v1 and Angular v2 to coexist in a single application.
@@ -608,11 +625,11 @@
      * ### Example
      *
      * ```
-     * var adapter = new UpgradeAdapter();
+     * var adapter = new UpgradeAdapter(forwardRef(() => MyNg2Module), myCompilerOptions);
      * var module = angular.module('myExample', []);
-     * module.directive('ng2', adapter.downgradeNg2Component(Ng2));
+     * module.directive('ng2Comp', adapter.downgradeNg2Component(Ng2Component));
      *
-     * module.directive('ng1', function() {
+     * module.directive('ng1Hello', function() {
      *   return {
      *      scope: { title: '=' },
      *      template: 'ng1[Hello {{title}}!](<span ng-transclude></span>)'
@@ -621,34 +638,54 @@
      *
      *
      * @Component({
-     *   selector: 'ng2',
+     *   selector: 'ng2-comp',
      *   inputs: ['name'],
-     *   template: 'ng2[<ng1 [title]="name">transclude</ng1>](<ng-content></ng-content>)',
-     *   directives: [adapter.upgradeNg1Component('ng1')]
+     *   template: 'ng2[<ng1-hello [title]="name">transclude</ng1-hello>](<ng-content></ng-content>)',
+     *   directives:
      * })
-     * class Ng2 {
+     * class Ng2Component {
      * }
      *
-     * document.body.innerHTML = '<ng2 name="World">project</ng2>';
+     * @NgModule({
+     *   declarations: [Ng2Component, adapter.upgradeNg1Component('ng1Hello')],
+     *   imports: [BrowserModule]
+     * })
+     * class MyNg2Module {}
+     *
+     *
+     * document.body.innerHTML = '<ng2-comp name="World">project</ng2-comp>';
      *
      * adapter.bootstrap(document.body, ['myExample']).ready(function() {
      *   expect(document.body.textContent).toEqual(
      *       "ng2[ng1[Hello World!](transclude)](project)");
      * });
+     *
      * ```
      *
-     * @experimental
+     * @stable
      */
     var UpgradeAdapter = (function () {
-        function UpgradeAdapter() {
+        function UpgradeAdapter(ng2AppModule, compilerOptions) {
+            this.ng2AppModule = ng2AppModule;
+            this.compilerOptions = compilerOptions;
             /* @internal */
             this.idPrefix = "NG2_UPGRADE_" + upgradeCount++ + "_";
             /* @internal */
             this.upgradedComponents = [];
-            /* @internal */
-            this.downgradedComponents = {};
+            /**
+             * An internal map of ng1 components which need to up upgraded to ng2.
+             *
+             * We can't upgrade until injector is instantiated and we can retrieve the component metadata.
+             * For this reason we keep a list of components to upgrade until ng1 injector is bootstrapped.
+             *
+             * @internal
+             */
+            this.ng1ComponentsToBeUpgraded = {};
             /* @internal */
             this.providers = [];
+            if (!ng2AppModule) {
+                throw new Error('UpgradeAdapter cannot be instantiated without an NgModule of the Angular 2 app.');
+            }
         }
         /**
          * Allows Angular v2 Component to be used from AngularJS v1.
@@ -678,7 +715,7 @@
          * ### Example
          *
          * ```
-         * var adapter = new UpgradeAdapter();
+         * var adapter = new UpgradeAdapter(forwardRef(() => MyNg2Module));
          * var module = angular.module('myExample', []);
          * module.directive('greet', adapter.downgradeNg2Component(Greeter));
          *
@@ -690,6 +727,12 @@
          *   @Input() salutation: string;
          *   @Input() name: string;
          * }
+         *
+         * @NgModule({
+         *   declarations: [Greeter],
+         *   imports: [BrowserModule]
+         * })
+         * class MyNg2Module {}
          *
          * document.body.innerHTML =
          *   'ng1 template: <greet salutation="Hello" [name]="world">text</greet>';
@@ -749,7 +792,7 @@
          * ### Example
          *
          * ```
-         * var adapter = new UpgradeAdapter();
+         * var adapter = new UpgradeAdapter(forwardRef(() => MyNg2Module));
          * var module = angular.module('myExample', []);
          *
          * module.directive('greet', function() {
@@ -759,15 +802,20 @@
          *   };
          * });
          *
-         * module.directive('ng2', adapter.downgradeNg2Component(Ng2));
+         * module.directive('ng2', adapter.downgradeNg2Component(Ng2Component));
          *
          * @Component({
          *   selector: 'ng2',
          *   template: 'ng2 template: <greet salutation="Hello" [name]="world">text</greet>'
-         *   directives: [adapter.upgradeNg1Component('greet')]
          * })
-         * class Ng2 {
+         * class Ng2Component {
          * }
+         *
+         * @NgModule({
+         *   declarations: [Ng2Component, adapter.upgradeNg1Component('greet')],
+         *   imports: [BrowserModule]
+         * })
+         * class MyNg2Module {}
          *
          * document.body.innerHTML = '<ng2></ng2>';
          *
@@ -777,11 +825,12 @@
          * ```
          */
         UpgradeAdapter.prototype.upgradeNg1Component = function (name) {
-            if (this.downgradedComponents.hasOwnProperty(name)) {
-                return this.downgradedComponents[name].type;
+            if (this.ng1ComponentsToBeUpgraded.hasOwnProperty(name)) {
+                return this.ng1ComponentsToBeUpgraded[name].type;
             }
             else {
-                return (this.downgradedComponents[name] = new UpgradeNg1ComponentAdapterBuilder(name)).type;
+                return (this.ng1ComponentsToBeUpgraded[name] = new UpgradeNg1ComponentAdapterBuilder(name))
+                    .type;
             }
         };
         /**
@@ -809,11 +858,16 @@
          * @Component({
          *   selector: 'ng2',
          *   inputs: ['name'],
-         *   template: 'ng2[<ng1 [title]="name">transclude</ng1>](<ng-content></ng-content>)',
-         *   directives: [adapter.upgradeNg1Component('ng1')]
+         *   template: 'ng2[<ng1 [title]="name">transclude</ng1>](<ng-content></ng-content>)'
          * })
          * class Ng2 {
          * }
+         *
+         * @NgModule({
+         *   declarations: [Ng2, adapter.upgradeNg1Component('ng1')],
+         *   imports: [BrowserModule]
+         * })
+         * class MyNg2Module {}
          *
          * document.body.innerHTML = '<ng2 name="World">project</ng2>';
          *
@@ -825,42 +879,34 @@
          */
         UpgradeAdapter.prototype.bootstrap = function (element$$, modules, config) {
             var _this = this;
+            var ngZone = new _angular_core.NgZone({ enableLongStackTrace: Zone.hasOwnProperty('longStackTraceZoneSpec') });
             var upgrade = new UpgradeAdapterRef();
             var ng1Injector = null;
-            var platformRef = _angular_platformBrowser.browserPlatform();
-            var applicationRef = _angular_core.ReflectiveInjector
-                .resolveAndCreate([
-                _angular_platformBrowser.BROWSER_APP_PROVIDERS, _angular_platformBrowserDynamic.BROWSER_APP_COMPILER_PROVIDERS,
-                { provide: NG1_INJECTOR, useFactory: function () { return ng1Injector; } },
-                { provide: NG1_COMPILE, useFactory: function () { return ng1Injector.get(NG1_COMPILE); } },
-                this.providers
-            ], platformRef.injector)
-                .get(_angular_core.ApplicationRef);
-            var injector = applicationRef.injector;
-            var ngZone = injector.get(_angular_core.NgZone);
-            var compiler = injector.get(_angular_core.ComponentResolver);
+            var moduleRef = null;
             var delayApplyExps = [];
             var original$applyFn;
             var rootScopePrototype;
             var rootScope;
             var componentFactoryRefMap = {};
             var ng1Module = module$1(this.idPrefix, modules);
-            var ng1BootstrapPromise = null;
-            var ng1compilePromise = null;
-            ng1Module.value(NG2_INJECTOR, injector)
+            var ng1BootstrapPromise;
+            var ng1compilePromise;
+            ng1Module.factory(NG2_INJECTOR, function () { return moduleRef.injector.get(_angular_core.Injector); })
                 .value(NG2_ZONE, ngZone)
-                .value(NG2_COMPILER, compiler)
+                .factory(NG2_COMPILER, function () { return moduleRef.injector.get(_angular_core.Compiler); })
                 .value(NG2_COMPONENT_FACTORY_REF_MAP, componentFactoryRefMap)
                 .config([
                 '$provide', '$injector',
-                function (provide /** TODO #???? */, ng1Injector /** TODO #???? */) {
+                function (provide /** TODO #???? */, ng1Injector) {
                     provide.decorator(NG1_ROOT_SCOPE, [
                         '$delegate',
                         function (rootScopeDelegate) {
+                            // Capture the root apply so that we can delay first call to $apply until we
+                            // bootstrap Angular 2 and then we replay and restore the $apply.
                             rootScopePrototype = rootScopeDelegate.constructor.prototype;
                             if (rootScopePrototype.hasOwnProperty('$apply')) {
                                 original$applyFn = rootScopePrototype.$apply;
-                                rootScopePrototype.$apply = function (exp /** TODO #???? */) { return delayApplyExps.push(exp); };
+                                rootScopePrototype.$apply = function (exp) { return delayApplyExps.push(exp); };
                             }
                             else {
                                 throw new Error('Failed to find \'$apply\' on \'$rootScope\'!');
@@ -873,11 +919,11 @@
                             '$delegate',
                             function (testabilityDelegate) {
                                 var _this = this;
-                                var ng2Testability = injector.get(_angular_core.Testability);
-                                var origonalWhenStable = testabilityDelegate.whenStable;
+                                var originalWhenStable = testabilityDelegate.whenStable;
                                 var newWhenStable = function (callback) {
                                     var whenStableContext = _this;
-                                    origonalWhenStable.call(_this, function () {
+                                    originalWhenStable.call(_this, function () {
+                                        var ng2Testability = moduleRef.injector.get(_angular_core.Testability);
                                         if (ng2Testability.isStable()) {
                                             callback.apply(this, arguments);
                                         }
@@ -898,24 +944,53 @@
                     '$injector', '$rootScope',
                     function (injector, rootScope) {
                         ng1Injector = injector;
-                        ngZone.onMicrotaskEmpty.subscribe({
-                            next: function (_ /** TODO #???? */) { return ngZone.runOutsideAngular(function () { return rootScope.$evalAsync(); }); }
-                        });
-                        UpgradeNg1ComponentAdapterBuilder.resolve(_this.downgradedComponents, injector)
-                            .then(resolve, reject);
+                        UpgradeNg1ComponentAdapterBuilder.resolve(_this.ng1ComponentsToBeUpgraded, injector)
+                            .then(function () {
+                            // At this point we have ng1 injector and we have lifted ng1 components into ng2, we
+                            // now can bootstrap ng2.
+                            var DynamicNgUpgradeModule = _angular_core.NgModule({
+                                providers: [
+                                    { provide: NG1_INJECTOR, useFactory: function () { return ng1Injector; } },
+                                    { provide: NG1_COMPILE, useFactory: function () { return ng1Injector.get(NG1_COMPILE); } },
+                                    _this.providers
+                                ],
+                                imports: [_this.ng2AppModule]
+                            }).Class({
+                                constructor: function DynamicNgUpgradeModule() { },
+                                ngDoBootstrap: function () { }
+                            });
+                            _angular_platformBrowserDynamic.platformBrowserDynamic()
+                                ._bootstrapModuleWithZone(DynamicNgUpgradeModule, _this.compilerOptions, ngZone, function (componentFactories) {
+                                componentFactories.forEach(function (componentFactory) {
+                                    var type = componentFactory.componentType;
+                                    if (_this.upgradedComponents.indexOf(type) !== -1) {
+                                        componentFactoryRefMap[getComponentInfo(type).selector] =
+                                            componentFactory;
+                                    }
+                                });
+                            })
+                                .then(function (ref) {
+                                moduleRef = ref;
+                                element(element$$).data(controllerKey(NG2_INJECTOR), moduleRef.injector);
+                                ngZone.onMicrotaskEmpty.subscribe({
+                                    next: function (_) { return ngZone.runOutsideAngular(function () { return rootScope.$evalAsync(); }); }
+                                });
+                            })
+                                .then(resolve, reject);
+                        })
+                            .catch(reject);
                     }
                 ]);
             });
             // Make sure resumeBootstrap() only exists if the current bootstrap is deferred
             var windowAngular = window['angular'];
             windowAngular.resumeBootstrap = undefined;
-            element(element$$).data(controllerKey(NG2_INJECTOR), injector);
             ngZone.run(function () { bootstrap(element$$, [_this.idPrefix], config); });
-            ng1BootstrapPromise = new Promise(function (resolve, reject) {
+            ng1BootstrapPromise = new Promise(function (resolve) {
                 if (windowAngular.resumeBootstrap) {
-                    var originalResumeBootstrap = windowAngular.resumeBootstrap;
+                    var originalResumeBootstrap_1 = windowAngular.resumeBootstrap;
                     windowAngular.resumeBootstrap = function () {
-                        windowAngular.resumeBootstrap = originalResumeBootstrap;
+                        windowAngular.resumeBootstrap = originalResumeBootstrap_1;
                         windowAngular.resumeBootstrap.apply(this, arguments);
                         resolve();
                     };
@@ -924,62 +999,20 @@
                     resolve();
                 }
             });
-            Promise
-                .all([
-                this.compileNg2Components(compiler, componentFactoryRefMap), ng1BootstrapPromise,
-                ng1compilePromise
-            ])
-                .then(function () {
-                ngZone.run(function () {
+            Promise.all([ng1BootstrapPromise, ng1compilePromise]).then(function () {
+                moduleRef.injector.get(_angular_core.NgZone).run(function () {
                     if (rootScopePrototype) {
                         rootScopePrototype.$apply = original$applyFn; // restore original $apply
                         while (delayApplyExps.length) {
                             rootScope.$apply(delayApplyExps.shift());
                         }
-                        upgrade._bootstrapDone(applicationRef, ng1Injector);
+                        upgrade._bootstrapDone(moduleRef, ng1Injector);
                         rootScopePrototype = null;
                     }
                 });
             }, onError);
             return upgrade;
         };
-        /**
-         * Adds a provider to the top level environment of a hybrid AngularJS v1 / Angular v2 application.
-         *
-         * In hybrid AngularJS v1 / Angular v2 application, there is no one root Angular v2 component,
-         * for this reason we provide an application global way of registering providers which is
-         * consistent with single global injection in AngularJS v1.
-         *
-         * ### Example
-         *
-         * ```
-         * class Greeter {
-         *   greet(name) {
-         *     alert('Hello ' + name + '!');
-         *   }
-         * }
-         *
-         * @Component({
-         *   selector: 'app',
-         *   template: ''
-         * })
-         * class App {
-         *   constructor(greeter: Greeter) {
-         *     this.greeter('World');
-         *   }
-         * }
-         *
-         * var adapter = new UpgradeAdapter();
-         * adapter.addProvider(Greeter);
-         *
-         * var module = angular.module('myExample', []);
-         * module.directive('app', adapter.downgradeNg2Component(App));
-         *
-         * document.body.innerHTML = '<app></app>'
-         * adapter.bootstrap(document.body, ['myExample']);
-         *```
-         */
-        UpgradeAdapter.prototype.addProvider = function (provider) { this.providers.push(provider); };
         /**
          * Allows AngularJS v1 service to be accessible from Angular v2.
          *
@@ -1004,7 +1037,6 @@
          * var adapter = new UpgradeAdapter();
          * adapter.upgradeNg1Provider('server');
          * adapter.upgradeNg1Provider('login', {asToken: Login});
-         * adapter.addProvider(Example);
          *
          * adapter.bootstrap(document.body, ['myExample']).ready((ref) => {
          *   var example: Example = ref.ng2Injector.get(Example);
@@ -1031,7 +1063,6 @@
          * }
          *
          * var adapter = new UpgradeAdapter();
-         * adapter.addProvider(Example);
          *
          * var module = angular.module('myExample', []);
          * module.factory('example', adapter.downgradeNg2Provider(Example));
@@ -1047,22 +1078,6 @@
             factory.$inject = [NG2_INJECTOR];
             return factory;
         };
-        /* @internal */
-        UpgradeAdapter.prototype.compileNg2Components = function (compiler, componentFactoryRefMap) {
-            var _this = this;
-            var promises = [];
-            var types = this.upgradedComponents;
-            for (var i = 0; i < types.length; i++) {
-                promises.push(compiler.resolveComponent(types[i]));
-            }
-            return Promise.all(promises).then(function (componentFactories) {
-                var types = _this.upgradedComponents;
-                for (var i = 0; i < componentFactories.length; i++) {
-                    componentFactoryRefMap[getComponentInfo(types[i]).selector] = componentFactories[i];
-                }
-                return componentFactoryRefMap;
-            }, onError);
-        };
         return UpgradeAdapter;
     }());
     function ng1ComponentDirective(info, idPrefix) {
@@ -1077,7 +1092,6 @@
                         var componentFactory = componentFactoryRefMap[info.selector];
                         if (!componentFactory)
                             throw new Error('Expecting ComponentFactory for: ' + info.selector);
-                        var domElement = element[0];
                         if (parentInjector === null) {
                             parentInjector = ng1Injector.get(NG2_INJECTOR);
                         }
@@ -1094,9 +1108,9 @@
         return directiveFactory;
     }
     /**
-     * Use `UgradeAdapterRef` to control a hybrid AngularJS v1 / Angular v2 application.
+     * Use `UpgradeAdapterRef` to control a hybrid AngularJS v1 / Angular v2 application.
      *
-     * @experimental
+     * @stable
      */
     var UpgradeAdapterRef = (function () {
         function UpgradeAdapterRef() {
@@ -1104,13 +1118,13 @@
             this._readyFn = null;
             this.ng1RootScope = null;
             this.ng1Injector = null;
-            this.ng2ApplicationRef = null;
+            this.ng2ModuleRef = null;
             this.ng2Injector = null;
         }
         /* @internal */
-        UpgradeAdapterRef.prototype._bootstrapDone = function (applicationRef, ng1Injector) {
-            this.ng2ApplicationRef = applicationRef;
-            this.ng2Injector = applicationRef.injector;
+        UpgradeAdapterRef.prototype._bootstrapDone = function (ngModuleRef, ng1Injector) {
+            this.ng2ModuleRef = ngModuleRef;
+            this.ng2Injector = ngModuleRef.injector;
             this.ng1Injector = ng1Injector;
             this.ng1RootScope = ng1Injector.get(NG1_ROOT_SCOPE);
             this._readyFn && this._readyFn(this);
@@ -1128,10 +1142,12 @@
          */
         UpgradeAdapterRef.prototype.dispose = function () {
             this.ng1Injector.get(NG1_ROOT_SCOPE).$destroy();
-            this.ng2ApplicationRef.dispose();
+            this.ng2ModuleRef.destroy();
         };
         return UpgradeAdapterRef;
     }());
+
     exports.UpgradeAdapter = UpgradeAdapter;
     exports.UpgradeAdapterRef = UpgradeAdapterRef;
+
 }));

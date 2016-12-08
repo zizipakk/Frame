@@ -15,6 +15,7 @@ using Frame.Services;
 namespace Frame.Controllers
 {
     [Authorize]
+    [Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -37,6 +38,14 @@ namespace Frame.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult TestLogin(string Username = "semmi")
+        {
+            Console.WriteLine(Username);
+            return Json(Username);
+        }
+
         //
         // GET: /Account/Login
         [HttpGet]
@@ -46,7 +55,7 @@ namespace Frame.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
-
+                
         //
         // POST: /Account/Login
         [HttpPost]

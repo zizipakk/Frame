@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var routes_1 = require('../routes');
 var dataService_1 = require('./dataService');
 var user_1 = require('../models/user');
 //A class to manage user authentication
@@ -17,9 +18,10 @@ var MembershipService = (function () {
     //inject data service
     function MembershipService(accountService) {
         this.accountService = accountService;
-        this.accountRegisterAPI = 'api/account/register/';
-        this.accountLoginAPI = 'api/account/authenticate/';
-        this.accountLogoutAPI = 'api/account/logout/';
+        this.action = '/account';
+        this.accountRegisterAPI = routes_1.API.AUTH + this.action + '/register';
+        this.accountLoginAPI = routes_1.API.AUTH + this.action + '/testlogin';
+        this.accountLogoutAPI = routes_1.API.AUTH + this.action + '/logout';
     }
     MembershipService.prototype.register = function (newUser) {
         this.accountService.set(this.accountRegisterAPI);
@@ -56,3 +58,4 @@ var MembershipService = (function () {
     return MembershipService;
 }());
 exports.MembershipService = MembershipService;
+//# sourceMappingURL=membershipService.js.map

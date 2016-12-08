@@ -33,3 +33,4 @@ platform_browser_dynamic_1.bootstrap(app_1.AppComponent, [
     core_1.provide(common_1.LocationStrategy, { useClass: common_1.PathLocationStrategy }),
     dataService_1.DataService
 ]).catch(function (err) { return console.error(err); });
+//# sourceMappingURL=boot.js.map

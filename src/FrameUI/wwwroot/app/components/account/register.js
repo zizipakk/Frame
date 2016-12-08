@@ -58,3 +58,4 @@ var Register = (function () {
     return Register;
 }());
 exports.Register = Register;
+//# sourceMappingURL=register.js.map

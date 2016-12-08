@@ -5,17 +5,16 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-"use strict";
-var core_1 = require('@angular/core');
-var angular = require('./angular_js');
-var constants_1 = require('./constants');
-var util_1 = require('./util');
+import { Directive, ElementRef, EventEmitter, Inject } from '@angular/core';
+import * as angular from './angular_js';
+import { NG1_COMPILE, NG1_CONTROLLER, NG1_HTTP_BACKEND, NG1_SCOPE, NG1_TEMPLATE_CACHE } from './constants';
+import { controllerKey } from './util';
 var CAMEL_CASE = /([A-Z])/g;
 var INITIAL_VALUE = {
     __UNINITIALIZED__: true
 };
 var NOT_SUPPORTED = 'NOT_SUPPORTED';
-var UpgradeNg1ComponentAdapterBuilder = (function () {
+export var UpgradeNg1ComponentAdapterBuilder = (function () {
     function UpgradeNg1ComponentAdapterBuilder(name) {
         this.name = name;
         this.inputs = [];
@@ -31,10 +30,10 @@ var UpgradeNg1ComponentAdapterBuilder = (function () {
         var selector = name.replace(CAMEL_CASE, function (all /** TODO #9100 */, next) { return '-' + next.toLowerCase(); });
         var self = this;
         this.type =
-            core_1.Directive({ selector: selector, inputs: this.inputsRename, outputs: this.outputsRename })
+            Directive({ selector: selector, inputs: this.inputsRename, outputs: this.outputsRename })
                 .Class({
                 constructor: [
-                    new core_1.Inject(constants_1.NG1_SCOPE), core_1.ElementRef,
+                    new Inject(NG1_SCOPE), ElementRef,
                     function (scope, elementRef) {
                         return new UpgradeNg1ComponentAdapter(self.linkFn, scope, self.directive, elementRef, self.$controller, self.inputs, self.outputs, self.propertyOutputs, self.checkProperties, self.propertyMap);
                     }
@@ -71,16 +70,18 @@ var UpgradeNg1ComponentAdapterBuilder = (function () {
         }
         var context = (btcIsObject) ? this.directive.bindToController : this.directive.scope;
         if (typeof context == 'object') {
-            for (var name in context) {
-                if (context.hasOwnProperty(name)) {
-                    var localName = context[name];
+            for (var name_1 in context) {
+                if (context.hasOwnProperty(name_1)) {
+                    var localName = context[name_1];
                     var type = localName.charAt(0);
-                    localName = localName.substr(1) || name;
-                    var outputName = 'output_' + name;
-                    var outputNameRename = outputName + ': ' + name;
-                    var outputNameRenameChange = outputName + ': ' + name + 'Change';
-                    var inputName = 'input_' + name;
-                    var inputNameRename = inputName + ': ' + name;
+                    var typeOptions = localName.charAt(1);
+                    localName = typeOptions === '?' ? localName.substr(2) : localName.substr(1);
+                    localName = localName || name_1;
+                    var outputName = 'output_' + name_1;
+                    var outputNameRename = outputName + ': ' + name_1;
+                    var outputNameRenameChange = outputName + ': ' + name_1 + 'Change';
+                    var inputName = 'input_' + name_1;
+                    var inputNameRename = inputName + ': ' + name_1;
                     switch (type) {
                         case '=':
                             this.propertyOutputs.push(outputName);
@@ -119,20 +120,20 @@ var UpgradeNg1ComponentAdapterBuilder = (function () {
                 this.directive.template);
         }
         else if (this.directive.templateUrl) {
-            var url = typeof this.directive.templateUrl === 'function' ? this.directive.templateUrl() :
+            var url_1 = typeof this.directive.templateUrl === 'function' ? this.directive.templateUrl() :
                 this.directive.templateUrl;
-            var html = templateCache.get(url);
+            var html = templateCache.get(url_1);
             if (html !== undefined) {
                 this.linkFn = compileHtml(html);
             }
             else {
                 return new Promise(function (resolve, err) {
-                    httpBackend('GET', url, null, function (status /** TODO #9100 */, response /** TODO #9100 */) {
+                    httpBackend('GET', url_1, null, function (status /** TODO #9100 */, response /** TODO #9100 */) {
                         if (status == 200) {
-                            resolve(_this.linkFn = compileHtml(templateCache.put(url, response)));
+                            resolve(_this.linkFn = compileHtml(templateCache.put(url_1, response)));
                         }
                         else {
-                            err("GET " + url + " returned " + status + ": " + response);
+                            err("GET " + url_1 + " returned " + status + ": " + response);
                         }
                     });
                 });
@@ -148,15 +149,18 @@ var UpgradeNg1ComponentAdapterBuilder = (function () {
             return compile(div.childNodes);
         }
     };
+    /**
+     * Upgrade ng1 components into Angular 2.
+     */
     UpgradeNg1ComponentAdapterBuilder.resolve = function (exportedComponents, injector) {
         var promises = [];
-        var compile = injector.get(constants_1.NG1_COMPILE);
-        var templateCache = injector.get(constants_1.NG1_TEMPLATE_CACHE);
-        var httpBackend = injector.get(constants_1.NG1_HTTP_BACKEND);
-        var $controller = injector.get(constants_1.NG1_CONTROLLER);
-        for (var name in exportedComponents) {
-            if (exportedComponents.hasOwnProperty(name)) {
-                var exportedComponent = exportedComponents[name];
+        var compile = injector.get(NG1_COMPILE);
+        var templateCache = injector.get(NG1_TEMPLATE_CACHE);
+        var httpBackend = injector.get(NG1_HTTP_BACKEND);
+        var $controller = injector.get(NG1_CONTROLLER);
+        for (var name_2 in exportedComponents) {
+            if (exportedComponents.hasOwnProperty(name_2)) {
+                var exportedComponent = exportedComponents[name_2];
                 exportedComponent.directive = exportedComponent.extractDirective(injector);
                 exportedComponent.$controller = $controller;
                 exportedComponent.extractBindings();
@@ -169,7 +173,6 @@ var UpgradeNg1ComponentAdapterBuilder = (function () {
     };
     return UpgradeNg1ComponentAdapterBuilder;
 }());
-exports.UpgradeNg1ComponentAdapterBuilder = UpgradeNg1ComponentAdapterBuilder;
 var UpgradeNg1ComponentAdapter = (function () {
     function UpgradeNg1ComponentAdapter(linkFn, scope, directive, elementRef, $controller, inputs, outputs, propOuts, checkProperties, propertyMap) {
         this.linkFn = linkFn;
@@ -197,13 +200,13 @@ var UpgradeNg1ComponentAdapter = (function () {
             this[inputs[i]] = null;
         }
         for (var j = 0; j < outputs.length; j++) {
-            var emitter = this[outputs[j]] = new core_1.EventEmitter();
+            var emitter = this[outputs[j]] = new EventEmitter();
             this.setComponentProperty(outputs[j], (function (emitter /** TODO #9100 */) { return function (value /** TODO #9100 */) {
                 return emitter.emit(value);
             }; })(emitter));
         }
         for (var k = 0; k < propOuts.length; k++) {
-            this[propOuts[k]] = new core_1.EventEmitter();
+            this[propOuts[k]] = new EventEmitter();
             this.checkLastValues.push(INITIAL_VALUE);
         }
     }
@@ -239,10 +242,10 @@ var UpgradeNg1ComponentAdapter = (function () {
         }
     };
     UpgradeNg1ComponentAdapter.prototype.ngOnChanges = function (changes) {
-        for (var name in changes) {
-            if (changes.hasOwnProperty(name)) {
-                var change = changes[name];
-                this.setComponentProperty(name, change.currentValue);
+        for (var name_3 in changes) {
+            if (changes.hasOwnProperty(name_3)) {
+                var change = changes[name_3];
+                this.setComponentProperty(name_3, change.currentValue);
             }
         }
     };
@@ -271,7 +274,7 @@ var UpgradeNg1ComponentAdapter = (function () {
     UpgradeNg1ComponentAdapter.prototype.buildController = function (controllerType /** TODO #9100 */) {
         var locals = { $scope: this.componentScope, $element: this.$element };
         var controller = this.$controller(controllerType, locals, null, this.directive.controllerAs);
-        this.$element.data(util_1.controllerKey(this.directive.name), controller);
+        this.$element.data(controllerKey(this.directive.name), controller);
         return controller;
     };
     UpgradeNg1ComponentAdapter.prototype.resolveRequired = function ($element, require) {
@@ -279,24 +282,23 @@ var UpgradeNg1ComponentAdapter = (function () {
             return undefined;
         }
         else if (typeof require == 'string') {
-            var name = require;
+            var name_4 = require;
             var isOptional = false;
             var startParent = false;
             var searchParents = false;
-            var ch;
-            if (name.charAt(0) == '?') {
+            if (name_4.charAt(0) == '?') {
                 isOptional = true;
-                name = name.substr(1);
+                name_4 = name_4.substr(1);
             }
-            if (name.charAt(0) == '^') {
+            if (name_4.charAt(0) == '^') {
                 searchParents = true;
-                name = name.substr(1);
+                name_4 = name_4.substr(1);
             }
-            if (name.charAt(0) == '^') {
+            if (name_4.charAt(0) == '^') {
                 startParent = true;
-                name = name.substr(1);
+                name_4 = name_4.substr(1);
             }
-            var key = util_1.controllerKey(name);
+            var key = controllerKey(name_4);
             if (startParent)
                 $element = $element.parent();
             var dep = searchParents ? $element.inheritedData(key) : $element.data(key);
