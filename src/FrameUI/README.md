@@ -32,6 +32,7 @@ To get more help on the `angular-cli` use `ng --help` or go check out the [Angul
 
 Next steps: 
 1. Intruduce primeng UI
-2. Dercognize angular2 modal, alertify
+2. Dercognize alertify
 3. Investigate to derecognize bootstrap responsive disign
 4. Remove unnecessary code from FrameUI (coverage, scripts, typings, wwwwroot), move to vs webpack
+5. Redux

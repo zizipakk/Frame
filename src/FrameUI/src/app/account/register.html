@@ -1,8 +1,7 @@
-﻿<p-dialog header="!Waiting for style!" [(visible)]="display" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)"> 
+﻿<p-dialog header="!Waiting for style!" [(visible)]="display" width="600" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)"> 
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <a class="close" [routerLink]="['/account/login']" data-dismiss="modal" aria-hidden="true">×</a>
                 <h1 class="text-center">
                     <span class="fa-stack fa-1x">
                         <i class="fa fa-circle fa-stack-2x text-primary"></i>
@@ -43,13 +42,6 @@
                     <a class="btn btn-danger pull-left" [routerLink]="['/account/login']" data-dismiss="modal" aria-hidden="true">Cancel</a>
                 </div>
             </div>
-
-            <table>
-                <tr>
-                    <td>Teszt</td><td [innerHTML]="TestName"></td><td>"{{newUser.Username}}"</td>
-                </tr>
-            </table>
-            
         </div>
     </div>
     <footer>

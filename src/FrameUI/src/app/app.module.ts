@@ -5,7 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule, RequestOptions } from '@angular/http';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 // 3rd party
-import { DialogModule } from 'primeng/primeng';
+import { 
+  DialogModule,
+  ButtonModule,
+  CheckboxModule,
+  InputTextModule,
+  PasswordModule
+ } from 'primeng/primeng';
 // custom components
 import { AppComponent } from './app.component';
 import { AppBaseRequestOptions } from './app.settings';
@@ -36,7 +42,11 @@ import { NotificationService } from './services/notificationService';
     BrowserModule,
     FormsModule,
     HttpModule,
-    DialogModule
+    DialogModule,
+    ButtonModule,
+    CheckboxModule,
+    InputTextModule,
+    PasswordModule
   ],
   providers: [
       { provide: RequestOptions, useClass: AppBaseRequestOptions },
