@@ -1,49 +1,47 @@
-﻿import { Component, OnInit, AfterViewInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+﻿import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Modal } from 'angular2-modal/plugins/bootstrap';
-import { Overlay } from 'angular2-modal';
-
 import { User } from '../models/user';
 import { OperationResult } from '../models/operationResult';
-
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
 
 @Component({
-    selector: 'login',
-    // templateUrl: 'login.html',
-    template: '<div></div>',
-    providers: [ Modal, Overlay ]
+    selector: 'login-modal',
+    templateUrl: 'login.html',
 })
-export class Login implements OnInit, AfterViewInit {
+export class Login implements AfterViewInit {
 
-    private user: User;
+    /** primeng show/hide prop */
+    display: boolean = false;
+
+    user: User;
 
     constructor(
-        public modal: Modal,
-        private overlay: Overlay,
-        private vcRef: ViewContainerRef,
-
         private router: Router,
         private membershipService: MembershipService,
         private notificationService: NotificationService,
     ) {
-        overlay.defaultViewContainer = vcRef;
-
         this.user = new User('', '');
     }
 
-    ngOnInit() {
+    /** ng event */
+    ngAfterViewInit(): void {
+        this.display = true;  
     }
 
-    ngAfterViewInit(): void {
-        this.modal.alert()
-        .size('lg')
-        .showClose(true)
-        .title('TEST')
-        .body('login.html')
-        .open();        
+    /** primeng event */
+    onAfterHide(event): void {
+        this.navigateBack();      
+    }
+    
+    /** custom events */
+    onClose(): void {
+        this.display = false;  
+        this.navigateBack();      
+    }
 
+    navigateBack(): void {
+        this.router.navigate(['/']);
     }
 
     login(): void {
@@ -66,4 +64,9 @@ export class Login implements OnInit, AfterViewInit {
                 }
             });
     };
+
+    // onRegister(): void {
+    //      this.router.navigate(['account/register']);
+    // }
+
 }

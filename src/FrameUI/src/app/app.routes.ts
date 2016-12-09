@@ -5,7 +5,7 @@ import { Account } from './account/account';
 import { Login } from './account/login';
 import { Register } from './account/register';
 
-export const appRoutes: Routes = [
+const appRoutes: Routes = [
     { path: '', component: Home }, // default
     {
         path: 'account', component: Account,

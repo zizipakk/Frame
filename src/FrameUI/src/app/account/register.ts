@@ -1,22 +1,19 @@
-﻿import { Component, OnInit} from '@angular/core';
+﻿import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router'
-import { appRoutes } from '../app.routes'
-
 import { Registration } from '../models/registration'
 import { OperationResult } from '../models/operationResult'
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
 
 @Component({
-    selector: 'register',
+    selector: 'register-modal',
     templateUrl: 'register.html',
-    // providers: [ 
-    //     MembershipService, 
-    //     NotificationService 
-    // ]
 })
 
-export class Register implements OnInit {
+export class Register implements AfterViewInit {
+
+    /** primeng show/hide prop */
+    display: boolean = false;
 
     private newUser: Registration;
 
@@ -28,7 +25,24 @@ export class Register implements OnInit {
         this.newUser = new Registration('', '', '');
     }
 
-    ngOnInit() {
+    /** ng event */
+    ngAfterViewInit(): void {
+        this.display = true;  
+    }
+
+    /** primeng event */
+    onAfterHide(event): void {
+        this.navigateBack();      
+    }
+    
+    /** custom events */
+    onClose(): void {
+        this.display = false;  
+        this.navigateBack();      
+    }
+
+    navigateBack(): void {
+        this.router.navigate(['/account/login']);
     }
 
     register(): void {
@@ -43,7 +57,7 @@ export class Register implements OnInit {
             () => {
                 if (registrationResult.Succeeded) {
                     this.notificationService.printSuccessMessage('Dear ' + this.newUser.Username + ', please login with your credentials');
-                    this.router.navigate([appRoutes.map(m => m.path == 'login')]);
+                    this.router.navigate(['/account/login']);
                 }
                 else {
                     this.notificationService.printErrorMessage(registrationResult.Message);

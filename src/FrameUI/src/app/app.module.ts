@@ -1,39 +1,34 @@
+// ng
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule, RequestOptions } from '@angular/http';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
-
-import { ModalModule } from 'angular2-modal';
-import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
-
-import { AppBaseRequestOptions } from './app.settings';
+// 3rd party
+import { DialogModule } from 'primeng/primeng';
+// custom components
 import { AppComponent } from './app.component';
+import { AppBaseRequestOptions } from './app.settings';
 import { Home } from './home/home';
 import { Account } from './account/account';
-
 import { Login } from './account/login';
-import { LoginModal } from './account/login.modal'
-
 import { Register } from './account/register';
 import { appRouting } from './app.routes';
-
+// custom services
 import { DataService } from './services/dataService';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 
 @NgModule({
   entryComponents: [
-    LoginModal
+    Login,
+    Register
   ],
   declarations: [
     AppComponent,
     Home, 
     Account,
-
     Login, 
-    LoginModal,
-
     Register    
   ],
   imports: [
@@ -41,10 +36,7 @@ import { NotificationService } from './services/notificationService';
     BrowserModule,
     FormsModule,
     HttpModule,
-
-    ModalModule.forRoot(),
-    BootstrapModalModule
-
+    DialogModule
   ],
   providers: [
       { provide: RequestOptions, useClass: AppBaseRequestOptions },

@@ -1,4 +1,4 @@
-﻿<div id="registerModal" class="modal show" tabindex="-1" role="dialog" aria-hidden="true">
+﻿<p-dialog header="!Waiting for style!" [(visible)]="display" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)"> 
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,7 +11,7 @@
                 </h1>
             </div>
             <div class="modal-body">
-                <form class="form col-md-12 center-block">
+                <form class="form col-md-12 center-block" #hf="ngForm">
                     <div class="form-group">
                         <input type="text" class="form-control input-lg" placeholder="Username" [(ngModel)]="newUser.Username"
                                name="username" required #username="ngModel">
@@ -52,5 +52,8 @@
             
         </div>
     </div>
-</div>
-
+    <footer>
+        <button type="button" pButton icon="fa-close" (click)="display=false" label="No"></button>
+        <button type="button" pButton icon="fa-check" (click)="display=false" label="Yes"></button>
+    </footer> 
+</p-dialog>
