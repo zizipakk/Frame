@@ -1,6 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+.color-blue {
+    color: dodgerblue;
+}
 
-bs-modal-container.modal.fade.in {
-    margin: 40px auto;
-    width: 600px;
+.button-red {
+    background-color: indianred !important;
+    border: 1px solid indianred !important;
+}
+
+.span-right {
+    float: right;
 }

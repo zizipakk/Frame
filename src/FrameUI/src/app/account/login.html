@@ -1,84 +1,40 @@
 ﻿<p-dialog [(visible)]="display" width="600" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)"> 
-    <!--<div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="text-center">
-                    <span class="fa-stack fa-1x">
-                        <i class="fa fa-circle fa-stack-2x text-primary"></i>
-                        <i class="fa fa-user fa-stack-1x fa-inverse"></i>
-                    </span>Login
-                </h1>
-            </div>
-            <div class="modal-body">
-                <form class="form col-md-12 center-block" #hf="ngForm">
-                    <div class="form-group">
-                        <input type="text" class="form-control input-lg" placeholder="Username" [(ngModel)]="user.Username"
-                                name="username" required #userName="ngModel"/>
-                        <div [hidden]="userName.valid || userName.untouched" class="alert alert-danger">
-                            Username is required
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control input-lg" placeholder="Password" [(ngModel)]="user.Password"
-                                name="password" required #passWord="ngModel"/>
-                        <div [hidden]="passWord.valid || passWord.untouched" class="alert alert-danger">
-                            Password is required
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-primary btn-lg btn-block" (click)="login()" [disabled]="!hf.form.valid">Sign In</button>
-                        <span class="pull-right">
-                            <a class="nav-link" [routerLink]="['/account/register']">Register</a>
-                        </span>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" [(ngModel)]="user.RememberMe" name="remember" > Remember me
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div class="col-md-12">
-                    <a class="btn btn-danger pull-left" (click)="onClose()">Cancel</a>
-                </div>
-            </div>
-        </div>
-    </div>-->
     <header>
-        <h1 class="text-center">
+        <h1>
             <span class="fa-stack fa-1x">
-                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                <i class="fa fa-circle fa-stack-2x color-blue"></i>
                 <i class="fa fa-user fa-stack-1x fa-inverse"></i>
             </span>Login
         </h1>
     </header>
-    <form class="form center-block" #hf="ngForm">
-        <div class="form-group">
-            <input type="text" pInputText placeholder="Username" [(ngModel)]="user.Username"
-                    name="username" required #userName="ngModel" style="width:100%"/>
-            <div [hidden]="userName.valid || userName.untouched" class="alert alert-danger">
-                Username is required
+    <form class="ui-g" #hf="ngForm">
+        <div class="ui-g-12">
+            <input class="ui-g-12" type="text" pInputText placeholder="Username" [(ngModel)]="user.Username"
+                    name="username" required #userName="ngModel" />
+            <div [hidden]="userName.valid || userName.untouched" class="ui-message ui-messages-error ui-corner-all">
+                <i class="fa fa-close"></i> Username is required
             </div>
         </div>
-        <div class="form-group">
-            <input type="password" pPassword placeholder="Password" [(ngModel)]="user.Password"
-                    name="password" required #passWord="ngModel" style="width:100%"/>
-            <div [hidden]="passWord.valid || passWord.untouched" class="alert alert-danger">
-                Password is required
+        <div class="ui-g-12">
+            <input class="ui-g-12" type="password" pPassword placeholder="Password" [(ngModel)]="user.Password"
+                    name="password" required #passWord="ngModel" />
+            <div [hidden]="passWord.valid || passWord.untouched" class="ui-message ui-messages-error ui-corner-all">
+                <i class="fa fa-close"></i> Password is required
             </div>
         </div>
-        <div class="form-group">
-            <button type="button" pButton [disabled]="!hf.form.valid" (click)="login()" label="Sign In" style="width:100%"></button>
-            <span class="pull-right">
-                <a class="nav-link" [routerLink]="['/account/register']">Register</a>
+        <div class="ui-g-12">
+            <button class="ui-g-12" type="button" pButton [disabled]="!hf.form.valid" (click)="login()" label="Sign In"></button>
+            <span class="span-right">
+                <a class="nav-link" [routerLink]="['/account/register']"><h4>Register</h4></a>
             </span>
+        </div>        
+        <div class="ui-g-12">
+            <p-checkbox name="remember" [(ngModel)]="value" binary="true" label="Remember me"></p-checkbox>
         </div>
-        <p-checkbox name="remember" [(ngModel)]="value" binary="true" label="Remember me"></p-checkbox>
     </form>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button type="button" pButton icon="fa-close" (click)="onClose()" label="Cancel" style="background-color:red"></button>
+            <button class="button-red" type="button" pButton icon="fa-close" (click)="onClose()" label="Cancel"></button>
         </div>
     </footer> 
 </p-dialog>

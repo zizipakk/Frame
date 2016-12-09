@@ -10,7 +10,8 @@ import {
   ButtonModule,
   CheckboxModule,
   InputTextModule,
-  PasswordModule
+  PasswordModule,
+  MessagesModule
  } from 'primeng/primeng';
 // custom components
 import { AppComponent } from './app.component';
@@ -46,7 +47,8 @@ import { NotificationService } from './services/notificationService';
     ButtonModule,
     CheckboxModule,
     InputTextModule,
-    PasswordModule
+    PasswordModule,
+    MessagesModule
   ],
   providers: [
       { provide: RequestOptions, useClass: AppBaseRequestOptions },
