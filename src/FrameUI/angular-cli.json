@@ -19,7 +19,6 @@
       "mobile": false,
       "styles": [
 
-        "../node_modules/bootstrap/dist/css/bootstrap.css",
         "../node_modules/alertify.js/dist/css/alertify.css",
 
         "../node_modules/primeng/resources/themes/omega/theme.css",

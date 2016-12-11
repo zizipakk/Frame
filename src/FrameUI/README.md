@@ -31,8 +31,9 @@ Run `ng github-pages:deploy` to deploy to Github Pages.
 To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 Next steps: 
-1. Intruduce primeng UI
-2. Dercognize alertify
-3. Investigate to derecognize bootstrap responsive disign
-4. Remove unnecessary code from FrameUI (coverage, scripts, typings, wwwwroot), move to vs webpack
-5. Redux
+1. Remove unnecessary code from FrameUI (coverage, scripts, typings, wwwwroot), move to vs webpack
+2. Redux
+3. tests
+4. localize
+5. validation from model
+6. log: sending, ui-message, blocking

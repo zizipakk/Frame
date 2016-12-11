@@ -1,52 +1,14 @@
-<!-- Navigation -->
-<div id="wrapper">
-    <!-- Navigation -->
-    <nav class="navbar navbar navbar-dark bg-inverse navbar-fixed-top">
-        <!--<button class="navbar-toggler hidden-lg-up" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"></button>
-        <div class="collapse navbar-toggleable-md">-->
-            <!-- Brand -->
-            <a class="navbar-brand" [routerLink]="['/']">Home</a>
-            <!-- Top Menu Items -->
-            <ul class="nav navbar-nav">
-                <li *ngIf="!isUserLoggedIn()" class="nav-item active">
-                    <a class="nav-link" href="#">Active link</a>
-                </li>
-                <li *ngIf="!isUserLoggedIn()" class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li *ngIf="!isUserLoggedIn()" class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{getUserName()}} <b class="caret"></b></a>
-                    <div class="dropdown-menu" aria-labelledby="">>
-                        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
-                        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                        <a class="dropdown-item" href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
-                        <div class="divider"></div>
-                        <a class="dropdown-item" *ngIf="isUserLoggedIn()" [routerLink]="['/account/login']" (click)="logout()"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
-                    </div>
-                </li>
-                <li *ngIf="!isUserLoggedIn()" class="nav-item">
-                    <a class="nav-link" [routerLink]="['/account/login']"><i class="fa fa-unlock-alt fa-fw"></i> Log In</a>
-                </li>
-            </ul>
-            
-            <form *ngIf="!isUserLoggedIn()" class="form-inline float-xs-right">
-                <input class="form-control" type="text" placeholder="Search">
-                <button class="btn btn-outline-info" type="submit">Search</button>
-            </form>
+<p-toolbar name="menuOptions">
+    <div class="ui-toolbar-group-left">
+        <img src="favicon.ico">
+    </div>
+    <div class="ui-toolbar-group-left">
+        <p-menubar [model]="menuItems"></p-menubar>
+    </div>
+    <div class="ui-toolbar-group-right" *ngIf="!isUserLoggedIn()">
+        <input type="text" pInputText placeholder="Search">
+        <button class="button-red" type="button" pButton icon="fa-search" label="Search"></button>
+    </div>
+</p-toolbar>
 
-            <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-            <div *ngIf="!isUserLoggedIn()" class="collapse navbar-collapse navbar-ex1-collapse">
-                <ul class="nav navbar-nav side-nav">
-                    <li class="active">
-                        <a href="index.html"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-
-        <!--</div>-->
-    </nav>
-
-    <router-outlet></router-outlet>
-
-</div>
+<router-outlet></router-outlet>
