@@ -1,0 +1,38 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v1.1/",
+    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "compilationOptions": {
+    "defines": [
+      "DEBUG",
+      "TRACE",
+      "NETCOREAPP1_1"
+    ],
+    "optimize": false,
+    "emitEntryPoint": true
+  },
+  "targets": {
+    ".NETCoreApp,Version=v1.1": {
+      "FrameUI/1.0.0": {
+        "compile": {
+          "FrameUI.dll": {}
+        }
+      }
+    },
+    ".NETCoreApp,Version=v1.1/": {
+      "FrameUI/1.0.0": {
+        "runtime": {
+          "FrameUI.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "FrameUI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

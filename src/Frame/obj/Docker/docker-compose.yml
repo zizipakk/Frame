@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  frame:
+    image: user/frame${TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80"

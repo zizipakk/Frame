@@ -1,5 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, Headers } from '@angular/http';
+import { BaseHeaders } from '../app.settings';
+
 import { Observable } from 'rxjs/Rx'; //http://stackoverflow.com/questions/37030963/angular-2-2-0-0-rc-1-property-map-does-not-exist-on-type-observableresponse
 import 'rxjs/add/operator/map'; //
 
@@ -29,7 +31,7 @@ export class DataService {
 
     post(data?: any, mapJson: boolean = true) {
         if (mapJson)
-            return this.http.post(this.baseUri, data)
+            return this.http.post(this.baseUri, data, { headers: BaseHeaders.HEADERS })
                 .map(response => <any>(<Response>response).json());
         else
             return this.http.post(this.baseUri, data);

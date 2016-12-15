@@ -12,7 +12,7 @@ export class MembershipService {
 
     private action = '/account'
     private accountRegisterAPI = API.AUTH + this.action + '/register';
-    private accountLoginAPI = API.AUTH + this.action + '/testlogin';
+    private accountLoginAPI = API.AUTH + this.action + '/login';
     private accountLogoutAPI = API.AUTH + this.action + '/logout';
     
     constructor(private dataService: DataService) {

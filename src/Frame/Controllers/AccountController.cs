@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -38,13 +37,27 @@ namespace Frame.Controllers
             _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult TestGet()
+        {
+            return Json("TestGet");
+        }
+
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult TestLogin(string Username = "semmi")
+        public IActionResult TestPost()
         {
-            Console.WriteLine(Username);
-            return Json(Username);
+            return Json("TestPost");
         }
+
+        //[HttpPost]
+        //[AllowAnonymous]
+        //public IActionResult Login(string Username = "semmi", string Password = "semmi", bool RememberMe = false)
+        //{
+        //    Console.WriteLine(Username);
+        //    return Json(Username);
+        //}
 
         //
         // GET: /Account/Login
@@ -55,12 +68,12 @@ namespace Frame.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
-                
+
         //
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;

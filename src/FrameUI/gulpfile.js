@@ -21,7 +21,6 @@ gulp.task("scriptsNStyles", () => {
     gulp.src([
             'rxjs/**/*.js',
             '@angular/**/*.js',
-            '@angular2-material/**/*.js',
             'angular2-in-memory-web-api/**/*.js',
     ], {
         cwd: "node_modules/**"
@@ -56,7 +55,6 @@ gulp.task("scriptsNStyles", () => {
         //    suffix: '.min'
         //}))
         .pipe(gulp.dest("./wwwroot/libs/js"));
-
     //css
     gulp.src([
       'bootstrap/dist/css/bootstrap.css',

@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpModule, RequestOptions } from '@angular/http';
+import { HttpModule } from '@angular/http';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 // 3rd party
 import { 
@@ -18,7 +18,6 @@ import {
  } from 'primeng/primeng';
 // custom components
 import { AppComponent } from './app.component';
-import { AppBaseRequestOptions } from './app.settings';
 import { Home } from './home/home';
 import { Account } from './account/account';
 import { Login } from './account/login';
@@ -57,7 +56,6 @@ import { NotificationService } from './services/notificationService';
     ToolbarModule
   ],
   providers: [
-      { provide: RequestOptions, useClass: AppBaseRequestOptions },
       { provide: LocationStrategy, useClass: PathLocationStrategy },
       DataService,
       MembershipService,
