@@ -10,7 +10,7 @@ export class API {
 export class BaseHeaders {
     public static get HEADERS(): Headers { 
         let headers: Headers = new Headers({ 'Content-Type': 'application/json' });
-        // headers.append('', '');
+        headers.append('Accept', 'application/json');
         return headers; 
     }
 }
