@@ -58,13 +58,12 @@ export class AppComponent implements OnInit  {
     }
 
     isUserLoggedIn(): boolean {
-        return this.membershipService.isUserAuthenticated();
+        return this.membershipService.IsAuthorized;
     }
 
     getUserName(): string {
         if (this.isUserLoggedIn()) {
-            var user: User = this.membershipService.getLoggedInUser();
-            return user.Username;
+            return this.membershipService.UserName;
         }
         else
             return 'Account';

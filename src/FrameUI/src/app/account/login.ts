@@ -52,11 +52,14 @@ export class Login implements AfterViewInit {
                 authenticationResult.Succeeded = res.Succeeded;
                 authenticationResult.Message = res.Message;
             },
-            error => console.error('Error: ' + error),
+            error => { 
+                console.error('Error: ' + error);
+                this.notificationService.handleError(error, this.membershipService.resetAuthorizationData)
+            },
             () => {
+                this.membershipService.loginCallback();
                 if (authenticationResult.Succeeded) {
                     this.notificationService.printSuccessMessage('Welcome back ' + this.user.Username + '!');
-                    localStorage.setItem('user', JSON.stringify(this.user));
                     this.router.navigateByUrl('/');
                 }
                 else {
@@ -64,9 +67,5 @@ export class Login implements AfterViewInit {
                 }
             });
     };
-
-    // onRegister(): void {
-    //      this.router.navigate(['account/register']);
-    // }
 
 }

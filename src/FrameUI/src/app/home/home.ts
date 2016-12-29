@@ -15,6 +15,6 @@ export class Home implements OnInit {
     }
 
     isUserLoggedIn(): boolean {
-        return this.membershipService.isUserAuthenticated();
+        return this.membershipService.IsAuthorized;
     }
 }

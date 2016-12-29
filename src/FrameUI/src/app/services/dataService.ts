@@ -1,5 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
+import { Router } from '@angular/router';
 import { BaseHeaders } from '../app.settings';
 
 import { Observable } from 'rxjs/Rx'; //http://stackoverflow.com/questions/37030963/angular-2-2-0-0-rc-1-property-map-does-not-exist-on-type-observableresponse
@@ -13,7 +14,7 @@ export class DataService {
     public pageSize: number;
     public baseUri: string;
 
-    constructor(public http: Http) {
+    constructor(private http: Http, private router: Router) {
 
     }
 
@@ -22,8 +23,10 @@ export class DataService {
         this.pageSize = pageSize;
     }
 
-    get(page: number) {
-        var uri = this.baseUri + page.toString() + '/' + this.pageSize.toString();
+    get(id?: number) {
+        var uri = this.baseUri 
+            + '/' + id.toString() 
+            + this.pageSize ? '&' + this.pageSize.toString() : '';
 
         return this.http.get(uri)
             .map(response => (<Response>response));
@@ -36,7 +39,6 @@ export class DataService {
         else
             return this.http.post(this.baseUri, data);
     }
-
 
     delete(id: number) {
         return this.http.delete(this.baseUri + '/' + id.toString())

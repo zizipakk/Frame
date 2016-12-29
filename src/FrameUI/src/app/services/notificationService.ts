@@ -26,4 +26,18 @@ export class NotificationService {
             }
         });
     }
+
+    handleError(error: any, callback?: () => void) {
+        console.log(error);
+        if (error.status == 403) {
+            this.printErrorMessage('Forbidden');
+        }
+        else if (error.status == 401) {
+            if (callback) {
+                callback();
+            }
+            this.printErrorMessage('Unauthorized');
+        }
+    }
+
 }
