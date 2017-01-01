@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Frame.Models.AccountViewModels
 {
-    public class LoginViewModel
+    public class LoginInputModel
     {
         [Required]
         [EmailAddress]
@@ -17,6 +17,21 @@ namespace Frame.Models.AccountViewModels
         public string Password { get; set; }
 
         [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
+        public bool RememberLogin { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
+
+    public class LoginViewModel : LoginInputModel
+    {
+        public bool EnableLocalLogin { get; set; }
+        public IEnumerable<ExternalProvider> ExternalProviders { get; set; }
+    }
+
+    public class ExternalProvider
+    {
+        public string DisplayName { get; set; }
+        public string AuthenticationScheme { get; set; }
+    }
+
 }

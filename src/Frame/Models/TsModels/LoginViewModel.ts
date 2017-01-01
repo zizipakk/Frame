@@ -1,21 +1,18 @@
 
 
     export interface IloginViewModel {
-        email: string;
-        password: string;
-        rememberMe: boolean;
+        enableLocalLogin: boolean;
+        externalProviders: ExternalProvider[];
         
     }
 
     export class LoginViewModel {
-        public email: string;
-        public password: string;
-        public rememberMe: boolean;
+        public enableLocalLogin: boolean;
+        public externalProviders: ExternalProvider[];
         
         constructor(model: IloginViewModel) {
-            this.email = model.email;
-            this.password = model.password;
-            this.rememberMe = model.rememberMe;
+            this.enableLocalLogin = model.enableLocalLogin;
+            this.externalProviders = model.externalProviders;
             
         }
     }

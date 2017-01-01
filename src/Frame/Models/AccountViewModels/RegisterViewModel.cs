@@ -23,5 +23,8 @@ namespace Frame.Models.AccountViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Display(Name = "IsAdmin")]
+        public bool IsAdmin { get; set; }
     }
 }
