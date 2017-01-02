@@ -47,7 +47,11 @@ namespace Frame
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var cert = new X509Certificate2(Path.Combine(_environment.ContentRootPath, "damienbodserver.pfx"), "");
+            var cert = new X509Certificate2(
+                Path.Combine(_environment.ContentRootPath, "CARoot.pfx"),
+                "PassPort",
+                X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet
+            );
 
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
