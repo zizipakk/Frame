@@ -56,11 +56,15 @@ namespace Frame
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Docker wont work with path 
+            var sqliteConn = "Filename=" + Path.Combine(_environment.ContentRootPath, Configuration.GetConnectionString("SqLiteFile"));
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlite(sqliteConn));
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlite(Configuration.GetConnectionString("SqLiteFile")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()

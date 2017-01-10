@@ -10,17 +10,17 @@
     }
 }
 $Classes(*ViewModel)[
-    export interface I$name {
-        $Properties[$name: $Type;
-        ]
-    }
+export interface I$name {
+    $Properties[$name: $Type;
+    ]
+}
 
-    export class $Name {
-        $Properties[public $name: $Type;
+export class $Name {
+    $Properties[public $name: $Type;
+    ]
+    constructor(model: I$name) {
+        $Properties[this.$name = model.$name;
         ]
-        constructor(model: I$name) {
-            $Properties[this.$name = model.$name;
-            ]
-        }
     }
+}
 ] 

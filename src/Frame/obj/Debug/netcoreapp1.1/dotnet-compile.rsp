@@ -253,10 +253,8 @@ C:\FRAME\Frame\src\Frame\Controllers\HomeController.cs
 C:\FRAME\Frame\src\Frame\Controllers\ManageController.cs
 C:\FRAME\Frame\src\Frame\Controllers\ValuesController.cs
 C:\FRAME\Frame\src\Frame\Data\ApplicationDbContext.cs
-C:\FRAME\Frame\src\Frame\Data\Migrations\00000000000000_CreateIdentitySchema.cs
-C:\FRAME\Frame\src\Frame\Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs
-C:\FRAME\Frame\src\Frame\Data\Migrations\ApplicationDbContextModelSnapshot.cs
 C:\FRAME\Frame\src\Frame\Filters\SecurityHeadersAttribute.cs
+C:\FRAME\Frame\src\Frame\Migrations\ApplicationDbContextModelSnapshot.cs
 C:\FRAME\Frame\src\Frame\Models\ApplicationUser.cs
 C:\FRAME\Frame\src\Frame\Models\ConsentInputModel.cs
 C:\FRAME\Frame\src\Frame\Models\ConsentViewModel.cs
