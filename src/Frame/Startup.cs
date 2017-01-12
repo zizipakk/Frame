@@ -16,18 +16,19 @@ namespace Frame
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _environment;
+        private readonly IHostingEnvironment environment;
+        public IConfigurationRoot Configuration { get; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment environment)
         {            
             var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
+                .SetBasePath(environment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
                 //.AddEnvironmentVariables()
                 ;
 
-            if (env.IsDevelopment())
+            if (environment.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets();
@@ -36,19 +37,17 @@ namespace Frame
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
-            _environment = env;
+            this.environment = environment;
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
-        public IConfigurationRoot Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var cert = new X509Certificate2(
-                Path.Combine(_environment.ContentRootPath, "CARoot.pfx"),
+                Path.Combine(environment.ContentRootPath, "CARoot.pfx"),
                 "PassPort",
                 X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet
             );
@@ -59,12 +58,8 @@ namespace Frame
             //services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            // Docker wont work with path 
-            var sqliteConn = "Filename=" + Path.Combine(_environment.ContentRootPath, Configuration.GetConnectionString("SqLiteFile"));
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(sqliteConn));
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlite(Configuration.GetConnectionString("SqLiteFile")));
+                options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection")));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -93,7 +88,7 @@ namespace Frame
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext context)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -132,9 +127,10 @@ namespace Frame
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "api/{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
+            context.Database.EnsureCreated();
         }
     }
 }

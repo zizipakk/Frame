@@ -21,7 +21,6 @@ using Frame.Services;
 
 namespace Frame.Controllers
 {
-    [Route("api/[controller]/[action]")]
     [Authorize]
     public class AccountController : Controller
     {

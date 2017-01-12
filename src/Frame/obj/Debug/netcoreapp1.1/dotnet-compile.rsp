@@ -254,6 +254,8 @@ C:\FRAME\Frame\src\Frame\Controllers\ManageController.cs
 C:\FRAME\Frame\src\Frame\Controllers\ValuesController.cs
 C:\FRAME\Frame\src\Frame\Data\ApplicationDbContext.cs
 C:\FRAME\Frame\src\Frame\Filters\SecurityHeadersAttribute.cs
+C:\FRAME\Frame\src\Frame\Migrations\20170112094330_Init.cs
+C:\FRAME\Frame\src\Frame\Migrations\20170112094330_Init.Designer.cs
 C:\FRAME\Frame\src\Frame\Migrations\ApplicationDbContextModelSnapshot.cs
 C:\FRAME\Frame\src\Frame\Models\ApplicationUser.cs
 C:\FRAME\Frame\src\Frame\Models\ConsentInputModel.cs
