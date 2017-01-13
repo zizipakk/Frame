@@ -1,8 +1,8 @@
-import { IuserLoginInfo } from './UserLoginInfo'; 
+
 
 export interface IindexViewModel {
     hasPassword: boolean;
-    logins: IuserLoginInfo[];
+    logins: UserLoginInfo[];
     phoneNumber: string;
     twoFactor: boolean;
     browserRemembered: boolean;
@@ -11,7 +11,7 @@ export interface IindexViewModel {
 
 export class IndexViewModel {
     public hasPassword: boolean;
-    public logins: IuserLoginInfo[];
+    public logins: UserLoginInfo[];
     public phoneNumber: string;
     public twoFactor: boolean;
     public browserRemembered: boolean;

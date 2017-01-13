@@ -1,9 +1,10 @@
 import { Headers, BaseRequestOptions } from '@angular/http';
 
 const apiHostPath = 'http://localhost:5000/api'; //URI scheme + host + main path 
+const authHostPath = 'http://localhost:32773/';
 
 export class API {
-    public static get AUTH(): string { return apiHostPath; }
+    public static get AUTH(): string { return authHostPath; }
     public static get APP(): string { return apiHostPath; }
 } 
 

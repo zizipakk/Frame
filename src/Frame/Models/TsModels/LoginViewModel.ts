@@ -1,25 +1,14 @@
 
-export interface IexternalProvider {
-    displayName: string;
-    authenticationScheme: string;
-
-}
-
-export class ExternalProvider {
-    public displayName: string;
-    public authenticationScheme: string;
-
-}
 
 export interface IloginViewModel {
     enableLocalLogin: boolean;
-    externalProviders: IexternalProvider[];
+    externalProviders: ExternalProvider[];
     
 }
 
 export class LoginViewModel {
     public enableLocalLogin: boolean;
-    public externalProviders: IexternalProvider[];
+    public externalProviders: ExternalProvider[];
     
     constructor(model: IloginViewModel) {
         this.enableLocalLogin = model.enableLocalLogin;
@@ -27,3 +16,4 @@ export class LoginViewModel {
         
     }
 }
+ 

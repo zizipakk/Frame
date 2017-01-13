@@ -25,14 +25,14 @@ namespace Frame
                 {
                     ApiSecrets =
                     {
-                        new Secret("dataEventRecordsSecret".Sha256())
+                        new Secret("dataSecret".Sha256())
                     },
                     Scopes =
                     {
                         new Scope
                         {
-                            Name = "dataeventrecordsscope",
-                            DisplayName = "Scope for the dataEventRecords ApiResource"
+                            Name = "dataScope",
+                            DisplayName = "Scope for the ApiResource"
                         }
                     },
                     UserClaims = { "role", "admin", "user" }

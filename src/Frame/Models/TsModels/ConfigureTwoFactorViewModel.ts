@@ -1,14 +1,14 @@
-import { ISelectListItem } from './SelectListItem';
+
 
 export interface IconfigureTwoFactorViewModel {
     selectedProvider: string;
-    providers: ISelectListItem[];
+    providers: SelectListItem[];
     
 }
 
 export class ConfigureTwoFactorViewModel {
     public selectedProvider: string;
-    public providers: ISelectListItem[];
+    public providers: SelectListItem[];
     
     constructor(model: IconfigureTwoFactorViewModel) {
         this.selectedProvider = model.selectedProvider;

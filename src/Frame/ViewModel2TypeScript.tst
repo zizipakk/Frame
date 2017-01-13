@@ -4,7 +4,7 @@
         settings.IncludeCurrentProject();
         settings.OutputFilenameFactory = file =>
         {
-            // return $"..\\FrameUI\\src\\app\\models\\{file.Name.Replace(".cs", ".ts")}" ; 2.0 will be great for foreign project outpu
+            // return $"..\\FrameUI\\src\\app\\models\\{file.Name.Replace(".cs", ".ts")}" ; 2.0 will be great for foreign project output
             return $".\\Models\\TsModels\\{file.Name.Replace(".cs", ".ts")}" ;
         };
     }

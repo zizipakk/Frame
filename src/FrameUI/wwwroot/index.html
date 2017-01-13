@@ -1,68 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
+    <title>FrameUi</title>
     <base href="/">
-    <link href="/libs/css/bootstrap.css" rel="stylesheet" />
-    <link href="/libs/css/jquery.fancybox.css" rel="stylesheet" />
-    <link href="/css/site.css" rel="stylesheet" />
-    <link href="/libs/css/font-awesome.css" rel="stylesheet" />
-    <link href="/libs/css/alertify.core.css" rel="stylesheet" />
-    <link href="/libs/css/alertify.bootstrap.css" rel="stylesheet" />
-
-<!-- 1. Load libraries -->
-    <!-- Polyfill(s) for older browsers -->
-    <script src="/libs/js/shim.js"></script>
-
-    <script src="/libs/js/zone.js"></script>
-    <script src="/libs/js/Reflect.js"></script>
-    <script src="/libs/js/system.src.js"></script>
-
-<!-- 2. Configure SystemJS -->
-    <script src="/systemjs.config.js"></script>
-    <script>
-        System.import('app/boot').catch(function (err) {
-            console.error(err);
-        });
-    </script>
-
-    <script src="/libs/js/jquery.min.js"></script>
     
-    <!--test staging env-->
-    <environment names="Development">
-        <script src="/libs/js/bootstrap.js"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <script src="/libs/js/bootstrap.min.js"></script>
-    </environment>
-
-    <script src="/libs/js/jquery.fancybox.pack.js"></script>
-    <script src="/libs/js/alertify.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
 </head>
 
-<!-- 3. Display the application -->
 <body>
-    <frame-app>
-        <div class="cs-loader">
-            <div class="cs-loader-inner">
-                <label>	●</label>
-                <label>	●</label>
-                <label>	●</label>
-                <label>	●</label>
-                <label>	●</label>
-                <label>	●</label>
-            </div>
-        </div>
-    </frame-app>
-
-    <script type="text/javascript">
-        System.import('app/boot').catch(console.log.bind(console));
-        $(document).ready(function() {
-            $('.fancybox').fancybox();
-        });
-    </script>
-</body>
+  <app-root>Loading...</app-root>
+<script type="text/javascript" src="/dist/polyfills.bundle.js"></script><script type="text/javascript" src="/dist/app.bundle.js"></script></body>
 </html>
+
