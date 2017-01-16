@@ -31,7 +31,7 @@ export class Register implements AfterViewInit {
     }
 
     /** primeng event */
-    onAfterHide(event): void {
+    onAfterHide(event: any): void {
         this.navigateBack();      
     }
     

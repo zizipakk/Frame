@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:4200/",
+      "applicationUrl": "http://localhost:4200/", //IIS portconfig
       "sslPort": 0
     }
   },
@@ -15,10 +15,10 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "FraneUI": {
-      "commandName": "FraneUI",
+    "FraneUI": { //Kestrel portconfig in appSettings.json "server.urls" and static used in program.cs
+      "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:4200",
+      "launchUrl": "http://localhost:4200/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

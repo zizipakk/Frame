@@ -2,17 +2,17 @@
 
     export interface IloginViewModel {
         enableLocalLogin: boolean;
-        externalProviders: ExternalProvider[];
+        //externalProviders: ExternalProvider[];
         
     }
 
     export class LoginViewModel {
         public enableLocalLogin: boolean;
-        public externalProviders: ExternalProvider[];
+        //public externalProviders: ExternalProvider[];
         
         constructor(model: IloginViewModel) {
             this.enableLocalLogin = model.enableLocalLogin;
-            this.externalProviders = model.externalProviders;
+            //this.externalProviders = model.externalProviders;
             
         }
     }

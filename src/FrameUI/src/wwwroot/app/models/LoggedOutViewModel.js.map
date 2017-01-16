@@ -1,0 +1,1 @@
+{"version":3,"file":"LoggedOutViewModel.js","sourceRoot":"","sources":["LoggedOutViewModel.ts"],"names":[],"mappings":"AASI;IAKI,4BAAY,KAA0B;QAClC,IAAI,CAAC,qBAAqB,GAAG,KAAK,CAAC,qBAAqB,CAAC;QACzD,IAAI,CAAC,UAAU,GAAG,KAAK,CAAC,UAAU,CAAC;QACnC,IAAI,CAAC,gBAAgB,GAAG,KAAK,CAAC,gBAAgB,CAAC;IAEnD,CAAC;IACL,yBAAC;AAAD,CAAC,AAXD,IAWC"}

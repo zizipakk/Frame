@@ -12,6 +12,8 @@ namespace FrameUI
 {
     public class Startup
     {
+        public IConfigurationRoot Configuration { get; set; }
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -22,29 +24,23 @@ namespace FrameUI
             Configuration = builder.Build();
         }
 
-        public IConfigurationRoot Configuration { get; set; }
-
         public void ConfigureServices(IServiceCollection services)
         {
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure (IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            // Nem kell majd, ha ng nem mvc-vel nyomul
             var angularRoutes = new[] {
                 "/home",
                 "/forbidden",
                 "/authorized",
                 "/authorize",
                 "/unauthorized",
-                "/dataeventrecords",
-                "/dataeventrecords/create",
-                "/dataeventrecords/edit",
                 "/logoff",
-                "/securefile",
-                "/securefile/securefiles",
             };
 
             app.Use(async (context, next) =>
@@ -69,11 +65,18 @@ namespace FrameUI
 
         public static void Main(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true)
+                .Build();
+
             var host = new WebHostBuilder()
                 .UseKestrel()
+                .UseConfiguration(config)
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
+                //.UseUrls("") //Only for hardcoded urls
                 .Build();
 
             host.Run();
