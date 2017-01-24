@@ -1,6 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { MembershipService } from '../services/membershipService';
-import { User } from '../models/user';
 
 @Component({
     selector: 'home',

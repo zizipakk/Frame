@@ -4,9 +4,9 @@ export interface ISelectListGroup {
     disabled: boolean;
     name: string;
 
-    }
+}
 
-}export class SelectListGroup {
+export class SelectListGroup {
     public disabled: boolean;
     public name: string;
 

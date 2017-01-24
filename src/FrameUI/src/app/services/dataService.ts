@@ -1,7 +1,8 @@
 ﻿import { Injectable } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import { Router } from '@angular/router';
-import { BaseHeaders } from '../app.settings';
+import { AuthHeaders } from '../app.settings';
+import { AppHeaders } from '../app.settings';
 
 import { Observable } from 'rxjs/Rx'; //http://stackoverflow.com/questions/37030963/angular-2-2-0-0-rc-1-property-map-does-not-exist-on-type-observableresponse
 import 'rxjs/add/operator/map'; //
@@ -11,33 +12,46 @@ import 'rxjs/add/operator/map'; //
 @Injectable()
 export class DataService {
 
-    public pageSize: number;
-    public baseUri: string;
+    private baseUri: string;
+    private pageSize: number;
+    private pageSizeUri: string;
 
     constructor(private http: Http, private router: Router) {
-
     }
 
     set(baseUri: string, pageSize?: number): void {
         this.baseUri = baseUri;
         this.pageSize = pageSize;
+        this.pageSizeUri = this.pageSize ? encodeURI(this.pageSize.toString()) : '';
     }
 
-    get(id?: number) {
-        var uri = this.baseUri 
+    getById(id?: number) {
+        let uri = this.baseUri 
             + '/' + id.toString() 
-            + this.pageSize ? '&' + this.pageSize.toString() : '';
+            + '&' + this.pageSizeUri;
+
+        return this.http.get(uri)
+            .map(response => (<Response>response));
+    }
+
+    get() {
+        this.pageSizeUri = this.pageSizeUri ? '&pageSize=' + this.pageSizeUri : '';
+        let uri = this.baseUri
+            + this.pageSizeUri;
 
         return this.http.get(uri)
             .map(response => (<Response>response));
     }
 
     post(data?: any, mapJson: boolean = true) {
+        // let postHeaders = data.grant_type ? { headers: AuthHeaders.HEADERS } : { headers: AppHeaders.HEADERS };
+        // let response = this.http.post(this.baseUri, JSON.stringify(data), postHeaders);
+        let postHeaders = data.indexOf('grant_type') !== -1 ? { headers: AuthHeaders.HEADERS } : { headers: AppHeaders.HEADERS };
+        let response = this.http.post(this.baseUri, data, postHeaders);
         if (mapJson)
-            return this.http.post(this.baseUri, data, { headers: BaseHeaders.HEADERS })
-                .map(response => <any>(<Response>response).json());
-        else
-            return this.http.post(this.baseUri, data);
+            return response.map(r => <any>(<Response>r).json());
+        
+        return response;
     }
 
     delete(id: number) {

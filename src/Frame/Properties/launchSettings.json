@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5200/", //IIS portconfig
+      "applicationUrl": "http://localhost:5200/",
       "sslPort": 0
     }
   },
@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Frame": { //Kestrel portconfig in appSettings.json "server.urls" and static used in program.cs
+    "Frame": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "http://localhost:5200/",
@@ -23,9 +23,12 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Docker": { //Docker portconfig in docker-compose.yml 5200:80 /public:private/, so EXPOSE in dockerfile not neccessary
+    "Docker": {
       "launchBrowser": true,
-      "launchUrl": "http://localhost:{ServicePort}/"
+      "launchUrl": "http://localhost:{ServicePort}/",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

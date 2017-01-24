@@ -21,21 +21,29 @@ export var DataService = (function () {
     DataService.prototype.set = function (baseUri, pageSize) {
         this.baseUri = baseUri;
         this.pageSize = pageSize;
+        this.pageSizeUri = this.pageSize ? encodeURI(this.pageSize.toString()) : '';
     };
-    DataService.prototype.get = function (id) {
+    DataService.prototype.getById = function (id) {
         var uri = this.baseUri
             + '/' + id.toString()
-            + this.pageSize ? '&' + this.pageSize.toString() : '';
+            + '&' + this.pageSizeUri;
+        return this.http.get(uri)
+            .map(function (response) { return (response); });
+    };
+    DataService.prototype.get = function () {
+        this.pageSizeUri = this.pageSizeUri ? '&pageSize=' + this.pageSizeUri : '';
+        var uri = this.baseUri
+            + this.pageSizeUri;
         return this.http.get(uri)
             .map(function (response) { return (response); });
     };
     DataService.prototype.post = function (data, mapJson) {
         if (mapJson === void 0) { mapJson = true; }
         if (mapJson)
-            return this.http.post(this.baseUri, data, { headers: BaseHeaders.HEADERS })
+            return this.http.post(this.baseUri, JSON.stringify(data), { headers: BaseHeaders.HEADERS })
                 .map(function (response) { return response.json(); });
         else
-            return this.http.post(this.baseUri, data);
+            return this.http.post(this.baseUri, data, { headers: BaseHeaders.HEADERS });
     };
     DataService.prototype.delete = function (id) {
         return this.http.delete(this.baseUri + '/' + id.toString())

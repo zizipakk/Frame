@@ -10,17 +10,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Injectable } from '@angular/core';
 import { API } from '../app.settings';
 import { DataService } from './dataService';
-//A class to manage user authentication
-//uses local storage to save user authentication cookies
+import { OpenIdConnectRequest } from '../models/openIdConnectRequest';
+/**
+    A class to manage user authentication
+    uses local storage to save user authentication cookies
+    OpenID and tokens are persist in local store
+*/
 export var MembershipService = (function () {
     function MembershipService(dataService) {
         this.dataService = dataService;
-        this.action = '/account';
-        this.accountRegisterAPI = API.AUTH + this.action + '/register';
-        this.accountInfoAPI = API.AUTH + this.action + '/info';
-        this.accountLoginAPI = API.AUTH + this.action + '/login';
-        this.accountLogoutAPI = API.AUTH + this.action + '/logout';
-        this.storage = sessionStorage; //localStorage;
+        this.idAction = '/connect';
+        this.idLogin = API.AUTH + this.idAction + '/token';
+        this.accountAction = 'account';
+        this.accountRegister = API.AUTH + this.accountAction + '/register';
+        this.accountInfo = API.AUTH + this.accountAction + '/info';
+        this.accountLogout = API.AUTH + this.accountAction + '/logout';
+        this.storage = sessionStorage;
         if (this.retrieve("IsAuthorized") !== "") {
             this.HasAdminRole = this.retrieve("HasAdminRole");
             this.IsAuthorized = this.retrieve("IsAuthorized");
@@ -39,31 +44,36 @@ export var MembershipService = (function () {
         this.storage.setItem(key, JSON.stringify(value));
     };
     MembershipService.prototype.register = function (newUser) {
-        this.dataService.set(this.accountRegisterAPI);
+        this.dataService.set(this.accountRegister);
         return this.dataService.post(JSON.stringify(newUser));
     };
+    MembershipService.prototype.encodeQueryData = function (data) {
+        var ret = [];
+        for (var d in data)
+            ret.push(encodeURI(d + '=' + data[d]));
+        return ret.join('&');
+    };
+    /** IdentityServer4 endpont use only get method */
     MembershipService.prototype.login = function (creds) {
         this.resetAuthorizationData();
-        // var authorizationUrl = this._configuration.Server + '/connect/authorize';
-        // var client_id = 'singleapp';
-        // var redirect_uri = this._configuration.Server + '/index.html';
-        // var response_type = "id_token token";
-        // var scope = "dataEventRecords openid";
+        var grant_type = "password";
         var nonce = "N" + Math.random() + "" + Date.now();
         var state = Date.now() + "" + Math.random();
-        // this.store("authStateControl", state);
-        // this.store("authNonce", nonce);
-        // var url =
-        //     authorizationUrl + "?" +
-        //     "response_type=" + encodeURI(response_type) + "&" +
-        //     "client_id=" + encodeURI(client_id) + "&" +
-        //     "redirect_uri=" + encodeURI(redirect_uri) + "&" +
-        //     "scope=" + encodeURI(scope) + "&" +
-        //     "nonce=" + encodeURI(nonce) + "&" +
-        //     "state=" + encodeURI(state);
-        // window.location.href = url;
-        this.dataService.set(this.accountLoginAPI);
-        return this.dataService.post(JSON.stringify(creds));
+        var username = creds.email;
+        var password = creds.password;
+        var offlineaccess = creds.rememberLogin ? " offlineaccess" : "";
+        var scope = "openid profile roles" + offlineaccess;
+        this.store("authNonce", nonce);
+        this.store("authStateControl", state);
+        var model = new OpenIdConnectRequest(null);
+        model.GrantType = grant_type;
+        model.Nonce = nonce;
+        model.State = state;
+        model.Username = username;
+        model.Password = password;
+        model.Scope = scope;
+        this.dataService.set(this.idLogin);
+        return this.dataService.post(model);
     };
     MembershipService.prototype.loginCallback = function () {
         console.log("BEGIN AuthorizedCallback, no auth data");
@@ -157,19 +167,17 @@ export var MembershipService = (function () {
     };
     MembershipService.prototype.logout = function () {
         this.resetAuthorizationData();
-        this.dataService.set(this.accountLogoutAPI);
-        return this.dataService.post(null, false);
-        //TODO
-        // let id_token_hint = this.retrieve("authorizationDataIdToken");
-        // let post_logout_redirect_uri = this._configuration.Server + '/Unauthorized';
-        // let url =
-        //     authorizationUrl + "?" +
-        //     "id_token_hint=" + encodeURI(id_token_hint) + "&" +
-        //     "post_logout_redirect_uri=" + encodeURI(post_logout_redirect_uri);
+        // No redirection
+        var id_token_hint = this.retrieve("authorizationDataIdToken");
+        //let post_logout_redirect_uri = this._configuration.Server + '/Unauthorized';
+        var url = this.accountLogout + "?" +
+            "id_token_hint=" + encodeURI(id_token_hint);
         // window.location.href = url;
+        this.dataService.set(url);
+        return this.dataService.post(null, false);
     };
     MembershipService.prototype.getUserData = function () {
-        this.dataService.set(this.accountInfoAPI);
+        this.dataService.set(this.accountInfo);
         return this.dataService.get();
     };
     MembershipService.prototype.urlBase64Decode = function (str) {

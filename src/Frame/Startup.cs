@@ -10,7 +10,9 @@ using Frame.Models;
 using Frame.Services;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
-using IdentityServer4.Services;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Frame
 {
@@ -18,6 +20,7 @@ namespace Frame
     {
         private readonly IHostingEnvironment environment;
         public IConfigurationRoot Configuration { get; }
+        public static IConfigurationRoot StaticConfig { get; set; }
 
         public Startup(IHostingEnvironment environment)
         {            
@@ -25,8 +28,9 @@ namespace Frame
                 .SetBasePath(environment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
-                //.AddEnvironmentVariables()
-                ;
+                .AddJsonFile("./Properties/launchSettings.json")
+            //.AddEnvironmentVariables()
+            ;
 
             if (environment.IsDevelopment())
             {
@@ -41,11 +45,13 @@ namespace Frame
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            StaticConfig = Configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //TODO
             var cert = new X509Certificate2(
                 Path.Combine(environment.ContentRootPath, "CARoot.pfx"),
                 "PassPort",
@@ -58,13 +64,52 @@ namespace Frame
             //services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection")));
+            services.AddDbContext<ApplicationDbContext>(
+                options =>
+                {
+                    options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"));
+                    // Register the entity sets needed by OpenIddict.
+                    // Note: use the generic overload if you need
+                    // to replace the default OpenIddict entities.
+                    options.UseOpenIddict();
+                }      
+            );                
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders(
                 );
+
+            // Register the OpenIddict services.
+            // Note: use the generic overload if you need
+            // to replace the default OpenIddict entities.
+            services.AddOpenIddict()
+                // Register the Entity Framework stores.
+                .AddEntityFrameworkCoreStores<ApplicationDbContext>()
+
+                // Register the ASP.NET Core MVC binder used by OpenIddict.
+                // Note: if you don't call this method, you won't be able to
+                // bind OpenIdConnectRequest or OpenIdConnectResponse parameters.
+                .AddMvcBinders()
+
+                // Enable the token endpoint (required to use the password flow).
+                .EnableTokenEndpoint("/connect/token")
+
+                // Allow client applications to use the grant_type=password flow.
+                .AllowPasswordFlow()
+
+                // During development, you can disable the HTTPS requirement.
+                .DisableHttpsRequirement()
+
+                .UseJsonWebTokens()
+
+                .AddSigningCertificate(cert)
+
+                // Register a new ephemeral key, that is discarded when the application
+                // shuts down. Tokens signed using this key are automatically invalidated.
+                // This method should only be used during development.
+                .AddEphemeralSigningKey()
+                ;
 
             services.AddMvc();
 
@@ -73,27 +118,97 @@ namespace Frame
 
             // Add application services.
 
-            services.AddTransient<IProfileService, IdentityWithAdditionalClaimsProfileService>();
-
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
 
-            services.AddIdentityServer()
-                .AddSigningCredential(cert)
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApiResources())
-                .AddInMemoryClients(Config.GetClients())
-                .AddAspNetIdentity<ApplicationUser>()
-                .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+        }
+
+        private string[] roles = new[] { "User", "Admin" };
+        private async Task InitializeRoles(RoleManager<IdentityRole> roleManager)
+        {
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    var newRole = new IdentityRole(role);
+                    await roleManager.CreateAsync(newRole);
+                    // In the real world, there might be claims associated with roles
+                    // _roleManager.AddClaimAsync(newRole, new )
+                }
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ApplicationDbContext context)
+        public void Configure(
+            IApplicationBuilder app, 
+            IHostingEnvironment env, 
+            ILoggerFactory loggerFactory, 
+            ApplicationDbContext dbContext,
+            RoleManager<IdentityRole> roleManager)
         {
+            // .Net Core 1.1 could'nt us in same pipeline more CORS, so we change headers manual for IDServer4 CORS
+            app.Use(async (context, next) =>
+            {
+                //if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
+                //    && context.Request.Headers.ContainsKey("Origin"))
+                //{
+                //    context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers["Origin"]);
+                //    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With");
+                //}
+
+                //if (context.Request.Method == "OPTIONS")
+                //    context.Response.StatusCode = (int)HttpStatusCode.OK;
+
+                //var headers = context.Response.Headers;
+                //if (headers.ContainsKey("Access-Control-Allow-Origin"))
+                //{
+                //    //headers["Access-Control-Allow-Origin"] = string.Join(",", context.Request.Headers["Referer"].Select(x => x.Substring(0, x.Length - 1)));
+                //    headers["Access-Control-Allow-Origin"] = context.Request.Headers["Origin"];
+                //}
+                //else
+                //{
+                //    //context.Response.Headers.Append("Access-Control-Allow-Origin", string.Join(",", context.Request.Headers["Referer"].Select(x => x.Substring(0, x.Length - 1))));
+                //    context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers["Origin"]);
+                //}
+                //if (headers.ContainsKey("Access-Control-Allow-Headers"))
+                //{
+                //    headers["Access-Control-Allow-Headers"] = "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With";
+                //}
+                //else
+                //{
+                //    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With");
+                //}
+                //if (headers.ContainsKey("Access-Control-Allow-Methods"))
+                //{
+                //    headers["Access-Control-Allow-Credentials"] = "GET, POST, PATCH, PUT, DELETE, OPTIONS";
+                //}
+                //else
+                //{
+                //    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+                //}
+                //if (headers.ContainsKey("Access-Control-Allow-Credentials"))
+                //{
+                //    headers["Access-Control-Allow-Credentials"] = "true";
+                //}
+                //else
+                //{
+                //    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+                //}
+
+                //context.Response.Headers.Append("Access-Control-Expose-Headers", "X-Auth-Token");
+                //context.Response.Headers.Append("Vary", "Origin");
+
+                await next();
+            });
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            // Add Application Insights monitoring to the request pipeline as a very first middleware.
             app.UseApplicationInsightsRequestTelemetry();
+
+            // Add Application Insights exceptions handling to the request pipeline.
+            app.UseApplicationInsightsExceptionTelemetry();
 
             if (env.IsDevelopment())
             {
@@ -106,22 +221,24 @@ namespace Frame
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseApplicationInsightsExceptionTelemetry();
-
             app.UseStaticFiles();
 
             app.UseIdentity();
+
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
-            app.UseIdentityServer();
 
             app.UseCors(builder =>
                 builder
-                .WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
-                //.AllowAnyOrigin()
+                //.WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
+                .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
             );
+
+            app.UseOAuthValidation();
+
+            app.UseOpenIddict();
 
             app.UseMvc(routes =>
             {
@@ -129,8 +246,12 @@ namespace Frame
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+            
+            dbContext.Database.EnsureCreated();
 
-            context.Database.EnsureCreated();
+            // Seed
+            Task.Run(() => InitializeRoles(roleManager));
+
         }
     }
 }

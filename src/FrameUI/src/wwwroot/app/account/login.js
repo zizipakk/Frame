@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../models/user';
+import { LoginInputModel } from '../models/user';
 import { OperationResult } from '../models/operationResult';
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
@@ -20,7 +20,7 @@ export var Login = (function () {
         this.notificationService = notificationService;
         /** primeng show/hide prop */
         this.display = false;
-        this.user = new User('', '');
+        this.user = new LoginInputModel({ email: '', password: '', rememberLogin: false, returnUrl: '' });
     }
     /** ng event */
     Login.prototype.ngAfterViewInit = function () {
@@ -43,15 +43,15 @@ export var Login = (function () {
         var authenticationResult = new OperationResult(false, '');
         this.membershipService.login(this.user)
             .subscribe(function (res) {
-            authenticationResult.Succeeded = res.Succeeded;
-            authenticationResult.Message = res.Message;
+            // authenticationResult.Succeeded = res.Succeeded;
+            // authenticationResult.Message = res.Message;
         }, function (error) {
             console.error('Error: ' + error);
             _this.notificationService.handleError(error, _this.membershipService.resetAuthorizationData);
         }, function () {
             _this.membershipService.loginCallback();
             if (authenticationResult.Succeeded) {
-                _this.notificationService.printSuccessMessage('Welcome back ' + _this.user.Username + '!');
+                _this.notificationService.printSuccessMessage('Welcome back ' + _this.user.email + '!');
                 _this.router.navigateByUrl('/');
             }
             else {

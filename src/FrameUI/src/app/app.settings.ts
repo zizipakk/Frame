@@ -9,7 +9,7 @@ export class API {
     public static get APP(): string { return apiHostPath; }
 } 
 
-export class BaseHeaders {
+export class AppHeaders {
     public static get HEADERS(): Headers { 
         /** Set content type */
         let headers: Headers = new Headers({ 'Content-Type': 'application/json' });
@@ -17,7 +17,7 @@ export class BaseHeaders {
         
         /** Set token if available */
         let token = sessionStorage.getItem("authorizationData"); //localStorage
-        if (token !== "") {
+        if (token !== "" && token !== '""') {
             headers.append('Authorization', 'Bearer ' + token);
         }
 
@@ -25,4 +25,12 @@ export class BaseHeaders {
     }
 }
 
+export class AuthHeaders {
+    public static get HEADERS(): Headers { 
+        /** Set content type for auth*/
+        let headers: Headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+
+        return headers; 
+    }
+}
 

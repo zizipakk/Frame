@@ -27,7 +27,7 @@ export var BaseHeaders = (function () {
             headers.append('Accept', 'application/json');
             /** Set token if available */
             var token = sessionStorage.getItem("authorizationData"); //localStorage
-            if (token !== "") {
+            if (token !== "" && token !== '""') {
                 headers.append('Authorization', 'Bearer ' + token);
             }
             return headers;

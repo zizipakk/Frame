@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/primeng';
-import { User } from './models/user';
 import { MembershipService } from './services/membershipService';
 
 @Component({

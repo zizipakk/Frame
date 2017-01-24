@@ -1,12 +1,20 @@
-﻿export class User {
-    Username: string;
-    Password: string;
-    RememberMe: boolean;
+﻿
+export interface IloginInputModel {
+    email: string,
+    password: string,
+    rememberLogin: boolean,
+    
+}
 
-    constructor(username: string,
-        password: string) {
-        this.Username = username;
-        this.Password = password;
-        this.RememberMe = false;
+export class LoginInputModel {
+    public email: string;
+    public password: string;
+    public rememberLogin: boolean;
+    
+    constructor(model: IloginInputModel) {
+        this.email = model.email;
+        this.password = model.password;
+        this.rememberLogin = model.rememberLogin;
+
     }
 }

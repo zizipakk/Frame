@@ -9,14 +9,14 @@
     </header>
     <form class="ui-g" #hf="ngForm">
         <div class="ui-g-12">
-            <input class="ui-g-12" type="text" pInputText placeholder="Username" [(ngModel)]="user.Username"
-                    name="username" required #userName="ngModel" />
-            <div [hidden]="userName.valid || userName.untouched" class="ui-message ui-messages-error ui-corner-all">
-                <i class="fa fa-close"></i> Username is required
+            <input class="ui-g-12" type="text" pInputText placeholder="Username" [(ngModel)]="user.email"
+                    name="email" required #email="ngModel" />
+            <div [hidden]="email.valid || email.untouched" class="ui-message ui-messages-error ui-corner-all">
+                <i class="fa fa-close"></i> Email is required
             </div>
         </div>
         <div class="ui-g-12">
-            <input class="ui-g-12" type="password" pPassword placeholder="Password" [(ngModel)]="user.Password"
+            <input class="ui-g-12" type="password" pPassword placeholder="Password" [(ngModel)]="user.password"
                     name="password" required #passWord="ngModel" />
             <div [hidden]="passWord.valid || passWord.untouched" class="ui-message ui-messages-error ui-corner-all">
                 <i class="fa fa-close"></i> Password is required
@@ -29,7 +29,7 @@
             </span>
         </div>        
         <div class="ui-g-12">
-            <p-checkbox name="remember" [(ngModel)]="value" binary="true" label="Remember me"></p-checkbox>
+            <p-checkbox name="remember" [(ngModel)]="user.rememberLogin" binary="true" label="Remember me"></p-checkbox>
         </div>
     </form>
     <footer>
