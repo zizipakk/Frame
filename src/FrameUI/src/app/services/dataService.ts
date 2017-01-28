@@ -36,17 +36,14 @@ export class DataService {
 
     get() {
         this.pageSizeUri = this.pageSizeUri ? '&pageSize=' + this.pageSizeUri : '';
-        let uri = this.baseUri
-            + this.pageSizeUri;
+        let uri = this.baseUri + this.pageSizeUri;
 
         return this.http.get(uri)
             .map(response => (<Response>response));
     }
 
     post(data?: any, mapJson: boolean = true) {
-        // let postHeaders = data.grant_type ? { headers: AuthHeaders.HEADERS } : { headers: AppHeaders.HEADERS };
-        // let response = this.http.post(this.baseUri, JSON.stringify(data), postHeaders);
-        let postHeaders = data.indexOf('grant_type') !== -1 ? { headers: AuthHeaders.HEADERS } : { headers: AppHeaders.HEADERS };
+        let postHeaders = data && data.indexOf('grant_type') !== -1 ? { headers: AuthHeaders.HEADERS } : { headers: AppHeaders.HEADERS };
         let response = this.http.post(this.baseUri, data, postHeaders);
         if (mapJson)
             return response.map(r => <any>(<Response>r).json());

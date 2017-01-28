@@ -8,7 +8,7 @@ export interface IopenIdConnectRequest {
         //     Gets or sets the "client_assertion_type" parameter.
         clientassertiontype: string;
         //     Gets or sets the "client_id" parameter.
-        clientid: string;
+        client_id: string;
         //     Gets or sets the "client_secret" parameter.
         clientsecret: string;
         //     Gets or sets the "code" parameter.
@@ -70,7 +70,7 @@ export class OpenIdConnectRequest implements IopenIdConnectRequest {
         //     Gets or sets the "client_assertion_type" parameter.
         public clientassertiontype: string;
         //     Gets or sets the "client_id" parameter.
-        public clientid: string;
+        public client_id: string;
         //     Gets or sets the "client_secret" parameter.
         public clientsecret: string;
         //     Gets or sets the "code" parameter.
@@ -127,7 +127,7 @@ export class OpenIdConnectRequest implements IopenIdConnectRequest {
             this.assertion = model.assertion;
             this.clientassertion = model.clientassertion;
             this.clientassertiontype = model.clientassertiontype;
-            this.clientid = model.clientid;
+            this.client_id = model.client_id;
             this.clientsecret = model.clientsecret;
             this.code = model.code;
             this.codechallenge = model.codechallenge;

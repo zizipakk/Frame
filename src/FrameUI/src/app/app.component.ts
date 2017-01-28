@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/primeng';
 import { MembershipService } from './services/membershipService';
+import { NotificationService } from './services/notificationService';
 
 @Component({
     selector: 'app-root',
@@ -11,10 +12,14 @@ import { MembershipService } from './services/membershipService';
 export class AppComponent implements OnInit  {
     
     menuItems: MenuItem[];
+    userName: string;
 
     constructor(
         private membershipService: MembershipService,
-        private router: Router) {
+        private notificationService: NotificationService,
+        private router: Router) 
+    {
+        this.userName = this.isUserLoggedIn() ? this.membershipService.UserName : '';
     }
 
     ngOnInit() {
@@ -28,25 +33,30 @@ export class AppComponent implements OnInit  {
             }];
 
         if (!this.isUserLoggedIn()) {
-            this.menuItems.push({
+            this.menuItems.push(
+                {
                     label: 'Log In',
                     icon: 'fa-unlock-alt fa-fw',
                     routerLink: ['/account/login'],
                     command: (event) => {},
                     items: null
-                });
+                }
+            );
         } else {
-            this.menuItems.push({
-                    label: '{{getUserName()}}',
+            this.menuItems.push(
+                {
+                    label: this.userName,
                     icon: 'fa-user',
                     routerLink: null,
                     command: (event) => {},
                     items: [
                         { label: ' Profile', icon: 'fa-fw fa-user', routerLink: null, command: (event) => {} },
-                        { label: ' Inbox', icon: 'fa-fw fa-envelop', routerLink: null, command: (event) => {} },
-                        { label: ' Settings', icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} }
+                        { label: ' Inbox', icon: 'fa-fw fa-envelope', routerLink: null, command: (event) => {} },
+                        { label: ' Settings', icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} },
+                        { label: ' Log Out', icon: 'fa-fw fa-lock', routerLink: null, command: (event) => { this.logOut(); } }
                     ]
-                });
+                }
+            );
         }
 
         this.navigateBack();
@@ -60,21 +70,18 @@ export class AppComponent implements OnInit  {
         return this.membershipService.IsAuthorized;
     }
 
-    getUserName(): string {
-        if (this.isUserLoggedIn()) {
-            return this.membershipService.UserName;
-        }
-        else
-            return 'Account';
-    }
-
-    logout(): void {
+    logOut(): void {
         this.membershipService.logout()
             .subscribe(res => {
-                localStorage.removeItem('user');
+                this.membershipService.logoutCallback(res);
+                this.notificationService.printSuccessMessage('By ' + this.userName + '!');
             },
-            error => console.error('Error: ' + error),
-            () => { });
+            error => { 
+                console.error('Error: ' + error);
+                this.notificationService.handleError(error, this.membershipService.resetAuthorizationData)
+                this.notificationService.printErrorMessage(error);
+            },
+            () => { this.navigateBack(); });        
     }
 
 }

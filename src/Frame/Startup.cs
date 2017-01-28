@@ -13,6 +13,8 @@ using System.IO;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using System.Net;
 
 namespace Frame
 {
@@ -93,25 +95,30 @@ namespace Frame
                 .AddMvcBinders()
 
                 // Enable the token endpoint (required to use the password flow).
-                .EnableTokenEndpoint("/connect/token")
+                .EnableTokenEndpoint("/connect/token")                
 
                 // Allow client applications to use the grant_type=password flow.
                 .AllowPasswordFlow()
 
+                // TODO
                 // During development, you can disable the HTTPS requirement.
                 .DisableHttpsRequirement()
-
+                
                 .UseJsonWebTokens()
 
                 .AddSigningCertificate(cert)
 
+                // TODO
                 // Register a new ephemeral key, that is discarded when the application
                 // shuts down. Tokens signed using this key are automatically invalidated.
                 // This method should only be used during development.
                 .AddEphemeralSigningKey()
+
                 ;
 
             services.AddMvc();
+
+            services.AddAutoMapper();
 
             //another client domain
             services.AddCors();
@@ -146,60 +153,21 @@ namespace Frame
             ApplicationDbContext dbContext,
             RoleManager<IdentityRole> roleManager)
         {
-            // .Net Core 1.1 could'nt us in same pipeline more CORS, so we change headers manual for IDServer4 CORS
-            app.Use(async (context, next) =>
-            {
-                //if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
-                //    && context.Request.Headers.ContainsKey("Origin"))
-                //{
-                //    context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers["Origin"]);
-                //    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With");
-                //}
+            //// .Net Core 1.1 could'nt us in same pipeline more CORS, so we change headers manual for auth server CORS
+            //app.Use(async (context, next) =>
+            //{
+            //    if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
+            //        && context.Request.Headers.ContainsKey("Origin"))
+            //    {
+            //        context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers["Origin"]);
+            //        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With");
+            //    }
 
-                //if (context.Request.Method == "OPTIONS")
-                //    context.Response.StatusCode = (int)HttpStatusCode.OK;
+            //    if (context.Request.Method == "OPTIONS")
+            //        context.Response.StatusCode = (int)HttpStatusCode.OK;
 
-                //var headers = context.Response.Headers;
-                //if (headers.ContainsKey("Access-Control-Allow-Origin"))
-                //{
-                //    //headers["Access-Control-Allow-Origin"] = string.Join(",", context.Request.Headers["Referer"].Select(x => x.Substring(0, x.Length - 1)));
-                //    headers["Access-Control-Allow-Origin"] = context.Request.Headers["Origin"];
-                //}
-                //else
-                //{
-                //    //context.Response.Headers.Append("Access-Control-Allow-Origin", string.Join(",", context.Request.Headers["Referer"].Select(x => x.Substring(0, x.Length - 1))));
-                //    context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers["Origin"]);
-                //}
-                //if (headers.ContainsKey("Access-Control-Allow-Headers"))
-                //{
-                //    headers["Access-Control-Allow-Headers"] = "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With";
-                //}
-                //else
-                //{
-                //    context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With");
-                //}
-                //if (headers.ContainsKey("Access-Control-Allow-Methods"))
-                //{
-                //    headers["Access-Control-Allow-Credentials"] = "GET, POST, PATCH, PUT, DELETE, OPTIONS";
-                //}
-                //else
-                //{
-                //    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
-                //}
-                //if (headers.ContainsKey("Access-Control-Allow-Credentials"))
-                //{
-                //    headers["Access-Control-Allow-Credentials"] = "true";
-                //}
-                //else
-                //{
-                //    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-                //}
-
-                //context.Response.Headers.Append("Access-Control-Expose-Headers", "X-Auth-Token");
-                //context.Response.Headers.Append("Vary", "Origin");
-
-                await next();
-            });
+            //    await next();
+            //});
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -246,7 +214,7 @@ namespace Frame
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
             dbContext.Database.EnsureCreated();
 
             // Seed

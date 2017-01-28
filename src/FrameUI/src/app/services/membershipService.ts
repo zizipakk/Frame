@@ -14,27 +14,30 @@ import { SignInResult } from '../models/signInResult';
 @Injectable()
 export class MembershipService {
 
-    idAction = '/connect'
+    idAction = 'connect'
     idLogin = API.AUTH + this.idAction + '/token';
-    accountAction = 'account'
-    accountRegister = API.AUTH + this.accountAction + '/register';
-    accountInfo = API.AUTH + this.accountAction + '/info';
-    accountLogout = API.AUTH + this.accountAction + '/logout';
+    idRegister = API.AUTH + this.idAction + '/register';
+    idLogout = API.AUTH + this.idAction + '/logoff';
+    // accountAction = 'account'
+    // accountRegister = API.AUTH + this.accountAction + '/register';
+    // accountInfo = API.AUTH + this.accountAction + '/info';
+    // accountLogout = API.AUTH + this.accountAction + '/logoff';
     storage: any;
 
+    public HasAdminRole: boolean;
+    public IsAuthorized: boolean;
+    public UserName: string;
+    
     constructor(private dataService: DataService) {
         this.storage = sessionStorage;
 
         if (this.retrieve("IsAuthorized") !== "") {
             this.HasAdminRole = this.retrieve("HasAdminRole");
             this.IsAuthorized = this.retrieve("IsAuthorized");
+            this.UserName = this.retrieve("UserName");
         }
     }
 
-    public IsAuthorized: boolean;
-    public HasAdminRole: boolean;
-    public UserName: string;
-    
     /** Read store */
     retrieve(key: string): any {
         let item = this.storage.getItem(key);
@@ -52,7 +55,7 @@ export class MembershipService {
     }
 
     register(newUser: Registration) {
-        this.dataService.set(this.accountRegister);
+        this.dataService.set(this.idLogout);
         return this.dataService.post(JSON.stringify(newUser));
     }
 
@@ -69,24 +72,18 @@ export class MembershipService {
 
         let grant_type = "password";
         let nonce = "N" + Math.random() + "" + Date.now();
-        let state = Date.now() + "" + Math.random();
-
-        let username = creds.email;
-        let password = creds.password;
 
         let offlineaccess = creds.rememberLogin ? " offlineaccess" : "";
         let scope = "openid profile roles" + offlineaccess;
 
         // TODO: redux store & state ?
         this.store("authNonce", nonce);
-        this.store("authStateControl", state);
 
         let model = new OpenIdConnectRequest();
         model.grant_type = grant_type;
         model.nonce = nonce;
-        model.state = state;
-        model.username = username;
-        model.password = password;
+        model.username = creds.email;
+        model.password = creds.password;
         model.scope = scope;
 
         this.dataService.set(this.idLogin); 
@@ -99,33 +96,20 @@ export class MembershipService {
 
         console.log(result);
         console.log("AuthorizedCallback created, begin token validation");
+        
+        let dataIdToken: any = this.getDataFromToken(result.id_token); // more types
+        console.log(dataIdToken);
 
-        let token = "";
-        let id_token = "";
+        if (!dataIdToken || dataIdToken.nonce !== this.retrieve("authNonce")) {
+            console.log("AuthorizedCallback incorrect nonce");
+            this.resetAuthorizationData();
+        } else {
+            this.store("authNonce", "");
+            this.store("authStateControl", "");
 
-// TODO
-        // if (result.state !== this.retrieve("authStateControl")) {
-        //     console.log("AuthorizedCallback incorrect state");
-        // } else {
-            token = result.access_token;
-            id_token = result.id_token
-
-            // TODO: typed
-            let dataIdToken: any = this.getDataFromToken(id_token);
-            console.log(dataIdToken);
-
-            // validate nonce
-            if (!dataIdToken || dataIdToken.nonce !== this.retrieve("authNonce")) {
-                console.log("AuthorizedCallback incorrect nonce");
-                this.resetAuthorizationData();
-            } else {
-                this.store("authNonce", "");
-                this.store("authStateControl", "");
-
-                console.log("AuthorizedCallback state and nonce validated, returning access token");
-                this.setAuthorizationData(token, id_token, dataIdToken);
-            }
-        // }
+            console.log("AuthorizedCallback state and nonce validated, returning access token");
+            this.setAuthorizationData(result.access_token, result.id_token, dataIdToken);
+        }
 
     }
 
@@ -136,22 +120,30 @@ export class MembershipService {
         this.store("authorizationData", token);
         this.store("authorizationDataIdToken", id_token);
         this.IsAuthorized = true;
-        this.store("IsAuthorized", true); //TODO: redux
+        this.store("IsAuthorized", true);
 
-        if (data.role)
+        if (data.role instanceof Array)
+        {        
             for (var i = 0; i < data.role.length; i++) {
                 console.log("Role: " + data.role[i]);
-                if (data.role[i] === "admin") {
+                if (data.role[i].toUpperCase() === "ADMIN") {
                     this.HasAdminRole = true;
-                    this.store("HasAdminRole", true) //TODO: redux
+                    this.store("HasAdminRole", true);
                 }
             }
+        } else {
+            console.log("Role: " + data.role);
+            if (data.role.toUpperCase() === "ADMIN") {
+                    this.HasAdminRole = true;
+                    this.store("HasAdminRole", true);
+                }
+        }
         
-        console.log("User: " + data.unique_name);
-        if (data.unique_name)
+        if (data.username)
         {
-            this.UserName = data.unique_name;
-            this.store("UserName", data.unique_name);  //TODO: redux
+            console.log("User: " + data.username);
+            this.UserName = data.username;
+            this.store("UserName", data.username);
         }
     }
 
@@ -165,30 +157,12 @@ export class MembershipService {
         this.UserName = '';
         this.store("UserName", '');
     }
-    
-    //TODO
-    logout() {
-        this.resetAuthorizationData();
-
-        // No redirection
-        let id_token_hint = this.retrieve("authorizationDataIdToken");
-        //let post_logout_redirect_uri = this._configuration.Server + '/Unauthorized';
-        let url =
-            this.accountLogout + "?" +
-            "id_token_hint=" + encodeURI(id_token_hint) 
-            // + "&" + "post_logout_redirect_uri=" + encodeURI(post_logout_redirect_uri)
-            ;
-
-        // window.location.href = url;
-
-        this.dataService.set(url);
-        return this.dataService.post(null, false);
-    }
-
-    getUserData() {
-        this.dataService.set(this.accountInfo);
-        return this.dataService.get();
-    }
+        
+    // TODO
+    // getUserData() {
+    //     this.dataService.set(this.accountInfo);
+    //     return this.dataService.get();
+    // }
 
     urlBase64Decode(str: string) {
         var output = str.replace('-', '+').replace('_', '/');
@@ -218,4 +192,17 @@ export class MembershipService {
         return data;
     }
 
+    logout() {
+
+        let id_token_hint = this.retrieve("authorizationDataIdToken");
+
+        this.dataService.set(this.idLogout);
+        //return this.dataService.post("id_token_hint=" + id_token_hint);
+        return this.dataService.post();
+    }
+
+    logoutCallback(result: SignInResult) {
+        console.log("BEGIN logoutCallback, clear auth data");
+        this.resetAuthorizationData();
+    }
 }

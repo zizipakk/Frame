@@ -19,7 +19,7 @@ export class Login implements AfterViewInit {
     constructor(
         private router: Router,
         private membershipService: MembershipService,
-        private notificationService: NotificationService,
+        private notificationService: NotificationService
     ) {
         this.user = new LoginInputModel({email: '', password: '', rememberLogin: false});
     }

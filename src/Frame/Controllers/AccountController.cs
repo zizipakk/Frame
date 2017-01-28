@@ -108,6 +108,17 @@ namespace WebApplication3.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // add persistent role, so that is in claim also
+                    await _userManager.AddToRoleAsync(user, "User");
+                    if (model.IsAdmin)
+                    {
+                        await _userManager.AddToRoleAsync(user, "Admin");
+                    }
+
+                    // add full name to claim, so that will be in idtoken
+                    var nameClaim = new Claim("username", user.UserName.ToString(), ClaimValueTypes.String);
+                    await _userManager.AddClaimAsync(user, nameClaim);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -133,6 +144,7 @@ namespace WebApplication3.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation(4, "User logged out.");
+
             return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
