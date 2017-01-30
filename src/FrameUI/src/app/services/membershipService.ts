@@ -1,4 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { UserModel } from '../models/user';
+import { IappState } from '../models/appState';
 import { API } from '../app.settings';
 import { DataService } from './dataService';
 import { Registration } from '../models/registration';
@@ -20,18 +23,11 @@ export class MembershipService {
     idLogout = API.AUTH + this.idAction + '/logoff';
     storage: any;
 
-    public HasAdminRole: boolean;
-    public IsAuthorized: boolean;
-    public UserName: string;
-        
-    constructor(private dataService: DataService) {
+    constructor(
+        private appStore: Store<IappState>,
+        private dataService: DataService
+        ) {
         this.storage = sessionStorage;
-
-        if (this.retrieve("IsAuthorized") !== "") {
-            this.HasAdminRole = this.retrieve("HasAdminRole");
-            this.IsAuthorized = this.retrieve("IsAuthorized");
-            this.UserName = this.retrieve("UserName");
-        }
     }
 
     /** Read store */
@@ -115,7 +111,9 @@ export class MembershipService {
         console.log("storing to storage, getting the roles");
         this.store("authorizationData", token);
         this.store("authorizationDataIdToken", id_token);
-        this.IsAuthorized = true;
+
+        let user = new UserModel({isAuthorized: false, hasAdminRole: false, userName: ''})
+        user.isAuthorized = true;
         this.store("IsAuthorized", true);
 
         if (data.role instanceof Array)
@@ -123,14 +121,14 @@ export class MembershipService {
             for (var i = 0; i < data.role.length; i++) {
                 console.log("Role: " + data.role[i]);
                 if (data.role[i].toUpperCase() === "ADMIN") {
-                    this.HasAdminRole = true;
+                    user.hasAdminRole = true;
                     this.store("HasAdminRole", true);
                 }
             }
         } else {
             console.log("Role: " + data.role);
             if (data.role.toUpperCase() === "ADMIN") {
-                    this.HasAdminRole = true;
+                    user.hasAdminRole = true;
                     this.store("HasAdminRole", true);
                 }
         }
@@ -138,28 +136,23 @@ export class MembershipService {
         if (data.username)
         {
             console.log("User: " + data.username);
-            this.UserName = data.username;
+            user.userName = data.username;
             this.store("UserName", data.username);
         }
+
+        this.appStore.dispatch({ type: 'SET', payload: user });
     }
 
     resetAuthorizationData() {
-        this.IsAuthorized = false;
-        this.HasAdminRole = false;
         this.store("authorizationData", "");
         this.store("authorizationDataIdToken", "");
         this.store("HasAdminRole", false);
         this.store("IsAuthorized", false);
-        this.UserName = '';
         this.store("UserName", '');
+
+        this.appStore.dispatch({ type: 'RESET' });
     }
         
-    // TODO
-    // getUserData() {
-    //     this.dataService.set(this.accountInfo);
-    //     return this.dataService.get();
-    // }
-
     urlBase64Decode(str: string) {
         var output = str.replace('-', '+').replace('_', '/');
         switch (output.length % 4) {

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs/Rx';
 import { MenuItem } from 'primeng/primeng';
 import { IappState } from './models/appState';
+import { UserModel } from './models/user';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 
@@ -11,12 +13,12 @@ import { NotificationService } from './services/notificationService';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent 
-//implements OnInit  
+export class AppComponent implements OnInit, OnDestroy 
 {
     
     menuItems: MenuItem[];
-    userName: string;
+    user: UserModel;
+    subscriptions: Subscription[];
 
     constructor(
         private store: Store<IappState>,
@@ -24,17 +26,34 @@ export class AppComponent
         private notificationService: NotificationService,
         private router: Router) 
     {
-        // this.userName = this.isUserLoggedIn() ? this.membershipService.UserName : '';
-        this.userName = this.membershipService.UserName;
-        this.menuItems = this.refreshMenu();
+        this.user = new UserModel({
+            isAuthorized: this.membershipService.retrieve("IsAuthorized"), 
+            hasAdminRole: this.membershipService.retrieve("HasAdminRole"), 
+            userName: this.membershipService.retrieve("UserName")
+        });
+        this.subscriptions = new Array<Subscription>();
     }
 
-    // ngOnInit() {
-    //     this.refreshMenu();
-    // }
+    ngOnInit() {
+        // Init all environment        
+        this.store.dispatch({ type: 'SET', payload: this.user });
+        
+        this.subscriptions.push(            
+            this.store.select(s => s.user).subscribe(
+                (user) => {
+                        this.user = user;
+                        this.menuItems = this.refreshMenu();                     
+                } 
+            )
+        );
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(sub => sub.unsubscribe());
+    }
 
     isUserLoggedIn() {
-        return this.membershipService.IsAuthorized;
+        return this.user.isAuthorized;
     }
 
     public refreshMenu(): MenuItem[] {
@@ -60,7 +79,7 @@ export class AppComponent
         } else {
             menuItems.push(
                 {
-                    label: this.userName,
+                    label: this.user.userName,
                     icon: 'fa-user',
                     routerLink: null,
                     command: (event) => {},
@@ -81,7 +100,7 @@ export class AppComponent
         this.membershipService.logout()
             .subscribe(() => {
                 this.membershipService.logoutCallback();
-                this.notificationService.printSuccessMessage('By ' + this.userName + '!');
+                this.notificationService.printSuccessMessage('By ' + this.user.userName + '!');
             },
             error => { 
                 console.error('Error: ' + error);

@@ -17,7 +17,7 @@ import {
   ToolbarModule
  } from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
-import { menuReducer } from './reducers/index';
+import { UserReducer } from './reducers/index';
 // custom components
 import { AppComponent } from './app.component';
 import { Home } from './home/home';
@@ -55,7 +55,7 @@ import { NotificationService } from './services/notificationService';
     MessagesModule,
     MenuModule,
     MenubarModule,
-    StoreModule.provideStore({ menu: menuReducer }),
+    StoreModule.provideStore({ user: UserReducer }),
     ToolbarModule
   ],
   providers: [

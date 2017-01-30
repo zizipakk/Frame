@@ -49,8 +49,8 @@ export class Register implements AfterViewInit {
         var registrationResult: OperationResult = new OperationResult(false, '');
         this.membershipService.register(this.newUser)
             .subscribe(res => {
-                registrationResult.Succeeded = res.Succeeded;
-                registrationResult.Message = res.Message;
+                // registrationResult.Succeeded = res.Succeeded;
+                // registrationResult.Message = res.Message;
 
             },
             error => console.error('Error: ' + error),
