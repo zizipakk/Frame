@@ -25,31 +25,31 @@ export class Login implements AfterViewInit {
     }
 
     /** ng event */
-    ngAfterViewInit(): void {
+    ngAfterViewInit() {
         this.display = true;  
     }
 
     /** primeng event */
-    onAfterHide(event: any): void {
+    onAfterHide(event: any) {
         this.navigateBack();      
     }
     
     /** custom events */
-    onClose(): void {
+    onClose() {
         this.display = false;  
         this.navigateBack();      
     }
 
-    navigateBack(): void {
+    navigateBack() {
         this.router.navigate(['/']);
     }
 
-    login(): void {
+    login() {
         this.membershipService.login(this.user)
             .subscribe(res => {
                 this.membershipService.loginCallback(res);
                 this.notificationService.printSuccessMessage('Welcome back ' + this.user.email + '!');
-                this.router.navigateByUrl('/');
+                this.navigateBack();
             },
             error => { 
                 console.error('Error: ' + error);

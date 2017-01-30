@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/primeng';
+import { IappState } from './models/appState';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 
@@ -9,21 +11,34 @@ import { NotificationService } from './services/notificationService';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit  {
+export class AppComponent 
+//implements OnInit  
+{
     
     menuItems: MenuItem[];
     userName: string;
 
     constructor(
+        private store: Store<IappState>,
         private membershipService: MembershipService,
         private notificationService: NotificationService,
         private router: Router) 
     {
-        this.userName = this.isUserLoggedIn() ? this.membershipService.UserName : '';
+        // this.userName = this.isUserLoggedIn() ? this.membershipService.UserName : '';
+        this.userName = this.membershipService.UserName;
+        this.menuItems = this.refreshMenu();
     }
 
-    ngOnInit() {
-        this.menuItems = 
+    // ngOnInit() {
+    //     this.refreshMenu();
+    // }
+
+    isUserLoggedIn() {
+        return this.membershipService.IsAuthorized;
+    }
+
+    public refreshMenu(): MenuItem[] {
+        let menuItems = 
             [{
                 label: 'Home',
                 icon: '',
@@ -33,7 +48,7 @@ export class AppComponent implements OnInit  {
             }];
 
         if (!this.isUserLoggedIn()) {
-            this.menuItems.push(
+            menuItems.push(
                 {
                     label: 'Log In',
                     icon: 'fa-unlock-alt fa-fw',
@@ -43,7 +58,7 @@ export class AppComponent implements OnInit  {
                 }
             );
         } else {
-            this.menuItems.push(
+            menuItems.push(
                 {
                     label: this.userName,
                     icon: 'fa-user',
@@ -59,21 +74,13 @@ export class AppComponent implements OnInit  {
             );
         }
 
-        this.navigateBack();
+        return menuItems;
     }
 
-    navigateBack(): void {
-        this.router.navigate(['/']);
-    }
-
-    isUserLoggedIn(): boolean {
-        return this.membershipService.IsAuthorized;
-    }
-
-    logOut(): void {
+    logOut() {
         this.membershipService.logout()
-            .subscribe(res => {
-                this.membershipService.logoutCallback(res);
+            .subscribe(() => {
+                this.membershipService.logoutCallback();
                 this.notificationService.printSuccessMessage('By ' + this.userName + '!');
             },
             error => { 
@@ -81,7 +88,7 @@ export class AppComponent implements OnInit  {
                 this.notificationService.handleError(error, this.membershipService.resetAuthorizationData)
                 this.notificationService.printErrorMessage(error);
             },
-            () => { this.navigateBack(); });        
+            () => { this.refreshMenu(); });        
     }
 
 }

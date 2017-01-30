@@ -18,16 +18,12 @@ export class MembershipService {
     idLogin = API.AUTH + this.idAction + '/token';
     idRegister = API.AUTH + this.idAction + '/register';
     idLogout = API.AUTH + this.idAction + '/logoff';
-    // accountAction = 'account'
-    // accountRegister = API.AUTH + this.accountAction + '/register';
-    // accountInfo = API.AUTH + this.accountAction + '/info';
-    // accountLogout = API.AUTH + this.accountAction + '/logoff';
     storage: any;
 
     public HasAdminRole: boolean;
     public IsAuthorized: boolean;
     public UserName: string;
-    
+        
     constructor(private dataService: DataService) {
         this.storage = sessionStorage;
 
@@ -194,15 +190,17 @@ export class MembershipService {
 
     logout() {
 
-        let id_token_hint = this.retrieve("authorizationDataIdToken");
+        //let id_token_hint = this.retrieve("authorizationDataIdToken");
 
         this.dataService.set(this.idLogout);
         //return this.dataService.post("id_token_hint=" + id_token_hint);
         return this.dataService.post();
     }
 
-    logoutCallback(result: SignInResult) {
+    logoutCallback() {
         console.log("BEGIN logoutCallback, clear auth data");
         this.resetAuthorizationData();
     }
+
+    
 }

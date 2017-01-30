@@ -16,13 +16,15 @@ import {
   MenubarModule,
   ToolbarModule
  } from 'primeng/primeng';
+import { StoreModule } from '@ngrx/store';
+import { menuReducer } from './reducers/index';
 // custom components
 import { AppComponent } from './app.component';
 import { Home } from './home/home';
 import { Account } from './account/account';
 import { Login } from './account/login';
 import { Register } from './account/register';
-import { appRouting } from './app.routes';
+import { AppRouting } from './app.routes';
 // custom services
 import { DataService } from './services/dataService';
 import { MembershipService } from './services/membershipService';
@@ -41,7 +43,7 @@ import { NotificationService } from './services/notificationService';
     Register    
   ],
   imports: [
-    appRouting,
+    AppRouting,
     BrowserModule,
     FormsModule,
     HttpModule,
@@ -53,6 +55,7 @@ import { NotificationService } from './services/notificationService';
     MessagesModule,
     MenuModule,
     MenubarModule,
+    StoreModule.provideStore({ menu: menuReducer }),
     ToolbarModule
   ],
   providers: [

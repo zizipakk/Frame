@@ -23,4 +23,4 @@ const appRoutes: Routes = [
     { path: '**', redirectTo: '/', pathMatch: 'full' } // at last ...
 ];
 
-export const appRouting: ModuleWithProviders = RouterModule.forRoot(appRoutes);
+export const AppRouting: ModuleWithProviders = RouterModule.forRoot(appRoutes);
