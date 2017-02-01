@@ -11,4 +11,6 @@ export class ActionTypes {
     public static get RESET_Message() { return 'RESET_Message'; };
     public static get ADD_Message() { return 'ADD_Message'; };
     public static get REMOVE_Message() { return 'REMOVE_Message'; };
+
+    public static get SET_Blocker() { return 'SET_Blocker'; };
 }

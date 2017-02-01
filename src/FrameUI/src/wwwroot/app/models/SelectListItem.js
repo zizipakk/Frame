@@ -1,5 +1,4 @@
-"use strict";
-var SelectListItem = (function () {
+export var SelectListItem = (function () {
     function SelectListItem(model) {
         this.disabled = model.disabled;
         this.group = model.group;
@@ -9,4 +8,4 @@ var SelectListItem = (function () {
     }
     return SelectListItem;
 }());
-exports.SelectListItem = SelectListItem;
+//# sourceMappingURL=C:/Frame/Frame/src/FrameUI/src/app/models/SelectListItem.js.map

@@ -15,13 +15,16 @@ import {
   MenuModule,
   MenubarModule,
   ToolbarModule,
-  GrowlModule
- } from 'primeng/primeng';
+  GrowlModule,
+  BlockUIModule
+} from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
 import { 
   UserReducer, 
   NotificationReducer,
-  MessageReducer } from './reducers/index';
+  MessageReducer,
+  BlockerReducer 
+} from './reducers/index';
 // custom components
 import { AppComponent } from './app.component';
 import { Home } from './home/home';
@@ -47,7 +50,7 @@ import { NotificationService } from './services/notificationService';
     Register    
   ],
   imports: [
-    AppRouting,
+    AppRouting, // inherited from ModuleWithProviders, so it is singleton
     BrowserModule,
     FormsModule,
     HttpModule,
@@ -62,14 +65,16 @@ import { NotificationService } from './services/notificationService';
     MenubarModule,    
     ToolbarModule,
     GrowlModule,
+    BlockUIModule,
 
-    StoreModule.provideStore({ 
+    StoreModule.provideStore({  // singleton the whole store with reducers
       UserReducer,
       NotificationReducer,
-      MessageReducer
+      MessageReducer,
+      BlockerReducer
      })
   ],
-  providers: [
+  providers: [ // singletons in whole app
       { provide: LocationStrategy, useClass: PathLocationStrategy },
       DataService,
       MembershipService,
