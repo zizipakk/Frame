@@ -56,11 +56,11 @@ export class Register implements AfterViewInit {
             error => console.error('Error: ' + error),
             () => {
                 if (registrationResult.Succeeded) {
-                    this.notificationService.printSuccessMessage('Dear ' + this.newUser.Username + ', please login with your credentials');
+                    this.notificationService.printSuccessMessage(new Array<string>('Dear ' + this.newUser.Username + ', please login with your credentials'));
                     this.router.navigate(['/account/login']);
                 }
                 else {
-                    this.notificationService.printErrorMessage(registrationResult.Message);
+                    this.notificationService.printErrorMessage([]);
                 }
             });
     };

@@ -19,7 +19,7 @@ export class Home {
 
     ngOnInit() {        
         this.subscriptions.push(            
-            this.store.select(s => s.user).subscribe(
+            this.store.select(s => s.UserReducer).subscribe(
                 (user) => { this.user = user; } 
             )
         );

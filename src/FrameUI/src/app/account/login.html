@@ -8,6 +8,7 @@
         </h1>
     </header>
     <form class="ui-g" #hf="ngForm">
+        <p-messages [value]="message"></p-messages>
         <div class="ui-g-12">
             <input class="ui-g-12" type="text" pInputText placeholder="Username" [(ngModel)]="user.email"
                     name="email" required #email="ngModel" />

@@ -2,6 +2,7 @@
 import { Store } from '@ngrx/store';
 import { UserModel } from '../models/user';
 import { IappState } from '../models/appState';
+import { ActionTypes } from '../reducers/reducer.settings'
 import { API } from '../app.settings';
 import { DataService } from './dataService';
 import { Registration } from '../models/registration';
@@ -47,8 +48,7 @@ export class MembershipService {
     }
 
     register(newUser: Registration) {
-        this.dataService.set(this.idLogout);
-        return this.dataService.post(JSON.stringify(newUser));
+        return this.dataService.post(this.idLogout, JSON.stringify(newUser));
     }
 
     private encodeQueryData(data) {
@@ -78,8 +78,7 @@ export class MembershipService {
         model.password = creds.password;
         model.scope = scope;
 
-        this.dataService.set(this.idLogin); 
-        return this.dataService.post(this.encodeQueryData(model));
+        return this.dataService.post<SignInResult>(this.idLogin, this.encodeQueryData(model));
     }
 
     loginCallback(result: SignInResult) {
@@ -125,7 +124,7 @@ export class MembershipService {
                     this.store("HasAdminRole", true);
                 }
             }
-        } else {
+        } else if (data.role) {
             console.log("Role: " + data.role);
             if (data.role.toUpperCase() === "ADMIN") {
                     user.hasAdminRole = true;
@@ -140,7 +139,7 @@ export class MembershipService {
             this.store("UserName", data.username);
         }
 
-        this.appStore.dispatch({ type: 'SET', payload: user });
+        this.appStore.dispatch({ type: ActionTypes.SET_User, payload: user });
     }
 
     resetAuthorizationData() {
@@ -150,7 +149,7 @@ export class MembershipService {
         this.store("IsAuthorized", false);
         this.store("UserName", '');
 
-        this.appStore.dispatch({ type: 'RESET' });
+        this.appStore.dispatch({ type: ActionTypes.RESET_User });
     }
         
     urlBase64Decode(str: string) {
@@ -184,10 +183,8 @@ export class MembershipService {
     logout() {
 
         //let id_token_hint = this.retrieve("authorizationDataIdToken");
-
-        this.dataService.set(this.idLogout);
-        //return this.dataService.post("id_token_hint=" + id_token_hint);
-        return this.dataService.post();
+        //return this.dataService.post(this.idLogout, "id_token_hint=" + id_token_hint);
+        return this.dataService.post<any>(this.idLogout);
     }
 
     logoutCallback() {

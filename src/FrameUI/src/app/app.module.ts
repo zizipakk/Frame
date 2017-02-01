@@ -14,10 +14,14 @@ import {
   MessagesModule,
   MenuModule,
   MenubarModule,
-  ToolbarModule
+  ToolbarModule,
+  GrowlModule
  } from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
-import { UserReducer } from './reducers/index';
+import { 
+  UserReducer, 
+  NotificationReducer,
+  MessageReducer } from './reducers/index';
 // custom components
 import { AppComponent } from './app.component';
 import { Home } from './home/home';
@@ -47,6 +51,7 @@ import { NotificationService } from './services/notificationService';
     BrowserModule,
     FormsModule,
     HttpModule,
+
     DialogModule,
     ButtonModule,
     CheckboxModule,
@@ -54,9 +59,15 @@ import { NotificationService } from './services/notificationService';
     PasswordModule,
     MessagesModule,
     MenuModule,
-    MenubarModule,
-    StoreModule.provideStore({ user: UserReducer }),
-    ToolbarModule
+    MenubarModule,    
+    ToolbarModule,
+    GrowlModule,
+
+    StoreModule.provideStore({ 
+      UserReducer,
+      NotificationReducer,
+      MessageReducer
+     })
   ],
   providers: [
       { provide: LocationStrategy, useClass: PathLocationStrategy },

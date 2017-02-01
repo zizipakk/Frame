@@ -1,63 +1,105 @@
-﻿import { Injectable } from '@angular/core';
+﻿import { Injectable, Type } from '@angular/core';
 import { Http, Response, Headers } from '@angular/http';
 import { Router } from '@angular/router';
-import { AuthHeaders } from '../app.settings';
-import { AppHeaders } from '../app.settings';
-
+import { AuthHeaders, AppHeaders } from '../app.settings';
 import { Observable } from 'rxjs/Rx'; //http://stackoverflow.com/questions/37030963/angular-2-2-0-0-rc-1-property-map-does-not-exist-on-type-observableresponse
-import 'rxjs/add/operator/map'; //
+import 'rxjs/add/operator/map';
+
+
+import { SignInResult } from '../models/signInResult';
 
 //A generic class used to GET/PUT/POST/DELETE over HTTP to server
 
 @Injectable()
 export class DataService {
 
-    private baseUri: string;
-    private pageSize: number;
-    private pageSizeUri: string;
-
     constructor(private http: Http, private router: Router) {
     }
 
-    set(baseUri: string, pageSize?: number): void {
-        this.baseUri = baseUri;
-        this.pageSize = pageSize;
-        this.pageSizeUri = this.pageSize ? encodeURI(this.pageSize.toString()) : '';
-    }
-
-    getById(id?: number) {
-        let uri = this.baseUri 
+    getById<T>(baseUri: string, id: number, pageSize?: number) {
+        let pageSizeUri = pageSize ? encodeURI(pageSize.toString()) : '';
+        let uri = baseUri 
             + '/' + id.toString() 
-            + '&' + this.pageSizeUri;
+            + '&' + pageSizeUri;
 
-        return this.http.get(uri)
-            .map(response => (<Response>response));
+        return this.http.get(uri, { headers: AppHeaders.HEADERS })
+            // .map(response => <any>(<Response>response).json());
+            .map(response => this.getResponseBody<T>(response))
+            .catch(err =>  { 
+                return Observable.throw(this.errorInfo(err)); // observable needs to be returned or exception raised
+            });
     }
 
-    get() {
-        this.pageSizeUri = this.pageSizeUri ? '&pageSize=' + this.pageSizeUri : '';
-        let uri = this.baseUri + this.pageSizeUri;
+    get<T>(baseUri: string, pageSize?: number) {
+        let pageSizeUri = pageSize ? encodeURI(pageSize.toString()) : '';
+        let uri = baseUri
+            + '&' + pageSizeUri;
 
-        return this.http.get(uri)
-            .map(response => (<Response>response));
+        return this.http.get(uri, { headers: AppHeaders.HEADERS })
+            .map(response => this.getResponseBody<T>(response))
+            .catch(err =>  { 
+                return Observable.throw(this.errorInfo(err)); // observable needs to be returned or exception raised
+            });
     }
 
-    post(data?: any, mapJson: boolean = true) {
+    post<T>(baseUri: string, data?: any) {
         let postHeaders = data && data.indexOf('grant_type') !== -1 ? { headers: AuthHeaders.HEADERS } : { headers: AppHeaders.HEADERS };
-        let response = this.http.post(this.baseUri, data, postHeaders);
-        if (mapJson)
-            return response.map(r => <any>(<Response>r).json());
-        
-        return response;
+        return this.http.post(baseUri, data, postHeaders)
+            .map(response => this.getResponseBody<T>(response))
+            .catch(err =>  { 
+                return Observable.throw(this.errorInfo(err)); // observable needs to be returned or exception raised
+            });
     }
 
-    delete(id: number) {
-        return this.http.delete(this.baseUri + '/' + id.toString())
-            .map(response => <any>(<Response>response).json())
+    deleteById<T>(baseUri: string, id: number) {
+        return this.http.delete(baseUri + '/' + id.toString(), { headers: AppHeaders.HEADERS })
+            .map(response => this.getResponseBody<T>(response))
+            .catch(err =>  { 
+                return Observable.throw(this.errorInfo(err)); // observable needs to be returned or exception raised
+            });
     }
 
-    deleteResource(resource: string) {
-        return this.http.delete(resource)
-            .map(response => <any>(<Response>response).json())
+    getResponseBody<T>(response: any)
+    {
+        let body = response._body;
+        if (body) { 
+            return <T>JSON.parse(body);
+        } else {
+            return <T>response;
+        }
+    }
+
+    errorInfo(error: any)
+    {
+        let response = <Response>error; 
+        let messages: string[] = [];
+        let body =  error._body;
+        if (body)
+        {
+            let bodyJson = JSON.parse(body);
+            messages.push('Error: ' + bodyJson.error + ', Description: ' + bodyJson.error_description); 
+        }
+        else
+        {
+            // TODO: ha html jön vissza az mvc-ről akkor kell ide egy dialog
+            // switch(response.status)
+            // {
+            //     case 400:
+            //         messages.push('Bad request');
+            //         break;
+            //     case 401:
+            //         messages.push('Unauthorized');
+            //         break;
+            //     case 403:
+            //         messages.push('Forbidden');
+            //         break;
+            //     default:
+            //         messages.push(response.statusText);
+            //         break;
+            // }
+
+            messages.push(response.statusText);
+        }
+        return messages;
     }
 }

@@ -1,14 +1,12 @@
 import { ActionReducer, Action } from '@ngrx/store';
 import { UserModel } from '../models/user';
+import { ActionTypes } from './reducer.settings';
 
-export const SET = 'SET';
-export const RESET = 'RESET';
-
-export function UserReducer(state: UserModel = null, action: Action) {
+export const UserReducer = (state: UserModel = null, action: Action) => {
     switch (action.type) {
-        case SET:
+        case ActionTypes.SET_User:
             return action.payload;
-        case RESET:
+        case ActionTypes.RESET_User:
             return new UserModel({userName: '', isAuthorized: false, hasAdminRole: false});
         default:
             return state;

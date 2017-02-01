@@ -1,5 +1,8 @@
 import { UserModel } from './user';
+import { Message } from 'primeng/primeng';
 
 export interface IappState {
-  user: UserModel;
+    UserReducer: UserModel;
+    NotificationReducer: Message[];
+    MessageReducer: Message[];
 }
