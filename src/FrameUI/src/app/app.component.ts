@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Rx';
-import { MenuItem } from 'primeng/primeng';
-import { Message } from 'primeng/primeng';
+import { MenuItem, Message } from 'primeng/primeng';
 import { IappState } from './models/appState';
 import { ActionTypes } from './reducers/reducer.settings'
 import { UserModel } from './models/user';
@@ -22,6 +21,7 @@ export class AppComponent implements OnInit, OnDestroy
     user: UserModel;
     notification: Message[];
     message: Message[];
+    blocked: boolean;
     subscriptions: Subscription[];    
 
     constructor(
@@ -30,7 +30,7 @@ export class AppComponent implements OnInit, OnDestroy
         private notificationService: NotificationService,
         private router: Router) 
     {
-        this.user = new UserModel({
+        this.user = new UserModel({ // At first we check the persistent data in local storage
             isAuthorized: this.membershipService.retrieve("IsAuthorized"), 
             hasAdminRole: this.membershipService.retrieve("HasAdminRole"), 
             userName: this.membershipService.retrieve("UserName")
@@ -51,19 +51,17 @@ export class AppComponent implements OnInit, OnDestroy
             )
         );
         this.subscriptions.push(            
-            this.store.select(s => s.NotificationReducer).subscribe(
-                (notification) => {
-                        this.notification = notification;
-                } 
-            )
+            this.store.select(s => s.NotificationReducer)
+                .subscribe((notification) => { this.notification = notification; })
         );
-        // this.subscriptions.push(            
-        //     this.store.select(s => s.MessageReducer).subscribe(
-        //         (message) => {
-        //                 this.message = message;
-        //         } 
-        //     )
-        // );
+        this.subscriptions.push(            
+            this.store.select(s => s.MessageReducer)
+                .subscribe((message) => { this.message = message; })
+        );
+        this.subscriptions.push(            
+            this.store.select(s => s.BlockerReducer)
+                .subscribe((blocked) => { this.blocked = blocked; })
+        );
     }
 
     ngOnDestroy() {

@@ -5,4 +5,5 @@ export interface IappState {
     UserReducer: UserModel;
     NotificationReducer: Message[];
     MessageReducer: Message[];
+    BlockerReducer: boolean;
 }
