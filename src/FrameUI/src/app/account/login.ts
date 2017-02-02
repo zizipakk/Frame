@@ -27,21 +27,27 @@ export class Login implements AfterViewInit
         private notificationService: NotificationService
     ) {
         this.user = new LoginInputModel({email: '', password: '', rememberLogin: false});
+        this.message = new Array<Message>();
     }
-    
+
     /** ng event */
     ngAfterViewInit() {
-        this.display = true;  
+        this.display = true;
+    }
+
+    /** primeng event */
+    onAfterHide(event: any): void {
+        this.navigateBack();
     }
 
     /** custom events */
     onClose() {
-        this.display = false;  
-        this.navigateBack();      
+        this.display = false;
+        this.navigateBack();
     }
 
     navigateBack() {
-        this.router.navigate(['/']);
+        this.router.navigate(['account/register']);
     }
 
     login() {
@@ -49,7 +55,7 @@ export class Login implements AfterViewInit
             .subscribe(res => {
                 this.membershipService.loginCallback(res);
                 this.notificationService.printSuccessNotification(new Array<string>('Welcome back ' + this.user.email + '!'));
-                this.navigateBack();
+                this.router.navigate(['/']);
             },
             error => {
                 this.membershipService.resetAuthorizationData();

@@ -31,11 +31,7 @@ Run `ng github-pages:deploy` to deploy to Github Pages.
 To get more help on the `angular-cli` use `ng --help` or go check out the [Angular-CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 Next steps:
-0. ASP login workflow instead MVC login
-1. ui-alert out 
-2. Redux
 3. tests
 4. localize
 5. validation from model
 6. log: sending
-7. http blocking

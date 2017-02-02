@@ -32,10 +32,11 @@ import { Account } from './account/account';
 import { Login } from './account/login';
 import { Register } from './account/register';
 import { AppRouting } from './app.routes';
-// custom services
+// custom singleton services
 import { DataService } from './services/dataService';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
+import { AuthGuard } from './app.guard';
 
 @NgModule({
   entryComponents: [
@@ -78,7 +79,8 @@ import { NotificationService } from './services/notificationService';
       { provide: LocationStrategy, useClass: PathLocationStrategy },
       DataService,
       MembershipService,
-      NotificationService
+      NotificationService,
+      AuthGuard
   ],  
   bootstrap: [
     AppComponent

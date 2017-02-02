@@ -15,26 +15,16 @@ import 'rxjs/add/operator/map';
 export class DataService {
 
     // we are in singleton, but observers can cross-blocking
-    blockerSemafor: boolean;
+    blockerSemafor: string[];
 
     constructor(
         private store: Store<IappState>,
         private http: Http, 
         private router: Router) {
+        this.blockerSemafor = new Array<string>();
     }
 
     getById<T>(baseUri: string, id: number, pageSize?: number) {
-        // let pageSizeUri = pageSize ? encodeURI(pageSize.toString()) : '';
-        // let uri = baseUri 
-        //     + '/' + id.toString() 
-        //     + '&' + pageSizeUri;
-
-        // return this.http.get(uri, { headers: AppHeaders.HEADERS })
-        //     // .map(response => <any>(<Response>response).json());
-        //     .map(response => this.getResponseBody<T>(response))
-        //     .catch(err =>  { 
-        //         return Observable.throw(this.errorInfo(err)); // observable needs to be returned or exception raised
-        //     });
         let args: RequestOptionsArgs = ({
             method: RequestMethod.Get,
             headers: AppHeaders.HEADERS
@@ -49,15 +39,6 @@ export class DataService {
     }
 
     get<T>(baseUri: string, pageSize?: number) {
-        // let pageSizeUri = pageSize ? encodeURI(pageSize.toString()) : '';
-        // let uri = baseUri
-        //     + '&' + pageSizeUri;
-
-        // return this.http.get(uri, { headers: AppHeaders.HEADERS })
-        //     .map(response => this.getResponseBody<T>(response))
-        //     .catch(err =>  { 
-        //         return Observable.throw(this.errorInfo(err));
-        //     });
         let args: RequestOptionsArgs = ({
             method: RequestMethod.Get,
             headers: AppHeaders.HEADERS
@@ -71,30 +52,17 @@ export class DataService {
     }
 
     post<T>(baseUri: string, data?: any) {
-        // let postHeaders = data && data.indexOf('grant_type') !== -1 
-        //     ? { headers: AuthHeaders.HEADERS } 
-        //     : { headers: AppHeaders.HEADERS };
-        // return this.http.post(baseUri, data, postHeaders)
-        //     .map(response => this.getResponseBody<T>(response))
-        //     .catch(err =>  { 
-        //         return Observable.throw(this.errorInfo(err));
-        //     });
         let args: RequestOptionsArgs = ({
             method: RequestMethod.Post,
-            headers: data && data.indexOf('grant_type') !== -1 
+            headers: data && data.indexOf('grant_type') !== -1
                 ? AuthHeaders.HEADERS
                 : AppHeaders.HEADERS,
-            body: data            
+            body: data
         });
         return this.httpRequest<T>(baseUri, args);
     }
 
     deleteById<T>(baseUri: string, id: number) {
-        // return this.http.delete(baseUri + '/' + id.toString(), { headers: AppHeaders.HEADERS })
-        //     .map(response => this.getResponseBody<T>(response))
-        //     .catch(err =>  { 
-        //         return Observable.throw(this.errorInfo(err));
-        //     });
         let args: RequestOptionsArgs = ({
             method: RequestMethod.Delete,
             headers: AppHeaders.HEADERS
@@ -106,6 +74,8 @@ export class DataService {
      * There is the base generic http request method
      */
     httpRequest<T>(url: string, options?: RequestOptionsArgs) {
+        let threadID = 'N' + Math.random() + '' + Date.now();
+        this.blockerSemafor.push(threadID);
         this.store.dispatch({ type: ActionTypes.SET_Blocker, payload: true }); //block UI
         return this.http.request(url, options)
             .map(response => this.getResponseBody<T>(response))
@@ -113,7 +83,11 @@ export class DataService {
                 return Observable.throw(this.errorInfo(err));
             })
             .finally(() => {
-                 this.store.dispatch({ type: ActionTypes.SET_Blocker, payload: false }); //unblock UI
+                if (this.blockerSemafor.length === 1
+                    && this.blockerSemafor.indexOf(threadID) === 0) { // if nobody works, just this thread
+                    this.store.dispatch({ type: ActionTypes.SET_Blocker, payload: false }); //unblock UI
+                }
+                this.blockerSemafor = this.blockerSemafor.filter(f => f !== threadID); // TODO: reference
             });
     }
 
@@ -127,36 +101,32 @@ export class DataService {
         }
     }
 
+    // TODO: If we become Html body from MVC by 500...
     errorInfo(error: any)
     {
-        let response = <Response>error; 
+        let response = <Response>error;
         let messages: string[] = [];
         let body =  error._body;
-        if (body)
+        if (body && response.status === 400) // Error message from OpenIDDict server
         {
             let bodyJson = JSON.parse(body);
             messages.push('Error: ' + bodyJson.error + ', Description: ' + bodyJson.error_description); 
-        }
-        else
-        {
-            // TODO: ha html jön vissza az mvc-ről akkor kell ide egy dialog
-            // switch(response.status)
-            // {
-            //     case 400:
-            //         messages.push('Bad request');
-            //         break;
-            //     case 401:
-            //         messages.push('Unauthorized');
-            //         break;
-            //     case 403:
-            //         messages.push('Forbidden');
-            //         break;
-            //     default:
-            //         messages.push(response.statusText);
-            //         break;
-            // }
-
-            messages.push(response.statusText);
+        } else {
+            switch(response.status)
+            {
+                case 0:
+                    messages.push('Network error. Connection refused.');
+                    break;
+                case 401:
+                    messages.push('Unauthorized');
+                    break;
+                case 403:
+                    messages.push('Forbidden');
+                    break;
+                default:
+                    messages.push(response.statusText);
+                    break;
+            }
         }
         return messages;
     }

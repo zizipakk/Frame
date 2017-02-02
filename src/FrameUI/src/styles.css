@@ -11,3 +11,9 @@
 .float-right {
     float: right;
 }
+
+.ui-blockui {
+    background-image: url(spin.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
+}

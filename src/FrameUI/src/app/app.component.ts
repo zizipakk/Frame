@@ -16,13 +16,13 @@ import { NotificationService } from './services/notificationService';
 })
 export class AppComponent implements OnInit, OnDestroy 
 {
-    
+
     menuItems: MenuItem[];
     user: UserModel;
     notification: Message[];
     message: Message[];
     blocked: boolean;
-    subscriptions: Subscription[];    
+    subscriptions: Subscription[];
 
     constructor(
         private store: Store<IappState>,
@@ -31,9 +31,8 @@ export class AppComponent implements OnInit, OnDestroy
         private router: Router) 
     {
         this.user = new UserModel({ // At first we check the persistent data in local storage
-            isAuthorized: this.membershipService.retrieve("IsAuthorized"), 
-            hasAdminRole: this.membershipService.retrieve("HasAdminRole"), 
-            userName: this.membershipService.retrieve("UserName")
+            isAuthorized: this.membershipService.retrieve('IsAuthorized'),
+            hasAdminRole: this.membershipService.retrieve('HasAdminRole'),            userName: this.membershipService.retrieve('UserName')
         });
         this.subscriptions = new Array<Subscription>();
     }
@@ -41,24 +40,24 @@ export class AppComponent implements OnInit, OnDestroy
     ngOnInit() {
         // Init from local store
         this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });
-        
-        this.subscriptions.push(            
+
+        this.subscriptions.push(
             this.store.select(s => s.UserReducer).subscribe(
                 (user) => {
                         this.user = user;
-                        this.menuItems = this.refreshMenu();                     
-                } 
+                        this.menuItems = this.refreshMenu();
+                }
             )
         );
-        this.subscriptions.push(            
+        this.subscriptions.push(
             this.store.select(s => s.NotificationReducer)
                 .subscribe((notification) => { this.notification = notification; })
         );
-        this.subscriptions.push(            
+        this.subscriptions.push(
             this.store.select(s => s.MessageReducer)
                 .subscribe((message) => { this.message = message; })
         );
-        this.subscriptions.push(            
+        this.subscriptions.push(
             this.store.select(s => s.BlockerReducer)
                 .subscribe((blocked) => { this.blocked = blocked; })
         );
@@ -117,12 +116,13 @@ export class AppComponent implements OnInit, OnDestroy
             .subscribe(() => {
                 this.membershipService.logoutCallback();
                 this.notificationService.printSuccessNotification(new Array<string>('By ' + this.user.userName + '!'));
+                this.router.navigate(['account/login']);
             },
             error => { 
                 this.membershipService.resetAuthorizationData();
                 this.notificationService.printErrorNotification(error);
             },
-            () => {});        
+            () => {});
     }
 
 }
