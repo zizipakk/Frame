@@ -59,10 +59,7 @@ export class Login implements AfterViewInit
             },
             error => {
                 this.membershipService.resetAuthorizationData();
-                this.message.push({severity: 'error', summary: 'Error Message', detail: error});
-                
-                throw new Error();
-                
+                this.message.push({severity: 'error', summary: 'Error Message', detail: error}); // Only on dialog
             },
             () => {});
     };

@@ -7,6 +7,7 @@ const authHostPath = 'http://localhost:5200/';
 export class API {
     public static get AUTH(): string { return authHostPath; }
     public static get APP(): string { return apiHostPath; }
+    public static get LOG(): string { return apiHostPath; }
 } 
 
 export class AppHeaders {

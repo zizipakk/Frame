@@ -154,6 +154,7 @@ namespace Frame
             RoleManager<IdentityRole> roleManager)
         {
             //// .Net Core 1.1 could'nt us in same pipeline more CORS, so we change headers manual for auth server CORS
+            //// So the response status codes will be right for Angular HTTP
             //app.Use(async (context, next) =>
             //{
             //    if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
@@ -163,8 +164,8 @@ namespace Frame
             //        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With");
             //    }
 
-            //    if (context.Request.Method == "OPTIONS")
-            //        context.Response.StatusCode = (int)HttpStatusCode.OK;
+            //    //    if (context.Request.Method == "OPTIONS")
+            //    //        context.Response.StatusCode = (int)HttpStatusCode.OK;
 
             //    await next();
             //});
@@ -197,8 +198,8 @@ namespace Frame
 
             app.UseCors(builder =>
                 builder
-                //.WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
-                .AllowAnyOrigin()
+                .WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
+                //.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()

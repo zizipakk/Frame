@@ -189,6 +189,23 @@
           "lib/netstandard1.6/Microsoft.ApplicationInsights.AspNetCore.dll": {}
         }
       },
+      "Microsoft.AspNetCore/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Diagnostics": "1.1.0",
+          "Microsoft.AspNetCore.Hosting": "1.1.0",
+          "Microsoft.AspNetCore.Routing": "1.1.0",
+          "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
+          "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
+          "Microsoft.Extensions.Configuration.FileExtensions": "1.1.0",
+          "Microsoft.Extensions.Configuration.Json": "1.1.0",
+          "Microsoft.Extensions.Logging": "1.1.0",
+          "Microsoft.Extensions.Logging.Console": "1.1.0",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
+          "NETStandard.Library": "1.6.1"
+        }
+      },
       "Microsoft.AspNetCore.Antiforgery/1.1.0": {
         "type": "package",
         "dependencies": {
@@ -683,7 +700,7 @@
           "lib/netstandard1.6/Microsoft.AspNetCore.Mvc.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Mvc.Abstractions/1.1.0": {
+      "Microsoft.AspNetCore.Mvc.Abstractions/1.1.1": {
         "type": "package",
         "dependencies": {
           "Microsoft.AspNetCore.Routing.Abstractions": "1.1.0",
@@ -712,13 +729,13 @@
           "lib/netstandard1.6/Microsoft.AspNetCore.Mvc.ApiExplorer.dll": {}
         }
       },
-      "Microsoft.AspNetCore.Mvc.Core/1.1.0": {
+      "Microsoft.AspNetCore.Mvc.Core/1.1.1": {
         "type": "package",
         "dependencies": {
           "Microsoft.AspNetCore.Authorization": "1.1.0",
           "Microsoft.AspNetCore.Hosting.Abstractions": "1.1.0",
           "Microsoft.AspNetCore.Http": "1.1.0",
-          "Microsoft.AspNetCore.Mvc.Abstractions": "1.1.0",
+          "Microsoft.AspNetCore.Mvc.Abstractions": "1.1.1",
           "Microsoft.AspNetCore.ResponseCaching.Abstractions": "1.1.0",
           "Microsoft.AspNetCore.Routing": "1.1.0",
           "Microsoft.Extensions.DependencyModel": "1.1.0",
@@ -5052,6 +5069,15 @@
         "lib/netstandard1.6/Microsoft.ApplicationInsights.AspNetCore.dll"
       ]
     },
+    "Microsoft.AspNetCore/1.1.0": {
+      "sha512": "NTTfzCLdAWwrwmeF+Djrao1O1dVOCFdvhBJr+hQpBS7aQgAUxZVOBZv7NZziQp8oIdQQ4ocoURsxs8aR/3cCMw==",
+      "type": "package",
+      "path": "Microsoft.AspNetCore/1.1.0",
+      "files": [
+        "Microsoft.AspNetCore.1.1.0.nupkg.sha512",
+        "Microsoft.AspNetCore.nuspec"
+      ]
+    },
     "Microsoft.AspNetCore.Antiforgery/1.1.0": {
       "sha512": "6HM8/rsSGAQybSZ9sNP2f0Xqh507OJu3kvqRksXeHUXV72yuwFpnauGkfIMSt+gwPSvyk8qGqZB2m4sKCUomhA==",
       "type": "package",
@@ -5453,12 +5479,12 @@
         "lib/netstandard1.6/Microsoft.AspNetCore.Mvc.xml"
       ]
     },
-    "Microsoft.AspNetCore.Mvc.Abstractions/1.1.0": {
-      "sha512": "r0OA3N1Onua8AcTtFYpK03K3WdwJBL3iFW4XzfMA49ZmAKGf1ARAlrt6Q8WCdBI7nFDJCc1/bdMJ0ozWaq9rhA==",
+    "Microsoft.AspNetCore.Mvc.Abstractions/1.1.1": {
+      "sha512": "oXYnarlPEcpGA0hwaqsUIqNuoOntWl/jS0QT489ypL+WWYa2QsH1aDP+qnLWoybArZLCpYswrLTKia5hWpViog==",
       "type": "package",
-      "path": "Microsoft.AspNetCore.Mvc.Abstractions/1.1.0",
+      "path": "Microsoft.AspNetCore.Mvc.Abstractions/1.1.1",
       "files": [
-        "Microsoft.AspNetCore.Mvc.Abstractions.1.1.0.nupkg.sha512",
+        "Microsoft.AspNetCore.Mvc.Abstractions.1.1.1.nupkg.sha512",
         "Microsoft.AspNetCore.Mvc.Abstractions.nuspec",
         "lib/net451/Microsoft.AspNetCore.Mvc.Abstractions.dll",
         "lib/net451/Microsoft.AspNetCore.Mvc.Abstractions.xml",
@@ -5479,12 +5505,12 @@
         "lib/netstandard1.6/Microsoft.AspNetCore.Mvc.ApiExplorer.xml"
       ]
     },
-    "Microsoft.AspNetCore.Mvc.Core/1.1.0": {
-      "sha512": "6Gxoe6MJPbc9yVx7IEkDlzfNRzQ+JSvlVmFvugoNbpWAefU2F8d76aj7oiGewucXVI8c7oZ1Q0+rx7059j7/fA==",
+    "Microsoft.AspNetCore.Mvc.Core/1.1.1": {
+      "sha512": "iderNqoLhYGWiSmdkw0qXZp6gxWxIcOJJCYXNVjM4xBYzFdeQ4QQUStoUZSAEpC1a760jU5VR8bbP8mZe9KJXA==",
       "type": "package",
-      "path": "Microsoft.AspNetCore.Mvc.Core/1.1.0",
+      "path": "Microsoft.AspNetCore.Mvc.Core/1.1.1",
       "files": [
-        "Microsoft.AspNetCore.Mvc.Core.1.1.0.nupkg.sha512",
+        "Microsoft.AspNetCore.Mvc.Core.1.1.1.nupkg.sha512",
         "Microsoft.AspNetCore.Mvc.Core.nuspec",
         "lib/net451/Microsoft.AspNetCore.Mvc.Core.dll",
         "lib/net451/Microsoft.AspNetCore.Mvc.Core.xml",
@@ -6491,7 +6517,7 @@
       ]
     },
     "Microsoft.IdentityModel.Logging/1.0.0": {
-      "sha512": "8lt3q7o9xSLyKfja/D2J67N8EZLwISjXktkwxK275yOrZY16iNCHCWqtDVP1M/DHuC/LWFMoheF3lmaJC9UXQg==",
+      "sha512": "Ol7aYJKsY1UDDTnCjXai17G3bJ0Q7Xj97Ao4nCoSU3+sc1/uMaWhCs3RjsZnrapYbdBPtt1xTPbhC8R6M1MqWQ==",
       "type": "package",
       "path": "Microsoft.IdentityModel.Logging/1.0.0",
       "files": [
@@ -6504,7 +6530,7 @@
       ]
     },
     "Microsoft.IdentityModel.Protocols/2.0.0": {
-      "sha512": "dHV39tCYxj8yMySDOUhNGakFQSNl3PZcweBWevtHyUeX/8UbroL0sQUHNjE38/UE0c4RS43WvWn+GO39R0PqOA==",
+      "sha512": "ACezwKCnK5e+SECvwo1l7VWTd6tMdXhg2UPXOAJ7rh/v06q72VBFmc1hb40QEglDVRyV132HBI9zWRfHDCO2Gw==",
       "type": "package",
       "path": "Microsoft.IdentityModel.Protocols/2.0.0",
       "files": [
@@ -6517,7 +6543,7 @@
       ]
     },
     "Microsoft.IdentityModel.Protocols.OpenIdConnect/2.0.0": {
-      "sha512": "0TVkFvDN2fnDt7DelqZ5w7SEwpOiCycNc/CV1ZZjFEBY0Kn4EwG100Lhf7nvylm5CrgiDWYHb6Db8hnDDTpiWg==",
+      "sha512": "JNVtDo5nnrBL15wSFQPuXxDd+bhuqjLHSVpkoEK9j7uKNG6oT1G7jheM8B9zHhcmQAUtnuFabRtZy+HadGBcNw==",
       "type": "package",
       "path": "Microsoft.IdentityModel.Protocols.OpenIdConnect/2.0.0",
       "files": [
@@ -6530,7 +6556,7 @@
       ]
     },
     "Microsoft.IdentityModel.Tokens/5.0.0": {
-      "sha512": "VwNw+fm2nlbkL3GRO8b6WBlqs6M4q9Dft0CAg0TMHUYwuiU+4dciiIlZRC6q/HEcllKUvc0KDXt20n2PGcO1pA==",
+      "sha512": "EINdydCekJeyG+IyaB/3GbIfEeaOIU5GJiMmpCI+G+o1g9RvRHkS1hpG4KCp3J5nOLzr31k+rRtNrEQcJJEGOQ==",
       "type": "package",
       "path": "Microsoft.IdentityModel.Tokens/5.0.0",
       "files": [
@@ -8708,7 +8734,7 @@
       ]
     },
     "System.IdentityModel.Tokens.Jwt/5.0.0": {
-      "sha512": "Ne69BCr2FPAysLG7pOM/+U/XFwGg849GIML2NuqtfEwBC3l74SaUPN3AmJfHccBcgOSDL3jVLQ3/ZQTtd3g6JA==",
+      "sha512": "qq2qmY/lV/474QRm5/YBRX44Ez3K4qcqIeB7PC3TG+LlFRoTtVokUttj4TFTXyzOZ1B2JsuEFNFfW1W2FdtsFg==",
       "type": "package",
       "path": "System.IdentityModel.Tokens.Jwt/5.0.0",
       "files": [
@@ -12156,6 +12182,7 @@
       "AutoMapper >= 5.2.0",
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 1.2.0",
       "Microsoft.ApplicationInsights.AspNetCore >= 1.0.0",
+      "Microsoft.AspNetCore >= 1.1.0",
       "Microsoft.AspNetCore.Authentication.Cookies >= 1.1.0",
       "Microsoft.AspNetCore.Authentication.FaceBook >= 1.1.0",
       "Microsoft.AspNetCore.Authentication.Google >= 1.1.0",
@@ -12166,6 +12193,7 @@
       "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore >= 1.1.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 1.1.0",
       "Microsoft.AspNetCore.Mvc >= 1.1.0",
+      "Microsoft.AspNetCore.Mvc.Core >= 1.1.1",
       "Microsoft.AspNetCore.Server.IISIntegration >= 1.1.0",
       "Microsoft.AspNetCore.Server.Kestrel >= 1.1.0",
       "Microsoft.AspNetCore.StaticFiles >= 1.1.0",
@@ -12181,15 +12209,14 @@
       "Microsoft.Extensions.Logging.Console >= 1.1.0",
       "Microsoft.Extensions.Logging.Debug >= 1.1.0",
       "Microsoft.Extensions.Options.ConfigurationExtensions >= 1.1.0",
+      "Microsoft.NETCore.App >= 1.1.0",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.1.0",
       "Microsoft.VisualStudio.Web.CodeGeneration.Tools >= 1.1.0-preview4-final",
       "OpenIddict >= 1.0.0-beta2-0544",
       "OpenIddict.EntityFrameworkCore >= 1.0.0-beta2-0544",
       "OpenIddict.Mvc >= 1.0.0-beta2-0544"
     ],
-    ".NETCoreApp,Version=v1.1": [
-      "Microsoft.NETCore.App >= 1.1.0"
-    ]
+    ".NETCoreApp,Version=v1.1": []
   },
   "tools": {},
   "projectFileToolGroups": {}

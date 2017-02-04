@@ -74,8 +74,8 @@ export class DataService {
      * There is the base generic http request method
      */
     httpRequest<T>(url: string, options?: RequestOptionsArgs) {
-        let threadID = 'N' + Math.random() + '' + Date.now();
-        this.blockerSemafor.push(threadID);
+        let threadID = 'N' + Math.random() + '' + Date.now(); // Own thread
+        this.blockerSemafor.push(threadID); 
 
         this.store.dispatch({ type: ActionTypes.SET_Blocker, payload: true }); //block UI
 

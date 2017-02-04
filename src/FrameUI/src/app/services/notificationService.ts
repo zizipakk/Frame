@@ -4,6 +4,9 @@ import { Message } from 'primeng/primeng';
 import { IappState } from '../models/appState';
 import { ActionTypes } from '../reducers/reducer.settings'
 
+/**
+ * Local notifi
+ */
 @Injectable()
 export class NotificationService {
 
@@ -57,27 +60,5 @@ export class NotificationService {
         messages.forEach(f => payload.push({severity: 'error', summary: 'Error Message', detail: f}));
         this.store.dispatch({ type: ActionTypes.SET_Notification, payload: payload});
     }
-
-    // printConfirmationDialog(message: string, okCallback: () => any) {
-        // this.notifier.confirm(message, function (e: any) {
-        //     if (e) {
-        //         okCallback();
-        //     } else {
-        //     }
-        // });
-    // }
-
-    // handleError(error: any, callback?: () => void) {
-    //     console.log(error);
-    //     if (error.status == 403) {
-    //         this.printErrorMessage('Forbidden');
-    //     }
-    //     else if (error.status == 401) {
-    //         if (callback) {
-    //             callback();
-    //         }
-    //         this.printErrorMessage('Unauthorized');
-    //     }
-    // }
 
 }

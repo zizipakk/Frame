@@ -1,14 +1,14 @@
 ﻿import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { UserModel } from '../models/user';
-import { IappState } from '../models/appState';
 import { ActionTypes } from '../reducers/reducer.settings'
+import { IappState } from '../models/appState';
 import { API } from '../app.settings';
 import { DataService } from './dataService';
 import { Registration } from '../models/registration';
 import { LoginInputModel } from '../models/user';
 import { OpenIdConnectRequest } from '../models/openIdConnectRequest';
 import { SignInResult } from '../models/signInResult';
+import { UserModel } from '../models/user';
 
 /** 
     A class to manage user authentication
@@ -18,7 +18,7 @@ import { SignInResult } from '../models/signInResult';
 @Injectable()
 export class MembershipService {
 
-    idAction = 'connect'
+    readonly idAction = 'connect'
     idLogin = API.AUTH + this.idAction + '/token';
     idRegister = API.AUTH + this.idAction + '/register';
     idLogout = API.AUTH + this.idAction + '/logoff';
@@ -66,6 +66,7 @@ export class MembershipService {
         let grant_type = 'password';
         let nonce = 'N' + Math.random() + '' + Date.now();
 
+        // TODO ?
         let offlineaccess = creds.rememberLogin ? ' offlineaccess' : '';
         let scope = 'openid profile roles' + offlineaccess;
 
