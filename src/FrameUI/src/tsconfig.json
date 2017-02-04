@@ -8,7 +8,7 @@
     "mapRoot": "./",
     "module": "es6",
     "moduleResolution": "node",
-    "outDir": "./wwwroot/",
+    "outDir": "../wwwroot/",
     "rootDir": ".",
     "sourceMap": true,
     "target": "es5",

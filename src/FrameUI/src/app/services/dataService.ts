@@ -76,11 +76,14 @@ export class DataService {
     httpRequest<T>(url: string, options?: RequestOptionsArgs) {
         let threadID = 'N' + Math.random() + '' + Date.now();
         this.blockerSemafor.push(threadID);
+
         this.store.dispatch({ type: ActionTypes.SET_Blocker, payload: true }); //block UI
+
         return this.http.request(url, options)
-            .map(response => this.getResponseBody<T>(response))
-            .catch(err => { 
-                return Observable.throw(this.errorInfo(err));
+            .map(response =>
+                this.getResponseBody<T>(response))
+            .catch(error => {
+                return Observable.throw(this.errorInfo(error));
             })
             .finally(() => {
                 if (this.blockerSemafor.length === 1
@@ -91,31 +94,40 @@ export class DataService {
             });
     }
 
-    getResponseBody<T>(response: any)
+    getResponseBody<T>(response: Response): T
     {
-        let body = response._body;
-        if (body) { 
-            return <T>JSON.parse(body);
-        } else {
-            return <T>response;
+        try {
+            return <T>(response.json()); // this take exception, if response body not json
+        } catch(e) {
+            return <T>(<any>(response.text()));
         }
+
     }
 
-    // TODO: If we become Html body from MVC by 500...
-    errorInfo(error: any)
+    errorInfo(error: Response)
     {
-        let response = <Response>error;
         let messages: string[] = [];
-        let body =  error._body;
-        if (body && response.status === 400) // Error message from OpenIDDict server
+        let body: any;
+
+        try {
+            body =  error.json(); // this take exception, if body not json
+        } catch(e) {
+            body =  error.text();
+        }
+
+        if (body)  // TODO: If we become Html body from MVC by 500...
         {
-            let bodyJson = JSON.parse(body);
-            messages.push('Error: ' + bodyJson.error + ', Description: ' + bodyJson.error_description); 
-        } else {
-            switch(response.status)
+            switch(error.status)
             {
                 case 0:
                     messages.push('Network error. Connection refused.');
+                    break;
+                case 400: // Error message from OpenIDDict server
+                    if (body.error) { // json object
+                        messages.push('Error: ' + body.error + ', Description: ' + body.error_description);
+                    } else { // text
+                        messages.push('Error: ' + body);
+                    }
                     break;
                 case 401:
                     messages.push('Unauthorized');
@@ -123,11 +135,15 @@ export class DataService {
                 case 403:
                     messages.push('Forbidden');
                     break;
+                case 500: // Wont work, because no allow origin header in response
+                    messages.push('Internal Server Error');
+                    break;
                 default:
-                    messages.push(response.statusText);
+                    messages.push(error.statusText);
                     break;
             }
         }
+
         return messages;
     }
 }

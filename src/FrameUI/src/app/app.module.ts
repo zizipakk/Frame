@@ -1,5 +1,5 @@
 // ng
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -37,18 +37,19 @@ import { DataService } from './services/dataService';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 import { AuthGuard } from './app.guard';
+import { AppErrorHandler } from './app.error';
 
 @NgModule({
-  entryComponents: [
+  entryComponents: [ // prebuild
     Login,
     Register
   ],
   declarations: [
     AppComponent,
-    Home, 
+    Home,
     Account,
-    Login, 
-    Register    
+    Login,
+    Register
   ],
   imports: [
     AppRouting, // inherited from ModuleWithProviders, so it is singleton
@@ -63,7 +64,7 @@ import { AuthGuard } from './app.guard';
     PasswordModule,
     MessagesModule,
     MenuModule,
-    MenubarModule,    
+    MenubarModule,
     ToolbarModule,
     GrowlModule,
     BlockUIModule,
@@ -76,12 +77,13 @@ import { AuthGuard } from './app.guard';
      })
   ],
   providers: [ // singletons in whole app
-      { provide: LocationStrategy, useClass: PathLocationStrategy },
+      { provide: LocationStrategy, useClass: PathLocationStrategy }, // override
+      { provide: ErrorHandler, useClass: AppErrorHandler },
       DataService,
       MembershipService,
       NotificationService,
       AuthGuard
-  ],  
+  ],
   bootstrap: [
     AppComponent
   ]

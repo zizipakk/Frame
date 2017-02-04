@@ -135,6 +135,10 @@ namespace Frame.Controllers
                 ticket.SetResources(Frame.Startup.StaticConfig["profiles:Frame:launchUrl"]);
                 ticket.SetScopes(scope);
 
+
+                throw new Exception();
+
+
                 // Sign in the user
                 //var response = _mapper.Map<OpenIdConnectResponse>(SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme));
                 //response.State = request.State;
