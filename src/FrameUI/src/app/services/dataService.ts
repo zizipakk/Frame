@@ -54,9 +54,16 @@ export class DataService {
     post<T>(baseUri: string, data?: any) {
         let args: RequestOptionsArgs = ({
             method: RequestMethod.Post,
-            headers: data && data.indexOf('grant_type') !== -1
-                ? AuthHeaders.HEADERS
-                : AppHeaders.HEADERS,
+            headers: AppHeaders.HEADERS,
+            body: JSON.stringify(data)
+        });
+        return this.httpRequest<T>(baseUri, args);
+    }
+
+    postAuth<T>(baseUri: string, data?: any) {
+        let args: RequestOptionsArgs = ({
+            method: RequestMethod.Post,
+            headers: AuthHeaders.HEADERS,
             body: data
         });
         return this.httpRequest<T>(baseUri, args);

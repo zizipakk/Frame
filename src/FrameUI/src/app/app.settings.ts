@@ -3,7 +3,7 @@ import { Headers, BaseRequestOptions } from '@angular/http';
 // TODO: better get this from unauth API, and put in redux store 
 const apiHostPath = 'http://localhost:5200/api'; //URI scheme + host + main path 
 const authHostPath = 'http://localhost:5200/';
-const logHostPath = 'http://localhost:6200/';
+const logHostPath = 'http://localhost:6200/api/';
 
 export class API {
     public static get AUTH(): string { return authHostPath; }

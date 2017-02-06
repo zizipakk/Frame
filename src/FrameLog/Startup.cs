@@ -58,8 +58,8 @@ namespace FrameLog
             services.AddCors();
 
             // Add application services.
-            services.AddTransient<ILogService>();
-            services.AddScoped<ILogRepository>();
+            services.AddTransient<ILogService, LogService>();
+            services.AddScoped<ILogRepository, LogRepository>(); // TODO: Just because EF ctx scoped
 
         }
 

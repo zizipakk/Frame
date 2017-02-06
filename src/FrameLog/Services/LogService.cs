@@ -15,12 +15,12 @@ namespace FrameLog.Services
         Task<int> SetAsync(ILogDTO log);
     }
 
-    class LogService : ILogService
+    public class LogService : ILogService
     {
         private readonly ILogRepository repo;
         private readonly IMapper mapper;
 
-        LogService(ILogRepository repo, IMapper mapper)
+        public LogService(ILogRepository repo, IMapper mapper)
         {
             this.repo = repo;
             this.mapper = mapper;

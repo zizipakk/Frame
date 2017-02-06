@@ -10,7 +10,7 @@ namespace FrameLog.Data
         DateTime TimeStamp { get; set; }
     }
 
-    internal class WithIdInit
+    public class WithIdInit
     {
         internal WithIdInit()
         {
@@ -21,7 +21,7 @@ namespace FrameLog.Data
         public virtual Guid Id { get; set; }
     }
 
-    class Log : WithIdInit, WithIdAndTimeStamp
+    public class Log : WithIdInit, WithIdAndTimeStamp
     {
         public DateTime TimeStamp { get; set; }
         public Guid? UserId { get; set; }

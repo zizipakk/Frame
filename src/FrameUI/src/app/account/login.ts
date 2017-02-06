@@ -62,6 +62,11 @@ export class Login implements AfterViewInit
                 this.message.push({severity: 'error', summary: 'Error Message', detail: error}); // Only on dialog
             },
             () => {});
+
+        
+        // test
+        throw(new Error("fokk"));
+            
     };
 
 }

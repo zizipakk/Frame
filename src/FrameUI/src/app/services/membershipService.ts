@@ -79,7 +79,7 @@ export class MembershipService {
         model.password = creds.password;
         model.scope = scope;
 
-        return this.dataService.post<SignInResult>(this.idLogin, this.encodeQueryData(model));
+        return this.dataService.postAuth<SignInResult>(this.idLogin, this.encodeQueryData(model));
     }
 
     loginCallback(result: SignInResult) {

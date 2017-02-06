@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace FrameLog.Repositories
 {
-    interface ILogRepository
+    public interface ILogRepository
     {
         Task<IEnumerable<Log>> GetListByUserIdAsync(Guid userid);
         Task<Log> GetByIdAsync(Guid id);
         Task<int> SetAsync(Log log);
     }
 
-    class LogRepository : ILogRepository
+    public class LogRepository : ILogRepository
     {
         private readonly ApplicationDbContext db;
 
-        LogRepository(ApplicationDbContext db)
+        public LogRepository(ApplicationDbContext db)
         {
             this.db = db;
         }

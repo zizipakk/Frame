@@ -17,10 +17,10 @@ namespace FrameLog.Controllers
         private readonly ILogger logger;
         private readonly IMapper mapper;
 
-        public LogController(ILogService logService, ILogger logger, IMapper mapper)
+        public LogController(ILogService logService, ILoggerFactory loggerFactory, IMapper mapper)
         {
             this.logService = logService;
-            this.logger = logger;
+            logger = loggerFactory.CreateLogger<LogController>();
             this.mapper = mapper;
         }
 
@@ -29,6 +29,7 @@ namespace FrameLog.Controllers
         [HttpGet]
         public async Task<IEnumerable<string>> Get()
         {
+
             return await Task.Run(() => new string[] { "value1", "value2" });
         }
 
@@ -66,7 +67,7 @@ namespace FrameLog.Controllers
 
         // POST api/log
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]ILogView log)
+        public async Task<IActionResult> Post(ILogView log)
         {
             try
             {

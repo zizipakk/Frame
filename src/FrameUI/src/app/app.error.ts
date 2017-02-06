@@ -46,20 +46,24 @@ export class AppErrorHandler implements ErrorHandler {
 
         // At first to console
         this.sendToConsole(unwrappedError, 'ErrorHandler');
-        
-        // Than try to server            
-        this.dataService.post<string>(
-          this.apiLog, 
-          { // TODO viewmodel
+
+        // TODO viewmodel
+        let data = 
+          { 
               type: unwrappedError.name,
               message: unwrappedError.message,
               stack: unwrappedError.stack,
-              location: unwrappedError.location.href
-          })
+              location: unwrappedError.location ? unwrappedError.location.href : ''
+          };
+        this.dataService.post<string>(
+          this.apiLog,
+          data
+          )
           .subscribe(result => {
               this.notificationService.printInfoNotification(new Array<string>('We succesfull sent the error to us. Your ticked id: ' + result));
           },
           error => {
+              this.sendToConsole(error, 'Network Error');
               this.notificationService.printErrorNotification(new Array<string>('We could not send the error. Pls check the browser console!'));
           },
           () => {});
