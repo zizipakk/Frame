@@ -77,11 +77,11 @@ import { AppErrorHandler } from './app.error';
      })
   ],
   providers: [ // singletons in whole app
-      { provide: LocationStrategy, useClass: PathLocationStrategy }, // override
+      { provide: LocationStrategy, useClass: PathLocationStrategy }, // overrides
       { provide: ErrorHandler, useClass: AppErrorHandler },
       DataService,
       MembershipService,
-      NotificationService,
+      NotificationService,      
       AuthGuard
   ],
   bootstrap: [

@@ -1,23 +1,25 @@
 import { ErrorHandler } from '@angular/core';
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 import { API } from './app.settings';
-import { DataService } from './services/dataservice';
-import { NotificationService } from './services/notificationservice'; 
+import { DataService } from './services/dataService';
+import { NotificationService } from './services/notificationService'; 
 
-// declare var newrelic: { noticeError( error: any ) : void; };
-// declare var Raygun: { send( error: any ) : void; }
-// declare var Rollbar: { error( error: any ) : void; }
-// declare var trackJs: { track( error: any ) : void; }
-
+/**
+ * Global error handling and log sending
+ */
 @Injectable()
 export class AppErrorHandler implements ErrorHandler {
-  
+
   readonly apiAction = 'log';
   apiLog = API.LOG + this.apiAction;
+  rethrowError: boolean;
 
   constructor(
-    private dataService: DataService,
-    private notificationService: NotificationService) {
+    // TODO: We cant direct inject DataService, because cycling ref (mybe http | routing). So just do it through injector
+    private injector: Injector,
+    private notificationService: NotificationService
+    ) {
+    this.rethrowError = false; // setup behavior
   }
 
   // I send the error the browser console (safely, if it exists).
@@ -31,6 +33,12 @@ export class AppErrorHandler implements ErrorHandler {
     }
   }
   
+  // This property only for indirect DataService usage 
+  get dataService(): DataService {
+    return this.injector.get(DataService);
+  }
+ 
+
   public handleError(error: any) : void {
     try {
         let unwrappedError = this.findOriginalError(error);
@@ -42,7 +50,7 @@ export class AppErrorHandler implements ErrorHandler {
         // Than try to server            
         this.dataService.post<string>(
           this.apiLog, 
-          {
+          { // TODO viewmodel
               type: unwrappedError.name,
               message: unwrappedError.message,
               stack: unwrappedError.stack,
@@ -63,19 +71,20 @@ export class AppErrorHandler implements ErrorHandler {
         console.groupEnd();
     }
 
-    // if ( base.rethrowError ) {
-    //     throw( error );
-    // }
+    // if neccessary drop to the next handler
+    if (this.rethrowError) {
+        throw(error);
+    }
 
   }
 
   // I attempt to find the underlying error in the given Wrapped error.
   private findOriginalError(error: any) {
-      while ( error && error.originalError ) {
+      while (error && error.originalError) {
           error = error.originalError;
       }
 
-      return( error );
+      return(error);
 
   }
 
