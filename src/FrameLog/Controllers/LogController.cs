@@ -67,7 +67,7 @@ namespace FrameLog.Controllers
 
         // POST api/log
         [HttpPost]
-        public async Task<IActionResult> Post(ILogView log)
+        public async Task<IActionResult> Post([FromBody]LogView log)
         {
             try
             {

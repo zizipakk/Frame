@@ -29,6 +29,15 @@ export class MembershipService {
         private dataService: DataService
         ) {
         this.storage = sessionStorage;
+        let user = new UserModel({ // At first we check the persistent data in local storage
+            userId: this.retrieve('UserId'),
+            isAuthorized: this.retrieve('IsAuthorized'),
+            hasAdminRole: this.retrieve('HasAdminRole'),            
+            userName: this.retrieve('UserName')
+        });
+
+        // Memory init from local store
+        this.appStore.dispatch({ type: ActionTypes.SET_User, payload: user });
     }
 
     /** Read store */
@@ -112,7 +121,7 @@ export class MembershipService {
         this.store('authorizationData', token);
         this.store('authorizationDataIdToken', id_token);
 
-        let user = new UserModel({isAuthorized: false, hasAdminRole: false, userName: ''})
+        let user = new UserModel();
         user.isAuthorized = true;
         this.store('IsAuthorized', true);
 
@@ -138,6 +147,13 @@ export class MembershipService {
             console.log('User: ' + data.username);
             user.userName = data.username;
             this.store('UserName', data.username);
+        }
+
+        if (data.sub)
+        {
+            console.log('UserId: ' + data.sub);
+            user.userId = data.sub;
+            this.store('UserId', data.sub);
         }
 
         this.appStore.dispatch({ type: ActionTypes.SET_User, payload: user });

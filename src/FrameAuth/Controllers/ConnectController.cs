@@ -132,7 +132,7 @@ namespace FrameAuth.Controllers
                     OpenIddictConstants.Scopes.Roles
                 }.Intersect(request.GetScopes());
 
-                ticket.SetResources(FrameAuth.Startup.StaticConfig["profiles:Frame:launchUrl"]);
+                ticket.SetResources(Startup.StaticConfig["profiles:FrameAuth:launchUrl"]);
                 ticket.SetScopes(scope);
 
                 // Sign in the user

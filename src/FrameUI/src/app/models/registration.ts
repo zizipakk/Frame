@@ -1,20 +1,24 @@
-﻿export class Registration {
-    Username: string;
-    Password: string;
-    Email: string;
-
-    constructor(username: string,
-        password: string,
-        email: string) {
-        this.Username = username;
-        this.Password = password;
-        this.Email = email;
-    }
+﻿export interface Iregistration {
+    username: string;
+    password: string;
+    email: string;
 }
 
-export const TestArray = ([
-    { Id: "name", Value: "Jack" },
-    { Id: "desc", Value: "The Ripper" },
-    { Id: "dist", Value: "10" }
-]);
-let TestName = TestArray.filter(m => m.Id == 'name')[0].Value;
+
+export class Registration implements Iregistration {
+    public username: string;
+    public password: string;
+    public email: string;
+
+    constructor(model?: Iregistration) {
+        if (model) {
+            this.username = model.username;
+            this.password = model.password;
+            this.email = model.email;
+        } else {
+            this.username = '';
+            this.password = '';
+            this.email = '';
+        }
+    }
+}

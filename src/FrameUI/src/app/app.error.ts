@@ -1,5 +1,9 @@
-import { ErrorHandler } from '@angular/core';
-import { Injectable, Injector } from "@angular/core";
+import { Injectable, Injector, ErrorHandler, OnDestroy } from "@angular/core";
+import { Subscription } from 'rxjs/Rx';
+import { Store } from '@ngrx/store';
+import { IappState } from './models/appState';
+import { UserModel } from './models/user';
+import { LogModel } from './models/log';
 import { API } from './app.settings';
 import { DataService } from './services/dataService';
 import { NotificationService } from './services/notificationService'; 
@@ -8,19 +12,31 @@ import { NotificationService } from './services/notificationService';
  * Global error handling and log sending
  */
 @Injectable()
-export class AppErrorHandler implements ErrorHandler {
+export class AppErrorHandler implements ErrorHandler, OnDestroy {
 
   readonly apiAction = 'log';
   apiLog = API.LOG + this.apiAction;
   rethrowError: boolean;
+  user: UserModel;
+  subscription: Subscription;
 
   constructor(
+    private store: Store<IappState>,
     // TODO: We cant direct inject DataService, because cycling ref (mybe http | routing). So just do it through injector
     private injector: Injector,
     private notificationService: NotificationService
     ) {
-    this.rethrowError = false; // setup behavior
-  }
+      this.rethrowError = false; // setup behavior
+      this.subscription = 
+        this.store.select(s => s.UserReducer)
+          .subscribe((user) => { 
+            this.user = user; 
+          });
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
 
   // I send the error the browser console (safely, if it exists).
   public sendToConsole(error: any, blockText?: string) {
@@ -48,13 +64,14 @@ export class AppErrorHandler implements ErrorHandler {
         this.sendToConsole(unwrappedError, 'ErrorHandler');
 
         // TODO viewmodel
-        let data = 
+        let data = new LogModel(
           { 
+              userId: this.user.userId,
               type: unwrappedError.name,
               message: unwrappedError.message,
               stack: unwrappedError.stack,
               location: unwrappedError.location ? unwrappedError.location.href : ''
-          };
+          });
         this.dataService.post<string>(
           this.apiLog,
           data

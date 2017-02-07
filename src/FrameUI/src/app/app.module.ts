@@ -52,7 +52,7 @@ import { AppErrorHandler } from './app.error';
     Register
   ],
   imports: [
-    AppRouting, // inherited from ModuleWithProviders, so it is singleton
+    AppRouting, // inherited from ModuleWithProviders, so it is singleton, and have instance in first steps
     BrowserModule,
     FormsModule,
     HttpModule,
@@ -76,16 +76,21 @@ import { AppErrorHandler } from './app.error';
       BlockerReducer
      })
   ],
-  providers: [ // singletons in whole app
-      { provide: LocationStrategy, useClass: PathLocationStrategy }, // overrides
-      { provide: ErrorHandler, useClass: AppErrorHandler },
-      DataService,
-      MembershipService,
-      NotificationService,      
-      AuthGuard
+
+  // Singletons in whole app.
+  // * Instantiate sequence like dependency or first usage (AppGuard)
+  providers: [ 
+      { provide: LocationStrategy, useClass: PathLocationStrategy }, // ?. Maybe with a common framework
+
+      NotificationService, // 1. : dep in AppErrorHandler
+      { provide: ErrorHandler, useClass: AppErrorHandler }, // 2. : dep in framework
+      DataService, // 3. : dep in MembershipService
+      MembershipService, // 4. : dep in ...
+      AuthGuard, // 5. : First usage in MembershipService with routing
   ],
-  bootstrap: [
-    AppComponent
+  
+  bootstrap: [ // The instantiate follows the singletons
+    AppComponent 
   ]
 })
 export class AppModule { }

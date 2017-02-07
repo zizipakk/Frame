@@ -10,14 +10,14 @@ namespace FrameLog.Mapping
         public MappingProfile()
         {
             // Entity > DTO > View
-            CreateMap<Log, ILogDTO>();
-            CreateMap<IEnumerable<Log>, IEnumerable<ILogDTO>>();
-            CreateMap<ILogDTO, ILogView>();
-            CreateMap<IEnumerable<ILogDTO>, IEnumerable<ILogView>>();
+            CreateMap<Log, LogDTO>();
+            CreateMap<IEnumerable<Log>, IEnumerable<LogDTO>>();
+            CreateMap<LogDTO, LogView>();
+            CreateMap<IEnumerable<LogDTO>, IEnumerable<LogView>>();
 
             // View > DTO > Entity
-            CreateMap<ILogView, ILogDTO>();
-            CreateMap<ILogDTO, Log>();
+            CreateMap<LogView, LogDTO>();
+            CreateMap<LogDTO, Log>();
 
         }
     }

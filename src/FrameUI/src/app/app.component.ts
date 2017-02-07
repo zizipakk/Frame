@@ -16,7 +16,7 @@ import { NotificationService } from './services/notificationService';
 })
 export class AppComponent implements OnInit, OnDestroy 
 {
-
+    // 1. App init secquent
     menuItems: MenuItem[];
     user: UserModel;
     notification: Message[];
@@ -24,42 +24,48 @@ export class AppComponent implements OnInit, OnDestroy
     blocked: boolean;
     subscriptions: Subscription[];
 
+    // 2. init seq
     constructor(
+        // 2.1. init seq
         private store: Store<IappState>,
         private membershipService: MembershipService,
         private notificationService: NotificationService,
         private router: Router) 
     {
-        this.user = new UserModel({ // At first we check the persistent data in local storage
-            isAuthorized: this.membershipService.retrieve('IsAuthorized'),
-            hasAdminRole: this.membershipService.retrieve('HasAdminRole'),            userName: this.membershipService.retrieve('UserName')
-        });
+        // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
     }
 
-    ngOnInit() {
-        // Init from local store
-        this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });
-
+    // 3. init seq
+    ngOnInit() {        
+        // Common app subscriptions
         this.subscriptions.push(
-            this.store.select(s => s.UserReducer).subscribe(
-                (user) => {
+            this.store
+                .select(s => s.UserReducer)
+                .subscribe((user) => {
                         this.user = user;
                         this.menuItems = this.refreshMenu();
-                }
-            )
+                })
         );
         this.subscriptions.push(
-            this.store.select(s => s.NotificationReducer)
-                .subscribe((notification) => { this.notification = notification; })
+            this.store
+                .select(s => s.NotificationReducer)
+                .subscribe((notification) => { 
+                    this.notification = notification;
+                })
         );
         this.subscriptions.push(
-            this.store.select(s => s.MessageReducer)
-                .subscribe((message) => { this.message = message; })
+            this.store
+                .select(s => s.MessageReducer)
+                .subscribe((message) => {
+                    this.message = message; 
+                })
         );
         this.subscriptions.push(
             this.store.select(s => s.BlockerReducer)
-                .subscribe((blocked) => { this.blocked = blocked; })
+                .subscribe((blocked) => { 
+                    this.blocked = blocked; 
+                })
         );
     }
 

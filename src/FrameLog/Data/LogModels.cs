@@ -10,20 +10,21 @@ namespace FrameLog.Data
         DateTime TimeStamp { get; set; }
     }
 
-    public class WithIdInit
+    public class WithInit : WithIdAndTimeStamp
     {
-        internal WithIdInit()
+        internal WithInit()
         {
             Id = Guid.NewGuid();
+            TimeStamp = DateTime.UtcNow;
         }
 
         [Key]
         public virtual Guid Id { get; set; }
+        public DateTime TimeStamp { get; set; }
     }
 
-    public class Log : WithIdInit, WithIdAndTimeStamp
-    {
-        public DateTime TimeStamp { get; set; }
+    public class Log : WithInit
+    {        
         public Guid? UserId { get; set; }
         public string Type { get; set; }
         public string Message { get; set; }

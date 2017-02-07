@@ -22,7 +22,7 @@ export class Register implements AfterViewInit {
         private notificationService: NotificationService,
         private router: Router
     ) {
-        this.newUser = new Registration('', '', '');
+        this.newUser = new Registration();
     }
 
     /** ng event */
@@ -56,7 +56,7 @@ export class Register implements AfterViewInit {
             error => console.error('Error: ' + error),
             () => {
                 if (registrationResult.Succeeded) {
-                    this.notificationService.printSuccessMessage(new Array<string>('Dear ' + this.newUser.Username + ', please login with your credentials'));
+                    this.notificationService.printSuccessMessage(new Array<string>('Dear ' + this.newUser.email + ', please login with your credentials'));
                     this.router.navigate(['/account/login']);
                 }
                 else {

@@ -53,20 +53,16 @@ export class Login implements AfterViewInit
     login() {
         this.membershipService.login(this.user)
             .subscribe(res => {
-                this.membershipService.loginCallback(res);
-                this.notificationService.printSuccessNotification(new Array<string>('Welcome back ' + this.user.email + '!'));
-                this.router.navigate(['/']);
-            },
-            error => {
-                this.membershipService.resetAuthorizationData();
-                this.message.push({severity: 'error', summary: 'Error Message', detail: error}); // Only on dialog
-            },
-            () => {});
-
-        
-        // test
-        throw(new Error("fokk"));
-            
+                    this.membershipService.loginCallback(res);
+                    this.notificationService.printSuccessNotification(new Array<string>('Welcome back ' + this.user.email + '!'));
+                    this.router.navigate(['/']);
+                },
+                error => {
+                    this.membershipService.resetAuthorizationData();
+                    this.message.push({severity: 'error', summary: 'Error Message', detail: error}); // Only on dialog
+                },
+                () => {}
+            );
     };
 
 }
