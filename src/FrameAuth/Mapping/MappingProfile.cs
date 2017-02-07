@@ -1,6 +1,7 @@
-﻿//using AspNet.Security.OpenIdConnect.Primitives;
-using AutoMapper;
-//using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using FrameAuth.Data;
+using FrameAuth.Models.UserViewModels;
+using System.Collections.Generic;
 
 namespace FrameAuth.Mapping
 {
@@ -8,7 +9,8 @@ namespace FrameAuth.Mapping
     {
         public MappingProfile()
         {
-            //CreateMap<SignInResult, OpenIdConnectResponse>();
+            CreateMap<ApplicationUser, UserViewModel>();
+            CreateMap<List<ApplicationUser>, List<UserViewModel>>();
         }
     }
 }

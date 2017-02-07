@@ -9,7 +9,7 @@ using AspNet.Security.OpenIdConnect.Server;
 using OpenIddict.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using FrameAuth.Models;
+using FrameAuth.Data;
 using AutoMapper;
 using System;
 using Microsoft.Extensions.Logging;
@@ -19,10 +19,10 @@ namespace FrameAuth.Controllers
     [Authorize]
     public class ConnectController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger _logger;
-        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly ILogger logger;
+        private readonly IMapper mapper;
 
         public ConnectController(
             UserManager<ApplicationUser> userManager,
@@ -30,10 +30,10 @@ namespace FrameAuth.Controllers
             ILoggerFactory loggerFactory,
             IMapper mapper)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = loggerFactory.CreateLogger<ConnectController>();
-            _mapper = mapper;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            logger = loggerFactory.CreateLogger<ConnectController>();
+            this.mapper = mapper;
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace FrameAuth.Controllers
                 if (!request.IsPasswordGrantType())
                 {
                     // Return bad request if the request is not for password grant type
-                    _logger.LogError(1, "Grant type is missing from request.");
+                    logger.LogError(1, "Grant type is missing from request.");
                     return BadRequest(new OpenIdConnectResponse
                     {
                         Error = OpenIdConnectConstants.Errors.UnsupportedGrantType,
@@ -59,11 +59,11 @@ namespace FrameAuth.Controllers
                 }
 
                 //var user = await _userManager.FindByNameAsync(request.Username);
-                var user = await _userManager.FindByEmailAsync(request.Username);
+                var user = await userManager.FindByEmailAsync(request.Username);
                 if (user == null)
                 {
                     // Return bad request if the user doesn't exist
-                    _logger.LogError(2, "Not found user.");
+                    logger.LogError(2, "Not found user.");
                     return BadRequest(new OpenIdConnectResponse
                     {
                         Error = OpenIdConnectConstants.Errors.InvalidGrant,
@@ -73,10 +73,10 @@ namespace FrameAuth.Controllers
 
                 // Check that the user can sign in and is not locked out.
                 // If two-factor authentication is supported, it would also be appropriate to check that 2FA is enabled for the user
-                if (!await _signInManager.CanSignInAsync(user) || (_userManager.SupportsUserLockout && await _userManager.IsLockedOutAsync(user)))
+                if (!await signInManager.CanSignInAsync(user) || (userManager.SupportsUserLockout && await userManager.IsLockedOutAsync(user)))
                 {
                     // Return bad request is the user can't sign in
-                    _logger.LogError(3, "The specified user cannot sign in.");
+                    logger.LogError(3, "The specified user cannot sign in.");
                     return BadRequest(new OpenIdConnectResponse
                     {
                         Error = OpenIdConnectConstants.Errors.InvalidGrant,
@@ -84,10 +84,10 @@ namespace FrameAuth.Controllers
                     });
                 }
 
-                if (!await _userManager.CheckPasswordAsync(user, request.Password))
+                if (!await userManager.CheckPasswordAsync(user, request.Password))
                 {
                     // Return bad request if the password is invalid
-                    _logger.LogError(4, "Invalid username or password.");
+                    logger.LogError(4, "Invalid username or password.");
                     return BadRequest(new OpenIdConnectResponse
                     {
                         Error = OpenIdConnectConstants.Errors.InvalidGrant,
@@ -95,17 +95,17 @@ namespace FrameAuth.Controllers
                     });
                 }
 
-                _logger.LogInformation(1, "User logged in.");
+                logger.LogInformation(1, "User logged in.");
 
                 // The user is now validated, so reset lockout counts, if necessary
-                if (_userManager.SupportsUserLockout)
+                if (userManager.SupportsUserLockout)
                 {
-                    _logger.LogInformation(2, "Lock-counter reseted.");
-                    await _userManager.ResetAccessFailedCountAsync(user);
+                    logger.LogInformation(2, "Lock-counter reseted.");
+                    await userManager.ResetAccessFailedCountAsync(user);
                 }
 
                 // Create the principal
-                var principal = await _signInManager.CreateUserPrincipalAsync(user);
+                var principal = await signInManager.CreateUserPrincipalAsync(user);
 
                 // Claims will not be associated with specific destinations by default, so we must indicate whether they should
                 // be included or not in access and identity tokens.
@@ -143,7 +143,7 @@ namespace FrameAuth.Controllers
             }
             catch (Exception e) 
             {
-                _logger.LogError(5, e.Message);
+                logger.LogError(5, e.Message);
                 // TODO 500-at elnyomja a kestrel, szóval ezt nem engedi át
                 return BadRequest(new OpenIdConnectResponse
                 {
@@ -159,8 +159,8 @@ namespace FrameAuth.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LogOff() //TODO ?????????????
         {
-            await _signInManager.SignOutAsync();
-            _logger.LogInformation(3, "User logged out.");
+            await signInManager.SignOutAsync();
+            logger.LogInformation(3, "User logged out.");
 
             return Ok(new JsonResult(null));
         }

@@ -6,10 +6,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using FrameAuth.Models;
+using FrameAuth.Data;
 using FrameAuth.Models.AccountViewModels;
 using FrameAuth.Services;
-using FrameAuth.Controllers;
 
 namespace FrameAuth.Controllers
 {

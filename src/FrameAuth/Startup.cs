@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using FrameAuth.Data;
-using FrameAuth.Models;
 using FrameAuth.Services;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;

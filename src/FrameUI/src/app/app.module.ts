@@ -16,7 +16,9 @@ import {
   MenubarModule,
   ToolbarModule,
   GrowlModule,
-  BlockUIModule
+  BlockUIModule,
+  DataTableModule,
+  SharedModule
 } from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
 import { 
@@ -68,6 +70,8 @@ import { AppErrorHandler } from './app.error';
     ToolbarModule,
     GrowlModule,
     BlockUIModule,
+    DataTableModule,
+    SharedModule,
 
     StoreModule.provideStore({  // singleton the whole store with reducers
       UserReducer,

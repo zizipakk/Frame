@@ -32,9 +32,9 @@ export class DataService {
         return this.httpRequest<T>(
             baseUri
                 + '/' + id.toString() 
-                + '&' + (pageSize 
-                            ? encodeURI(pageSize.toString()) 
-                            : ''),
+                + (pageSize 
+                    ? '&' + encodeURI(pageSize.toString()) 
+                    : ''),
              args);
     }
 
@@ -44,9 +44,9 @@ export class DataService {
             headers: AppHeaders.HEADERS
         });
         return this.httpRequest<T>(
-            baseUri + '&' 
+            baseUri
                 + (pageSize 
-                    ? encodeURI(pageSize.toString()) 
+                ? '&' + encodeURI(pageSize.toString()) 
                     : ''),
              args);
     }
@@ -142,8 +142,15 @@ export class DataService {
                 case 403:
                     messages.push('Forbidden');
                     break;
-                case 500: // Wont work, because no allow origin header in response
+                case 404:
+                    messages.push('Not found url');
+                    break;
+                // TODO: Wont work by 50X, because no allow origin header in response
+                case 500:
                     messages.push('Internal Server Error');
+                    break;
+                case 502:
+                    messages.push('Bad Gateway / Time Out');
                     break;
                 default:
                     messages.push(error.statusText);
