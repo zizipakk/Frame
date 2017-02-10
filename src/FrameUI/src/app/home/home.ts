@@ -22,13 +22,21 @@ export class Home {
     users: IuserViewModel[];
     cols: any;
     names: SelectItem[];
-    locks: SelectItem[];
+    locks: number;
+    locksMin: number;
+    locksMax: number;
 
     constructor(
         private store: Store<IappState>,
         private notificationService: NotificationService,
         private dataService: DataService) {
         this.subscriptions = new Array<Subscription>();
+        this.users = new Array<IuserViewModel>();
+        this.cols = null;
+        this.names = new Array<SelectItem>();
+        this.locks = null;
+        this.locksMin = null;
+        this.locksMax = null;
     }
 
     ngOnInit() {        
@@ -40,7 +48,9 @@ export class Home {
                 } 
             )
         );
-        this.subscriptions.push(            
+        this.subscriptions.push(
+
+            // TODO: LAZYLOADING            
             this.dataService.get<IuserViewModel>(
                     this.apiPath
                 )
@@ -55,6 +65,8 @@ export class Home {
                                                 )
                                             )
                                         ]);
+                        this.locks = this.locksMin = Math.min.apply(Math, this.users.map(m => m.accessFailedCount));
+                        this.locksMax = Math.max.apply(Math, this.users.map(m => m.accessFailedCount));
                     },
                     error =>
                         this.notificationService.printErrorMessage(new Array<string>(error))

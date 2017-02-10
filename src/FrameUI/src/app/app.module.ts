@@ -19,7 +19,8 @@ import {
   BlockUIModule,
   DataTableModule,
   SharedModule,
-  DropdownModule
+  DropdownModule,
+  SliderModule
 } from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
 import { 
@@ -74,6 +75,7 @@ import { AppErrorHandler } from './app.error';
     DataTableModule,
     SharedModule,
     DropdownModule,
+    SliderModule,
 
     StoreModule.provideStore({  // singleton the whole store with reducers
       UserReducer,

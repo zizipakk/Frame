@@ -9,5 +9,5 @@ services:
     ports:
       - "5200:80"
   framelog:
-    image: user/framelog
+    image: user/framelog:dev
     

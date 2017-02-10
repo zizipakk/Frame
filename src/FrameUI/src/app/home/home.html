@@ -27,25 +27,34 @@
                 </template>
             </p-column>
         </ng-container>
-        <ng-container *ngIf="col.field !== 'id'">
-            <ng-container *ngIf="col.field === 'userName'">
-                <!--Dropdown filtering-->
-                <p-column [field]="col.field" [header]="col.header" [filter]="true" [style]="{'overflow':'visible'}" filterMatchMode="equals">
-                    <template let-col pTemplate="filter">
-                        <p-dropdown 
-                            [options]="names" [style]="{'width':'100%'}" 
-                            (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)" 
-                            styleClass="ui-column-filter"></p-dropdown>
-                    </template>
-                    <!--Template in all row in this column-->
-                    <template let-col ylet-user="rowData" pTemplate="body"> 
-                        <span [style.color]="'orange'" [innerHtml]="user[col.field]"></span>
-                    </template>
-                </p-column>
-            </ng-container>
-            <ng-container *ngIf="col.field !== 'userName'">
-                <p-column [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
-            </ng-container>
+        <ng-container *ngIf="col.field === 'userName'">
+            <!--Dropdown filtering-->
+            <p-column 
+                [field]="col.field" [header]="col.header" 
+                [filter]="true" [style]="{'overflow':'visible'}" filterMatchMode="equals" >
+                <template let-col pTemplate="filter">
+                    <p-dropdown 
+                        [options]="names" [style]="{'width':'100%'}" 
+                        (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)" 
+                        styleClass="ui-column-filter">
+                    </p-dropdown>
+                </template>
+                <!--Template in all row in this column-->
+                <template let-col ylet-user="rowData" pTemplate="body"> 
+                    <span [style.color]="'orange'" [innerHtml]="user[col.field]"></span>
+                </template>
+            </p-column>
+        </ng-container>
+        <ng-container *ngIf="col.field === 'accessFailedCount'">
+            <p-column [field]="col.field" header="{{col.header}} ({{locks||'No Filter'}})" [filter]="true" filterMatchMode="equals" [sortable]="true">
+                <template pTemplate="filter" let-col>
+                    <i class="fa fa-close" (click)="locks=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                    <p-slider [style]="{'width':'100%','margin-top':'8px'}" [(ngModel)]="locks" [min]="locksMin" [max]="locksMax" (onSlideEnd)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-slider>
+                </template>
+            </p-column>
+        </ng-container>
+        <ng-container *ngIf="col.field !== 'id' && col.field !== 'userName' && col.field !== 'accessFailedCount'">
+            <p-column [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
         </ng-container>
     </ng-container>
 </p-dataTable>
