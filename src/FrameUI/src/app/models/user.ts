@@ -11,11 +11,16 @@ export class LoginInputModel implements IloginInputModel {
     public password: string;
     public rememberLogin: boolean;
     
-    constructor(model: IloginInputModel) {
-        this.email = model.email;
-        this.password = model.password;
-        this.rememberLogin = model.rememberLogin;
-
+    constructor(model?: IloginInputModel) {
+        if (model) {
+            this.email = model.email;
+            this.password = model.password;
+            this.rememberLogin = model.rememberLogin;
+        } else {
+            this.email = '';
+            this.password = '';
+            this.rememberLogin = false;
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  frame:
+  framelog:
     labels:
       - "com.microsoft.visualstudio.targetoperatingsystem=linux"
     volumes:

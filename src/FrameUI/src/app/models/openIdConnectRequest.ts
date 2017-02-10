@@ -1,60 +1,60 @@
 export interface IopenIdConnectRequest {
         //     Gets or sets the "access_token" parameter.
-        accesstoken: string;
+        accesstoken?: string;
         //     Gets or sets the "assertion" parameter.
-        assertion: string;
+        assertion?: string;
         //     Gets or sets the "client_assertion" parameter.
-        clientassertion: string;
+        clientassertion?: string;
         //     Gets or sets the "client_assertion_type" parameter.
-        clientassertiontype: string;
+        clientassertiontype?: string;
         //     Gets or sets the "client_id" parameter.
-        client_id: string;
+        client_id?: string;
         //     Gets or sets the "client_secret" parameter.
-        clientsecret: string;
+        clientsecret?: string;
         //     Gets or sets the "code" parameter.
-        code: string;
+        code?: string;
         //     Gets or sets the "code_challenge" parameter.
-        codechallenge: string;
+        codechallenge?: string;
         //     Gets or sets the "code_challenge_method" parameter.
-        codechallengemethod: string;
+        codechallengemethod?: string;
         //     Gets or sets the "code_verifier" parameter.
-        codeverifier: string;
+        codeverifier?: string;
         //     Gets or sets the "grant_type" parameter.
         grant_type: string;
         //     Gets or sets the "id_token_hint" parameter.
-        idtokenhint: string;
+        idtokenhint?: string;
         //     Gets or sets the "nonce" parameter.
         nonce: string;
         //     Gets or sets the "password" parameter.
         password: string;
         //     Gets or sets the "post_logout_redirect_uri" parameter.
-        postlogoutredirecturi: string;
+        postlogoutredirecturi?: string;
         //     Gets or sets the "prompt" parameter.
-        prompt: string;
+        prompt?: string;
         //     Gets or sets the "redirect_uri" parameter.
-        redirecturi: string;
+        redirecturi?: string;
         //     Gets or sets the "refresh_token" parameter.
-        refreshtoken: string;
+        refreshtoken?: string;
         //     Gets or sets the "request" parameter.
-        request: string;
+        request?: string;
         //     Gets or sets the "request_id" parameter.
-        requestid: string;
+        requestid?: string;
         //     Gets or sets the "request_uri" parameter.
-        requesturi: string;
+        requesturi?: string;
         //     Gets or sets the "resource" parameter.
-        resource: string;
+        resource?: string;
         //     Gets or sets the "response_mode" parameter.
-        responsemode: string;
+        responsemode?: string;
         //     Gets or sets the "response_type" parameter.
-        responsetype: string;
+        responsetype?: string;
         //     Gets or sets the "scope" parameter.
         scope: string;
         //     Gets or sets the "state" parameter.
-        state: string;
+        state?: string;
         //     Gets or sets the "token" parameter.
-        token: string;
+        token?: string;
         //     Gets or sets the "token_type_hint" parameter.
-        tokentypehint: string;
+        tokentypehint?: string;
         //     Gets or sets the "username" parameter.
         username: string;
 

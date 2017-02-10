@@ -4,7 +4,7 @@ import { Response } from '@angular/http';
 import { Store } from '@ngrx/store';
 import { Message } from 'primeng/primeng';
 import { IappState } from '../models/appState';
-import { LoginInputModel } from '../models/user';
+import { IloginInputModel, LoginInputModel } from '../models/user';
 import { SignInResult } from '../models/signInResult';
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
@@ -18,7 +18,7 @@ export class Login implements AfterViewInit
     /** primeng show/hide prop */
     display: boolean = false;
 
-    user: LoginInputModel;
+    user: IloginInputModel;
     message: Message[];
 
     constructor(
@@ -26,7 +26,7 @@ export class Login implements AfterViewInit
         private membershipService: MembershipService,
         private notificationService: NotificationService
     ) {
-        this.user = new LoginInputModel({email: '', password: '', rememberLogin: false});
+        this.user = new LoginInputModel();
         this.message = new Array<Message>();
     }
 

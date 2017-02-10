@@ -1,10 +1,10 @@
 version: '2'
 
 services:
-  frame:
-    image: user/frame${TAG}
+  framelog:
+    image: user/framelog${TAG}
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5200:80"
+      - "6200:80"

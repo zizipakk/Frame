@@ -1,3 +1,51 @@
-﻿<p-dataTable [value]="users">
-    <p-column *ngFor="let col of cols" [field]="col.field" [header]="col.header"></p-column>
+﻿<input #gb pInputText type="text" placeholder="Global search">
+<p-dataTable 
+    [value]="users" 
+    sortField="isAdmin" [sortOrder]="1" rowGroupMode="rowspan"
+    [rows]="10" [paginator]="true"
+    [globalFilter]="gb"
+    [resizableColumns]="true"
+    [reorderableColumns]="true"
+    [responsive]="true"
+    #dt>
+    <ng-container *ngFor="let col of cols">
+        <!-- Wont work here ngSwitch
+            <ng-container [ngSwitch]="col.field">
+            <ng-container *ngSwitchCase="'userName'">
+                <p-column [field]="col.field" [header]="col.header"></p-column>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+                <p-column [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
+            </ng-container>
+        </ng-container>-->
+        <ng-container *ngIf="col.field === 'id'">
+            <!--Contains filtering-->
+            <p-column [field]="col.field" [filter]="true" filterMatchMode="contains">
+                <!--Header template-->
+                <template pTemplate="header"> 
+                    <button type="button" pButton icon="fa-refresh"></button>
+                </template>
+            </p-column>
+        </ng-container>
+        <ng-container *ngIf="col.field !== 'id'">
+            <ng-container *ngIf="col.field === 'userName'">
+                <!--Dropdown filtering-->
+                <p-column [field]="col.field" [header]="col.header" [filter]="true" [style]="{'overflow':'visible'}" filterMatchMode="equals">
+                    <template let-col pTemplate="filter">
+                        <p-dropdown 
+                            [options]="names" [style]="{'width':'100%'}" 
+                            (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)" 
+                            styleClass="ui-column-filter"></p-dropdown>
+                    </template>
+                    <!--Template in all row in this column-->
+                    <template let-col ylet-user="rowData" pTemplate="body"> 
+                        <span [style.color]="'orange'" [innerHtml]="user[col.field]"></span>
+                    </template>
+                </p-column>
+            </ng-container>
+            <ng-container *ngIf="col.field !== 'userName'">
+                <p-column [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
+            </ng-container>
+        </ng-container>
+    </ng-container>
 </p-dataTable>

@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  frame:
+  frameauth:
     build:
       args:
         source: .
@@ -11,7 +11,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:
-      - .:/app
+      #- .:/app
       - ~/.nuget/packages:/root/.nuget/packages:ro
       - ~/clrdbg:/clrdbg:ro
     entrypoint: tail -f /dev/null

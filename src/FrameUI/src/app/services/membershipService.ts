@@ -4,11 +4,11 @@ import { ActionTypes } from '../reducers/reducer.settings'
 import { IappState } from '../models/appState';
 import { API } from '../app.settings';
 import { DataService } from './dataService';
-import { Registration } from '../models/registration';
-import { LoginInputModel } from '../models/user';
-import { OpenIdConnectRequest } from '../models/openIdConnectRequest';
-import { SignInResult } from '../models/signInResult';
-import { UserModel } from '../models/user';
+import { Iregistration } from '../models/registration';
+import { IloginInputModel } from '../models/user';
+import { IopenIdConnectRequest } from '../models/openIdConnectRequest';
+import { IsignInResult } from '../models/signInResult';
+import { IuserModel, UserModel } from '../models/user';
 
 /** 
     A class to manage user authentication
@@ -29,13 +29,12 @@ export class MembershipService {
         private dataService: DataService
         ) {
         this.storage = sessionStorage;
-        let user = new UserModel({ // At first we check the persistent data in local storage
+        let user: IuserModel = { // At first we check the persistent data in local storage
             userId: this.retrieve('UserId'),
             isAuthorized: this.retrieve('IsAuthorized'),
             hasAdminRole: this.retrieve('HasAdminRole'),            
             userName: this.retrieve('UserName')
-        });
-
+        };
         // Memory init from local store
         this.appStore.dispatch({ type: ActionTypes.SET_User, payload: user });
     }
@@ -56,7 +55,7 @@ export class MembershipService {
         this.storage.setItem(key, JSON.stringify(value));
     }
 
-    register(newUser: Registration) {
+    register(newUser: Iregistration) {
         return this.dataService.post(this.idLogout, JSON.stringify(newUser));
     }
 
@@ -69,7 +68,7 @@ export class MembershipService {
     }
 
     /** IdentityServer4 endpont use only get method */
-    login(creds: LoginInputModel) {
+    login(creds: IloginInputModel) {
         this.resetAuthorizationData();
 
         let grant_type = 'password';
@@ -81,17 +80,18 @@ export class MembershipService {
 
         this.store('authNonce', nonce);
 
-        let model = new OpenIdConnectRequest();
-        model.grant_type = grant_type;
-        model.nonce = nonce;
-        model.username = creds.email;
-        model.password = creds.password;
-        model.scope = scope;
+        let model: IopenIdConnectRequest = {
+            grant_type: grant_type,
+            nonce: nonce,
+            username: creds.email,
+            password: creds.password,
+            scope: scope
+        };
 
-        return this.dataService.postAuth<SignInResult>(this.idLogin, this.encodeQueryData(model));
+        return this.dataService.postAuth<IsignInResult>(this.idLogin, this.encodeQueryData(model));
     }
 
-    loginCallback(result: SignInResult) {
+    loginCallback(result: IsignInResult) {
         console.log('BEGIN AuthorizedCallback, clear old data');
         this.resetAuthorizationData();
 

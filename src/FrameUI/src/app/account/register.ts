@@ -1,6 +1,6 @@
 ﻿import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router'
-import { Registration } from '../models/registration'
+import { Iregistration, Registration } from '../models/registration'
 import { OperationResult } from '../models/operationResult'
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
@@ -15,7 +15,7 @@ export class Register implements AfterViewInit {
     /** primeng show/hide prop */
     display: boolean = false;
 
-    private newUser: Registration;
+    private newUser: Iregistration;
 
     constructor(
         private membershipService: MembershipService,

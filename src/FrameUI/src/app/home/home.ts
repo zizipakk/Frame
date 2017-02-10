@@ -3,10 +3,11 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Rx';
 import { API } from '../app.settings';
 import { IappState } from '../models/appState';
-import { UserModel, IuserModel } from '../models/user';
-import { UserViewModel, IuserViewModel } from '../models/UserViewModel';
+import { IuserModel } from '../models/user';
+import { IuserViewModel } from '../models/UserViewModel';
 import { DataService } from '../services/dataService';
 import { NotificationService } from '../services/notificationService';
+import { SelectItem } from 'primeng/primeng';
 
 @Component({
     selector: 'home',
@@ -16,10 +17,12 @@ export class Home {
     
     readonly apiAction = 'user/getusers';
     apiPath = API.AUTH + this.apiAction;
-    user: UserModel;
+    user: IuserModel;
     subscriptions: Subscription[];
     users: IuserViewModel[];
     cols: any;
+    names: SelectItem[];
+    locks: SelectItem[];
 
     constructor(
         private store: Store<IappState>,
@@ -37,7 +40,6 @@ export class Home {
                 } 
             )
         );
-
         this.subscriptions.push(            
             this.dataService.get<IuserViewModel>(
                     this.apiPath
@@ -45,12 +47,21 @@ export class Home {
                 .subscribe(
                     users => {
                         this.users = users;
+                        this.names = [{label: 'All', value: null}] // default filter
+                                        .concat(
+                                            [...new Set( // distinct
+                                                this.users.map(
+                                                    m => { return {label: m.userName, value: m.userName};}
+                                                )
+                                            )
+                                        ]);
                     },
                     error =>
                         this.notificationService.printErrorMessage(new Array<string>(error))
                 )
         );
 
+        // TODO: it clould be better from response model with localization
         this.cols = [
             {field: 'id', header: 'Id'},
             {field: 'userName', header: 'Name'},

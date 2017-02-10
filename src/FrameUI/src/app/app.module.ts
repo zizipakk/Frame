@@ -18,7 +18,8 @@ import {
   GrowlModule,
   BlockUIModule,
   DataTableModule,
-  SharedModule
+  SharedModule,
+  DropdownModule
 } from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
 import { 
@@ -72,6 +73,7 @@ import { AppErrorHandler } from './app.error';
     BlockUIModule,
     DataTableModule,
     SharedModule,
+    DropdownModule,
 
     StoreModule.provideStore({  // singleton the whole store with reducers
       UserReducer,

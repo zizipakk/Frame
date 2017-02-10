@@ -2,13 +2,13 @@
 import { CanActivate, Router } from '@angular/router';import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Rx';
 import { IappState } from './models/appState';
-import { UserModel } from './models/user';
+import { IuserModel } from './models/user';
 import { MembershipService } from './services/membershipService';
 
 @Injectable()
 export class AuthGuard implements CanActivate, OnDestroy {
 
-    user: UserModel;
+    user: IuserModel;
     subscription: Subscription;
 
     constructor(

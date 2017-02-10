@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Rx';
 import { MenuItem, Message } from 'primeng/primeng';
 import { IappState } from './models/appState';
 import { ActionTypes } from './reducers/reducer.settings'
-import { UserModel } from './models/user';
+import { IuserModel } from './models/user';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 
@@ -18,7 +18,7 @@ export class AppComponent implements OnInit, OnDestroy
 {
     // 1. App init secquent
     menuItems: MenuItem[];
-    user: UserModel;
+    user: IuserModel;
     notification: Message[];
     message: Message[];
     blocked: boolean;
