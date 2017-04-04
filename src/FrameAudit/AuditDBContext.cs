@@ -190,7 +190,6 @@ namespace FrameAudit
                         });
                 }
 
-
                 result = await context.SaveChangesAsync();
                 // back to normal operation
                 context.ChangeTracker.AutoDetectChangesEnabled = true;
