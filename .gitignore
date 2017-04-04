@@ -18,7 +18,6 @@
 [Xx]64/
 [Xx]86/
 [Bb]uild/
-bld/
 [Bb]in/
 [Oo]bj/
 
@@ -28,6 +27,7 @@ bld/
 .vscode/
 # In UI project this is always recreated
 wwwroot/
+node_modules/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -245,3 +245,9 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+src/FrameUI/bin/Debug/netcoreapp1.1/FrameUI.deps.json
+src/FrameUI/bin/Debug/netcoreapp1.1/FrameUI.dll
+src/FrameUI/bin/Debug/netcoreapp1.1/FrameUI.pdb
+src/FrameUI/bin/Debug/netcoreapp1.1/FrameUI.runtimeconfig.dev.json
+src/FrameUI/bin/Debug/netcoreapp1.1/FrameUI.runtimeconfig.json

@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using AutoMapper;
 
 namespace FrameAudit
 {
@@ -19,10 +20,11 @@ namespace FrameAudit
             DbContextOptions options,
             IHttpContextAccessor context,
             IEnumerable<EntityState> loggedStates,
-            IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries
+            IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries,
+            IMapper mapper
         ) : base(options)
         {
-            this.common = new CommonAudits(context, loggedStates, loggedEntries); //TODO: Zero DI conf
+            this.common = new CommonAudits(context, loggedStates, loggedEntries, mapper); //TODO: or DI constructor arguments
         }
 
         /// <summary>
