@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrameAudit
 {
@@ -29,14 +28,14 @@ namespace FrameAudit
         {
         }
 
-        public AuditLog(Guid? creatorId, string entity, string location)
+        public AuditLog(string creatorId, string entity, string location)
         {
             CreatorId = creatorId;
             Entity = entity;
             Location = location;
         }
 
-        public Guid? CreatorId { get; set; }
+        public string CreatorId { get; set; }
         public string Entity { get; set; }
         public string State { get; set; }
         public string Action { get; set; }
