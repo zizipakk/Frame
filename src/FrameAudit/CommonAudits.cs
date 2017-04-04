@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using AutoMapper;
 
 namespace FrameAudit
 {
@@ -20,16 +21,19 @@ namespace FrameAudit
         private readonly IHttpContextAccessor context;
         private readonly IEnumerable<EntityState> loggedStates;
         private readonly IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries;
+        private readonly IMapper mapper;
 
         public CommonAudits(
             IHttpContextAccessor context,
             IEnumerable<EntityState> loggedStates,
-            IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries
+            IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries,
+            IMapper mapper
         )
         {
             this.context = context;
             this.loggedStates = loggedStates.Distinct();
             this.loggedEntries = loggedEntries.Distinct();
+            this.mapper = mapper;
         }
 
         /// <summary>
@@ -92,11 +96,20 @@ namespace FrameAudit
                                 }));
 
                         // shadow
-                        dbContext.AddRange(
-                            filteredChangedEntries
-                            .SelectMany(e =>
-                                loggedEntries.Where(w => w.Item1 == e && w.Item2 != null),
-                                (e, s) => new { s.Item1 }));
+                        loggedEntries
+                            .Where(w => w.Item2 != null)
+                            .Select(s => s.Item2.Entity)
+                            .Distinct()
+                            .ToList()
+                            .ForEach(shadowEntityFilter =>
+                                {
+                                    var entityType = shadowEntityFilter.GetType();
+                                    dbContext.AddRange(
+                                        filteredChangedEntries
+                                            .SelectMany(e => loggedEntries.Where(w => w.Item1.Entity == e.Entity && w.Item2.Entity == shadowEntityFilter),
+                                                (e, s) => mapper.Map(s.Item1.Entity, Activator.CreateInstance(entityType))
+                                            ));
+                                });
 
                         // back to normal operation
                         dbContext.ChangeTracker.AutoDetectChangesEnabled = true;

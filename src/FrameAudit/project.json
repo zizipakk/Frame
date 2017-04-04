@@ -10,7 +10,8 @@
     "System.Reflection.Extensions": "4.3.0",
     "System.Reflection.Primitives": "4.3.0",
     "System.Threading.Thread": "4.3.0",
-    "System.Security.Claims": "4.3.0"
+    "System.Security.Claims": "4.3.0",
+    "AutoMapper": "6.0.2"
   },
 
   "frameworks": {
