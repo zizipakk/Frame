@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using System.Reflection;
+using System.Collections;
 
 namespace FrameAudit
 {
@@ -20,13 +22,13 @@ namespace FrameAudit
     {
         private readonly IHttpContextAccessor context;
         private readonly IEnumerable<EntityState> loggedStates;
-        private readonly IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries;
+        private readonly IEnumerable<Tuple<Type, Type>> loggedEntries;
         private readonly IMapper mapper;
 
         public CommonAudits(
             IHttpContextAccessor context,
             IEnumerable<EntityState> loggedStates,
-            IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries,
+            IEnumerable<Tuple<Type, Type>> loggedEntries,
             IMapper mapper
         )
         {
@@ -73,7 +75,7 @@ namespace FrameAudit
                 try
                 {
                     var filteredChangedEntries = allChangedEntries
-                        .Where(w => loggedStates.Contains(w.State) && loggedEntries.Select(s => s.Item1).Contains(w));
+                        .Where(w => loggedStates.Contains(w.State) && loggedEntries.Select(s => s.Item1).Contains(w.Entity.GetType()));
 
                     if (filteredChangedEntries.Any())
                     {
@@ -89,26 +91,35 @@ namespace FrameAudit
                         dbContext.AddRange(
                             filteredChangedEntries
                             .Select(s =>
-                                new AuditLog(userId, s.Entity.GetType().Name, location)
+                                new AuditLog(userId, s.Entity.GetType()?.Name, location)
                                 {
+                                    EntityId = (Guid)s.Entity.GetType()?.GetProperty(s.Metadata.FindPrimaryKey().Properties.Select(se => se.Name).FirstOrDefault())?.GetValue(s.Entity, null),
                                     State = s.State.ToString(),
                                     Action = action
-                                }));
+                                })
+                            .ToList());
 
                         // shadow
                         loggedEntries
                             .Where(w => w.Item2 != null)
-                            .Select(s => s.Item2.Entity)
+                            .Select(s => s.Item2)
                             .Distinct()
                             .ToList()
-                            .ForEach(shadowEntityFilter =>
+                            .ForEach(shadowEntityType =>
                                 {
-                                    var entityType = shadowEntityFilter.GetType();
-                                    dbContext.AddRange(
+                                    var shadowList =
                                         filteredChangedEntries
-                                            .SelectMany(e => loggedEntries.Where(w => w.Item1.Entity == e.Entity && w.Item2.Entity == shadowEntityFilter),
-                                                (e, s) => mapper.Map(s.Item1.Entity, Activator.CreateInstance(entityType))
-                                            ));
+                                            .SelectMany(e => loggedEntries.Where(w => w.Item1 == e.Entity.GetType() && w.Item2 == shadowEntityType),
+                                                (e, s) => mapper.Map(e.Entity, Activator.CreateInstance(shadowEntityType)))
+                                            .ToList();
+                                    shadowList
+                                        .ForEach(item =>
+                                            {
+                                                item.GetType()?.GetProperty(nameof(LogModelExtension.ExecutiveId))?.SetValue(item, userId);
+                                            });
+
+                                    dbContext.AddRange(shadowList);
+
                                 });
 
                         // back to normal operation
