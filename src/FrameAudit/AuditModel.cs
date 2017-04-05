@@ -35,6 +35,7 @@ namespace FrameAudit
             Location = location;
         }
 
+        public Guid EntityId { get; set; }
         public string CreatorId { get; set; }
         public string Entity { get; set; }
         public string State { get; set; }

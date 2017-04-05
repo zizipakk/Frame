@@ -12,14 +12,13 @@ namespace FrameAudit
 {
     public class AuditDBContext : DbContext
     {
-        private string action = ""; //TODO thread safe?
         private readonly ICommonAudits common;
 
         public AuditDBContext(
             DbContextOptions options,
             IHttpContextAccessor context,
             IEnumerable<EntityState> loggedStates,
-            IEnumerable<Tuple<EntityEntry, EntityEntry>> loggedEntries,
+            IEnumerable<Tuple<Type, Type>> loggedEntries,
             IMapper mapper
         ) : base(options)
         {
@@ -31,44 +30,33 @@ namespace FrameAudit
         /// </summary>
         public virtual DbSet<AuditLog> AuditLogs { get; set; }
 
-        /// <summary>
-        /// Proxy to get caller
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public Task<int> SaveChangesAsync([CallerMemberName]string action = "")
-        {
-            this.action = action;
-            return SaveChangesAsync();
-        }
+        ///// <summary>
+        ///// Proxy to get caller
+        ///// </summary>
+        ///// <param name="action"></param>
+        ///// <returns></returns>
+        //public Task<int> SaveChangesAsync([CallerMemberName]string action = "")
+        //{
+        //    this.action = action;
+        //    return base.SaveChangesAsync();
+        //}
 
         /// <summary>
         /// Override async save
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<int> SaveChangesAsync([CallerMemberName]string action = "")
         {
             common.Logger(action, this as DbContext);
             return base.SaveChangesAsync();
         }
 
         /// <summary>
-        /// Proxy to get caller
-        /// </summary>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public int SaveChanges([CallerMemberName]string action = "")
-        {
-            this.action = action;
-            return SaveChanges();
-        }
-
-        /// <summary>
         /// Override sync save
         /// </summary>
         /// <returns></returns>
-        public override int SaveChanges()
+        public int SaveChanges([CallerMemberName]string action = "")
         {
             common.Logger(action, this as DbContext);
             return base.SaveChanges();
