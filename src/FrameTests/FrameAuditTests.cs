@@ -1,13 +1,7 @@
-using AutoMapper;
-using AutoMapper.Configuration;
-using FrameAudit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-using static FrameTests.TestFixtures;
+using static FrameTests.FrameAuditTestFixtures;
 
 namespace FrameTests
 {

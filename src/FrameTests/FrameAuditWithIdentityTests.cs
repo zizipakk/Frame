@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-using static FrameTests.TestFixtures;
+using static FrameTests.FrameAuditTestFixtures;
 
 namespace FrameTests
 {
@@ -353,6 +353,8 @@ namespace FrameTests
 
                 fixture.Clean();
             }
+
+            // TODO: test switching tables
         }
     }
 }

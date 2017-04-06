@@ -9,6 +9,13 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Török Tamás</Authors>
+    <Description>Audit and shadow logging with EF DbContext wrapper</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <Copyright>Copyright 2017 (c) ZaZiZi Corporation. All rights reserved.</Copyright>
+    <PackageTags>logger logging logs audit auditlog</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

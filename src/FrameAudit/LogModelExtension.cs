@@ -3,6 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FrameAudit
 {
+    public interface ILogModelExtension
+    {
+        Guid LogId { get; set; }
+        DateTime TimeStamp { get; set; }
+        string ExecutiveId { get; set; }
+    }
+
     public class LogModelExtension
     {
         public LogModelExtension()

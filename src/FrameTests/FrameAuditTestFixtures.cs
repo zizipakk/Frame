@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace FrameTests
 {
-    public class TestFixtures
+    public class FrameAuditTestFixtures
     {
         // mapping for write log
         public class FakeMappingProfile : MapperConfigurationExpression, IDisposable
