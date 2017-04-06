@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
-using System.Threading;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using AutoMapper;
 
@@ -13,7 +11,7 @@ namespace FrameAudit
 {
     public class AuditDBContextWithIdentity<TUser> : IdentityDbContext<TUser> where TUser : IdentityUser
     {
-        private readonly ICommonAudits common;
+        public ICommonAudits common;
 
         public AuditDBContextWithIdentity(
             DbContextOptions options,

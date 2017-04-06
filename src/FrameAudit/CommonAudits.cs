@@ -13,17 +13,18 @@ namespace FrameAudit
 {
     public interface ICommonAudits
     {
+        IEnumerable<EntityState> loggedStates { get; set; }
+        IEnumerable<Tuple<Type, Type>> loggedEntries { get; set; }
         void RevertChanges(IEnumerable<EntityEntry> allEntries);
-
         void Logger(string action, DbContext dbContext);
     }
 
     public class CommonAudits : ICommonAudits
     {
         private readonly IHttpContextAccessor context;
-        private readonly IEnumerable<EntityState> loggedStates;
-        private readonly IEnumerable<Tuple<Type, Type>> loggedEntries;
         private readonly IMapper mapper;
+        public IEnumerable<EntityState> loggedStates { get; set; } // reconfigurable
+        public IEnumerable<Tuple<Type, Type>> loggedEntries { get; set; } // reconfigurable
 
         public CommonAudits(
             IHttpContextAccessor context,
@@ -69,7 +70,10 @@ namespace FrameAudit
         {
             var allChangedEntries = dbContext.ChangeTracker.Entries();
 
-            if (allChangedEntries.Any() && loggedStates.Any() && loggedEntries.Any())
+            if (
+                allChangedEntries.Any() 
+                && loggedStates != null && loggedStates.Any() 
+                && loggedEntries != null && loggedEntries.Any())
             {
 
                 try
@@ -93,7 +97,7 @@ namespace FrameAudit
                             .Select(s =>
                                 new AuditLog(userId, s.Entity.GetType()?.Name, location)
                                 {
-                                    EntityId = (Guid)s.Entity.GetType()?.GetProperty(s.Metadata.FindPrimaryKey().Properties.Select(se => se.Name).FirstOrDefault())?.GetValue(s.Entity, null),
+                                    EntityId = s.Entity.GetType()?.GetProperty(s.Metadata.FindPrimaryKey().Properties.Select(se => se.Name).FirstOrDefault())?.GetValue(s.Entity, null).ToString(),
                                     State = s.State.ToString(),
                                     Action = action
                                 })
