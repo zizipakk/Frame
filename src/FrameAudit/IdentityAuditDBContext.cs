@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using AutoMapper;
+using System.Threading;
 
 namespace FrameAudit
 {
@@ -40,6 +41,12 @@ namespace FrameAudit
             return base.SaveChangesAsync();
         }
 
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            common.Logger("internal", this as DbContext);
+            return base.SaveChangesAsync();
+        }
+
         /// <summary>
         /// Override sync save
         /// </summary>
@@ -47,6 +54,12 @@ namespace FrameAudit
         public int SaveChanges([CallerMemberName]string action = "")
         {
             common.Logger(action, this as DbContext);
+            return base.SaveChanges();
+        }
+
+        public override int SaveChanges()
+        {
+            common.Logger("internal", this as DbContext);
             return base.SaveChanges();
         }
     }

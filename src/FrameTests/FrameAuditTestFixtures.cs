@@ -20,6 +20,7 @@ namespace FrameTests
             {
                 CreateMap<FakeEntity, FakeEntityLog>();
                 CreateMap<FakeIdentity, FakeIdentityLog>();
+                CreateMap<IdentityUserRole<string>, FakeUserRoleLog>();
             }
 
             public void Dispose()
@@ -27,6 +28,8 @@ namespace FrameTests
                 Dispose();
             }
         }
+
+#region audit
 
         // classes for test
         public class FakeEntity
@@ -119,6 +122,10 @@ namespace FrameTests
             }
         }
 
+        #endregion
+
+#region identity
+
         // classes for fake identity context
         public class FakeIdentity : IdentityUser
         {
@@ -132,23 +139,39 @@ namespace FrameTests
 
         public class FakeIdentityLog : LogModelExtension
         {
-            public virtual int AccessFailedCount { get; set; }
-            public virtual bool LockoutEnabled { get; set; }
-            public virtual DateTimeOffset? LockoutEnd { get; set; }
-            public virtual bool TwoFactorEnabled { get; set; }
-            public virtual bool PhoneNumberConfirmed { get; set; }
-            public virtual string PhoneNumber { get; set; }
-            public virtual string ConcurrencyStamp { get; set; }
-            public virtual string SecurityStamp { get; set; }
-            public virtual string PasswordHash { get; set; }
-            public virtual bool EmailConfirmed { get; set; }
-            public virtual string NormalizedEmail { get; set; }
-            public virtual string Email { get; set; }
-            public virtual string NormalizedUserName { get; set; }
-            public virtual string UserName { get; set; }
-            public virtual string Id { get; set; }
+            public int AccessFailedCount { get; set; }
+            public bool LockoutEnabled { get; set; }
+            public DateTimeOffset? LockoutEnd { get; set; }
+            public bool TwoFactorEnabled { get; set; }
+            public bool PhoneNumberConfirmed { get; set; }
+            public string PhoneNumber { get; set; }
+            public string ConcurrencyStamp { get; set; }
+            public string SecurityStamp { get; set; }
+            public string PasswordHash { get; set; }
+            public bool EmailConfirmed { get; set; }
+            public string NormalizedEmail { get; set; }
+            public string Email { get; set; }
+            public string NormalizedUserName { get; set; }
+            public string UserName { get; set; }
+            public string Id { get; set; }
 
             public string FakeProperty { get; set; }
+        }
+
+        public class FakeIdentityRole : IdentityRole
+        {
+            public FakeIdentityRole()
+            {
+                Id = Guid.NewGuid().ToString();
+            }
+
+            public string FakeProperty { get; set; }
+        }
+
+        public class FakeUserRoleLog : LogModelExtension
+        {
+            public string UserId { get; set; }
+            public string RoleId { get; set; }
         }
 
         public class FakeIdentityContext : AuditDBContextWithIdentity<IdentityUser>
@@ -175,6 +198,10 @@ namespace FrameTests
 
             public virtual DbSet<FakeIdentity> FakeIdentities { get; set; }
             public virtual DbSet<FakeIdentityLog> FakeIdentityLogs { get; set; }
+            public virtual DbSet<FakeIdentityRole> FakeIdentityRoles { get; set; } 
+            public virtual DbSet<FakeUserRoleLog> FakeUserRoleLogs { get; set; }
+            public virtual DbSet<IdentityUserRole<string>> IdentityUserRoles { get; set; }
+            
         }
 
         /// <summary>
@@ -239,10 +266,16 @@ namespace FrameTests
 
             public void Clean()
             {
+                if (db.IdentityUserRoles.Any())
+                    db.RemoveRange(db.IdentityUserRoles);
+                if (db.FakeIdentityRoles.Any())
+                    db.RemoveRange(db.FakeIdentityRoles);
                 if (db.FakeIdentities.Any())
                     db.RemoveRange(db.FakeIdentities);
                 db.SaveChanges(); // This trigger logs again, so we must to save twice
 
+                if (db.FakeUserRoleLogs.Any())
+                    db.RemoveRange(db.FakeUserRoleLogs);
                 if (db.FakeIdentityLogs.Any())
                     db.RemoveRange(db.FakeIdentityLogs);
                 if (db.AuditLogs.Any())
@@ -265,6 +298,7 @@ namespace FrameTests
             }
         }
 
+#endregion
 
     }
 }

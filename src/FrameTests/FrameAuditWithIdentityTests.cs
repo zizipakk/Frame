@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -354,7 +356,73 @@ namespace FrameTests
                 fixture.Clean();
             }
 
-            // TODO: test switching tables
+            [Fact]
+            public async void TestAuditAndLogAndSwitchLog()
+            {
+                fixture.db.common.loggedEntries =
+                    new List<Tuple<Type, Type>>
+                    {
+                        Tuple.Create(typeof(FakeIdentity), typeof(FakeIdentityLog)),
+                        Tuple.Create(typeof(IdentityUserRole<string>), typeof(FakeUserRoleLog)),
+                    };
+
+                // insert
+                var roleStore = new RoleStore<FakeIdentityRole>(fixture.db);
+                var role = new FakeIdentityRole { Name = "TÜSKEBÖKI", NormalizedName = "TUSKEBOKI" };
+                await roleStore.CreateAsync(role);
+
+                // insert assertion
+                Assert.Equal(fixture.db.FakeIdentityRoles.Count(), 1);
+                Assert.Equal(fixture.db.AuditLogs.Count(),0);
+
+                // insert users
+                var userStore = new UserStore<FakeIdentity>(fixture.db);
+                fixture.testList.ForEach(async l => await userStore.CreateAsync(l));
+
+                // insert assertion
+                Assert.Equal(testCount, fixture.db.FakeIdentities.SelectMany(s => fixture.testList.Where(w => w.FakeProperty == s.FakeProperty)).Count());
+                Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.CreatorId == fixture.userId).Count());
+                Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.State == EntityState.Added.ToString()).Count());
+                Assert.Equal(testCount, fixture.db.FakeIdentityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+
+                // add user roles
+                //await fixture.db.FakeIdentities.ForEachAsync(a => userStore.AddToRoleAsync(a, role.Name));
+                fixture.db.FakeIdentities.ToList().ForEach(async a => await userStore.AddToRoleAsync(a, role.NormalizedName));
+                var count = await fixture.db.SaveChangesAsync();
+
+                // modify assertion
+                Assert.Equal(count, 9);
+                Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => 
+                    w.CreatorId == fixture.userId
+                    && w.State == EntityState.Added.ToString()
+                    && w.Entity == typeof(IdentityUserRole<string>).Name).Count());
+                Assert.Equal(testCount, fixture.db.FakeUserRoleLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+
+                // delete roles
+                fixture.db.FakeIdentities.ToList().ForEach(async a => await userStore.RemoveFromRoleAsync(a, role.NormalizedName));
+                count = await fixture.db.SaveChangesAsync();
+
+                // delete assertion
+                Assert.Equal(count, 9);
+                Assert.Equal(testCount, fixture.db.AuditLogs.Where(w =>
+                    w.CreatorId == fixture.userId
+                    && w.State == EntityState.Deleted.ToString()
+                    && w.Entity == typeof(IdentityUserRole<string>).Name).Count());
+                Assert.Equal(2*testCount, fixture.db.FakeUserRoleLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+
+                // delete users
+                await fixture.db.FakeIdentities.ForEachAsync(a => userStore.DeleteAsync(a));
+
+                // delete assertion
+                Assert.Equal(fixture.db.FakeIdentities.Count(), 0);
+                Assert.Equal(testCount, fixture.db.AuditLogs.Where(w =>
+                   w.CreatorId == fixture.userId
+                   && w.State == EntityState.Deleted.ToString()
+                   && w.Entity == typeof(FakeIdentity).Name).Count());
+                Assert.Equal(2*testCount, fixture.db.FakeIdentityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+                                
+                fixture.Clean();
+            }
         }
     }
 }
