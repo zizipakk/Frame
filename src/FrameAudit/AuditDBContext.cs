@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
+using System.Threading;
 
 namespace FrameAudit
 {
@@ -29,9 +30,9 @@ namespace FrameAudit
         public virtual DbSet<AuditLog> AuditLogs { get; set; }
 
         /// <summary>
-        /// Override async save
+        /// Overload async save
         /// </summary>
-        /// <param name="cancellationToken"></param>
+        /// <param name="action"></param>
         /// <returns></returns>
         public Task<int> SaveChangesAsync([CallerMemberName]string action = "")
         {
@@ -40,12 +41,36 @@ namespace FrameAudit
         }
 
         /// <summary>
-        /// Override sync save
+        /// Override async save
         /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            common.Logger("internal", this as DbContext);
+            return base.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Overload sync save
+        /// </summary>
+        /// <param name="action"></param>
         /// <returns></returns>
         public int SaveChanges([CallerMemberName]string action = "")
         {
             common.Logger(action, this as DbContext);
+            return base.SaveChanges();
+        }
+
+        /// <summary>
+        /// Override sync save
+        /// </summary>
+        /// <returns></returns>
+        public override int SaveChanges()
+        {
+            //var stackTrace = new StackTrace(new Exception(), true);
+            //var action = stackTrace?.GetFrames()?.Length > 0 ? stackTrace?.GetFrames()[1]?.GetMethod()?.Name : "internal";
+            common.Logger("internal", this as DbContext);
             return base.SaveChanges();
         }
     }

@@ -139,6 +139,7 @@ namespace FrameTests
 
         public class FakeIdentityLog : LogModelExtension
         {
+            public virtual ICollection<IdentityUserRole<string>> Roles { get; }
             public int AccessFailedCount { get; set; }
             public bool LockoutEnabled { get; set; }
             public DateTimeOffset? LockoutEnd { get; set; }
