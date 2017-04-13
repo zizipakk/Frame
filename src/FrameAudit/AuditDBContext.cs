@@ -17,7 +17,7 @@ namespace FrameAudit
             DbContextOptions options,
             IHttpContextAccessor context,
             IEnumerable<EntityState> loggedStates,
-            IEnumerable<Tuple<Type, Type>> loggedEntries,
+            IEnumerable<(Type, Type)> loggedEntries,
             IMapper mapper
         ) : base(options)
         {

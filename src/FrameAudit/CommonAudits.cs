@@ -4,17 +4,16 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using System.Reflection;
-using System.Collections;
+using System.Security.Claims;
 
 namespace FrameAudit
 {
     public interface ICommonAudits
     {
         IEnumerable<EntityState> loggedStates { get; set; }
-        IEnumerable<Tuple<Type, Type>> loggedEntries { get; set; }
+        IEnumerable<(Type, Type)> loggedEntries { get; set; }
         void RevertChanges(IEnumerable<EntityEntry> allEntries);
         void Logger(string action, DbContext dbContext);
     }
@@ -24,12 +23,12 @@ namespace FrameAudit
         private readonly IHttpContextAccessor context;
         private readonly IMapper mapper;
         public IEnumerable<EntityState> loggedStates { get; set; } // reconfigurable
-        public IEnumerable<Tuple<Type, Type>> loggedEntries { get; set; } // reconfigurable
+        public IEnumerable<(Type, Type)> loggedEntries { get; set; } // reconfigurable
 
         public CommonAudits(
             IHttpContextAccessor context,
             IEnumerable<EntityState> loggedStates,
-            IEnumerable<Tuple<Type, Type>> loggedEntries,
+            IEnumerable<(Type, Type)> loggedEntries,
             IMapper mapper
         )
         {
@@ -87,8 +86,8 @@ namespace FrameAudit
                         dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
                         var id = context.HttpContext?.User?.Identity;
-                        // By sing necessary put userID into claims
-                        var userId = (id as ClaimsIdentityOptions)?.UserIdClaimType ?? id?.Name;
+                        // By sign necessary put userID into claims
+                        var userId = (id as ClaimsIdentity)?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? id?.Name;
                         var location = context.HttpContext?.Request?.Host.Host;
 
                         // audit

@@ -108,9 +108,9 @@ namespace FrameTests
             {
                 // switch off shadow logging
                 fixture.db.common.loggedEntries =
-                    new List<Tuple<Type, Type>>
+                    new List<(Type, Type)>
                     {
-                        Tuple.Create(typeof(FakeIdentity), default(Type))
+                        (typeof(FakeIdentity), default(Type))
                     };
 
                 // insert
@@ -155,7 +155,7 @@ namespace FrameTests
             {
                 // switch off
                 fixture.db.common.loggedEntries = null;
-                    //new List<Tuple<Type, Type>>
+                    //new List<(Type, Type)>
                     //{
                     //    Tuple.Create(default(Type), default(Type))
                     //};
@@ -362,10 +362,10 @@ namespace FrameTests
             public async void TestAuditAndLogAndSwitchLog()
             {
                 fixture.db.common.loggedEntries =
-                    new List<Tuple<Type, Type>>
+                    new List<(Type, Type)>
                     {
-                        Tuple.Create(typeof(FakeIdentity), typeof(FakeIdentityLog)),
-                        Tuple.Create(typeof(IdentityUserRole<string>), typeof(FakeUserRoleLog)),
+                        (typeof(FakeIdentity), typeof(FakeIdentityLog)),
+                        (typeof(IdentityUserRole<string>), typeof(FakeUserRoleLog)),
                     };
 
                 var count = 0;
@@ -392,7 +392,7 @@ namespace FrameTests
                 // add user roles
 
                 // todo: Wont work AWAIT
-                // await fixture.db.FakeIdentities.ForEachAsync(async u => await userStore.AddToRoleAsync(u, role.NormalizedName));
+                // await fixture.db.FakeIdentities.ForEachAsync(u => userStore.AddToRoleAsync(u, role.NormalizedName));
                 foreach (var u in fixture.db.FakeIdentities.ToList())
                     await userStore.AddToRoleAsync(u, role.NormalizedName);
                 count = await fixture.db.SaveChangesAsync();
@@ -411,7 +411,7 @@ namespace FrameTests
                 // delete roles
 
                 // todo: Wont work AWAIT
-                // await fixture.db.FakeIdentities.ForEachAsync(async u => await userStore.RemoveFromRoleAsync(u, role.NormalizedName));
+                // await fixture.db.FakeIdentities.ForEachAsync(u => userStore.RemoveFromRoleAsync(u, role.NormalizedName));
                 foreach (var u in fixture.db.FakeIdentities.ToList())
                     await userStore.RemoveFromRoleAsync(u, role.NormalizedName);
                 count = await fixture.db.SaveChangesAsync();

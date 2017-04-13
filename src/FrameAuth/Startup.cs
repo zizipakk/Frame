@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using AutoMapper;
 using System.Reflection;
+using FrameSearch.ElasticSearchProvider;
 
 namespace FrameAuth
 {
@@ -123,9 +124,10 @@ namespace FrameAuth
             services.AddCors();
 
             // Add application services.
-
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            services.AddTransient(typeof(IEntitySearchProvider<,,>), typeof(EntitySearchProvider<,,>));
 
         }
 

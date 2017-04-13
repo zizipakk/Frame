@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using AspNet.Security.OpenIdConnect.Primitives;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using FrameAuth.Data;
@@ -10,20 +9,28 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using FrameAuth.Models.UserViewModels;
+using FrameSearch.Controllers;
+using FrameSearch.ElasticSearchProvider;
 
 namespace FrameAuth.Controllers
 {
+    /// <summary>
+    /// SPA controller
+    /// </summary>
     [Authorize]
-    public class UserController : Controller
+    public class UserController : EntitySearchController<ApplicationUser, ApplicationUserSearch, string>
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ILogger logger;
         private readonly IMapper mapper;
+        private readonly IEntitySearchProvider<ApplicationUser, ApplicationUserSearch, string> entitySearchProvider;
 
         public UserController(
             UserManager<ApplicationUser> userManager,
             ILoggerFactory loggerFactory,
-            IMapper mapper)
+            IMapper mapper,
+            IEntitySearchProvider<ApplicationUser, ApplicationUserSearch, string> entitySearchProvider)
+            : base(entitySearchProvider, loggerFactory)
         {
             this.userManager = userManager;
             this.logger = loggerFactory.CreateLogger<UserController>();
@@ -41,14 +48,11 @@ namespace FrameAuth.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(1, e.Message);
-                // TODO 500-at elnyomja a kestrel, szóval ezt nem engedi át
-                return BadRequest(new OpenIdConnectResponse
-                {
-                    Error = e.Message,
-                    ErrorDescription = e.InnerException.Message ?? e.InnerException.InnerException.Message
-                });
+                logger.LogError(new EventId(1, nameof(GetUsers)), e.Message);
+                return await ExceptionResponse(e);
             }
         }
-    }
+
+        
+    }   
 }

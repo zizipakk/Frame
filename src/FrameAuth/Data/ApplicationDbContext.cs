@@ -11,11 +11,7 @@ namespace FrameAuth.Data
     public class ApplicationDbContext : AuditDBContextWithIdentity<ApplicationUser>
     {
         private static IEnumerable<EntityState> loggedStates = new List<EntityState> { EntityState.Added, EntityState.Deleted, EntityState.Modified };
-        private static IEnumerable<Tuple<Type, Type>> loggedEntries =
-            new List<Tuple<Type, Type>>
-            {
-                    Tuple.Create(typeof(ApplicationUser), typeof(ApplicationUserLog)) // default(Type)
-            };
+        private static IEnumerable<(Type, Type)> loggedEntries = new List<(Type, Type)> {(typeof(ApplicationUser), typeof(ApplicationUserLog))};
 
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options,

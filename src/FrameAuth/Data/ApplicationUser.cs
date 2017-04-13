@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FrameAudit;
-using System.ComponentModel.DataAnnotations;
+using ElasticsearchCRUD.ContextAddDeleteUpdate.CoreTypeAttributes;
 
 namespace FrameAuth.Data
 {
@@ -25,5 +22,23 @@ namespace FrameAuth.Data
         public Guid LogId { get; set; }
         public DateTime TimeStamp { get; set; }
         public string ExecutiveId { get; set; }
+    }
+
+    public class ApplicationUserSearch : ApplicationUser
+    {
+        [ElasticsearchString(CopyToList = new[] { "autocomplete", "searchfield" })]
+        public override string PhoneNumber { get; set; }
+
+        [ElasticsearchString(CopyToList = new[] { "autocomplete", "searchfield" })]
+        public override string NormalizedEmail { get; set; }
+
+        [ElasticsearchString(CopyToList = new[] { "autocomplete", "searchfield" })]
+        public override string Email { get; set; }
+
+        [ElasticsearchString(CopyToList = new[] { "autocomplete", "searchfield" })]
+        public override string NormalizedUserName { get; set; }
+
+        [ElasticsearchString(CopyToList = new[] { "autocomplete", "searchfield" })]
+        public override string UserName { get; set; }
     }
 }

@@ -1,41 +1,79 @@
-﻿using FrameSearch.ElasticSearchProvider;
+﻿using FrameHelper;
+using FrameSearch.ElasticSearchProvider;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace FrameSearch.Controllers
 {
     [Route("api/[controller]")]
-    public class EntitySearchController<TEntity, TDTO, TId> : Controller
+    public class EntitySearchController<TEntity, TDTO, TId> : ControllerHelpers
     {
         private readonly IEntitySearchProvider<TEntity, TDTO, TId> entitySearchProvider;
+        private readonly ILogger logger;
 
-        public EntitySearchController(IEntitySearchProvider<TEntity, TDTO, TId> entitySearchProvider)
+        public EntitySearchController(IEntitySearchProvider<TEntity, TDTO, TId> entitySearchProvider, ILoggerFactory loggerFactory)
         {
             this.entitySearchProvider = entitySearchProvider;
+            this.logger = loggerFactory.CreateLogger<EntitySearchController<TEntity, TDTO, TId>>();
         }
 
         [HttpGet("search/{from}/{searchtext}")]
-        public virtual IActionResult Search(string searchtext, int from)
+        public virtual async Task<IActionResult> SearchAsync(string searchtext, int from)
         {
-            return Ok(entitySearchProvider.Search(searchtext.ToLower(), from));
+            try
+            {
+                return Ok(entitySearchProvider.Search(searchtext.ToLower(), from));
+            }
+            catch (Exception e)
+            {
+                logger.LogError(new EventId(1, nameof(SearchAsync)), e.Message);
+                return await ExceptionResponse(e);
+            }
         }
 
         [HttpGet("querystringsearch/{searchtext}")]
-        public virtual IActionResult QueryString(string searchtext)
+        public virtual async Task<IActionResult> QueryString(string searchtext)
         {
-            return Ok(entitySearchProvider.QueryString(searchtext));
+            try
+            {
+                return Ok(entitySearchProvider.QueryString(searchtext));
+            }
+            catch (Exception e)
+            {
+                logger.LogError(new EventId(1, nameof(QueryString)), e.Message);
+                return await ExceptionResponse(e);
+            }
         }
 
         [HttpGet("autocomplete/{searchtext}")]
-        public virtual IActionResult AutoComplete(string searchtext)
+        public virtual async Task<IActionResult> AutoComplete(string searchtext)
         {
-            return Ok(entitySearchProvider.AutocompleteSearch(searchtext.ToLower()));
+            try
+            {
+                return Ok(entitySearchProvider.AutocompleteSearch(searchtext.ToLower()));
+            }
+            catch (Exception e)
+            {
+                logger.LogError(new EventId(1, nameof(AutoComplete)), e.Message);
+                return await ExceptionResponse(e);
+            }
         }
 
         [HttpGet("createindex")]
-        public virtual IActionResult CreateIndex()
+        public virtual async Task<IActionResult> CreateIndex()
         {
-            entitySearchProvider.CreateIndex();
-            return Ok("index created");
+            try
+            {
+                entitySearchProvider.CreateIndex();
+                return Ok("index created");
+            }
+            catch (Exception e)
+            {
+                logger.LogError(new EventId(1, nameof(CreateIndex)), e.Message);
+                return await ExceptionResponse(e);
+            }
         }
 
         //[HttpGet("createtestdata")]
@@ -46,9 +84,17 @@ namespace FrameSearch.Controllers
         //}   WS-L0015547  6hBm7Dxr
 
         [HttpGet("indexexists")]
-        public virtual IActionResult GetElasticsearchStatus()
+        public virtual async Task<IActionResult> GetElasticsearchStatus()
         {
-            return Ok(entitySearchProvider.GetStatus());
+            try
+            {
+                return Ok(entitySearchProvider.GetStatus());
+            }
+            catch (Exception e)
+            {
+                logger.LogError(new EventId(1, nameof(GetElasticsearchStatus)), e.Message);
+                return await ExceptionResponse(e);
+            }
         }
     }
 }

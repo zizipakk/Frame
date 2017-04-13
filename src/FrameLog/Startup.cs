@@ -50,7 +50,7 @@ namespace FrameLog
                 }
             );
 
-            services.AddMvc();
+            services.AddMvcCore();
 
             services.AddAutoMapper();
 

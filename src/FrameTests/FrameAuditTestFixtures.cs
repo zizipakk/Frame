@@ -51,10 +51,10 @@ namespace FrameTests
         public class FakeAuditContext : AuditDBContext
         {
             public static IEnumerable<EntityState> loggedStates = new List<EntityState> { EntityState.Added, EntityState.Deleted, EntityState.Modified };
-            public static IEnumerable<Tuple<Type, Type>> loggedEntries =
-                new List<Tuple<Type, Type>>
+            public static IEnumerable<(Type, Type)> loggedEntries =
+                new List<(Type, Type)>
                 {
-                Tuple.Create(typeof(FakeEntity), typeof(FakeEntityLog)) // default(Type)
+                    (typeof(FakeEntity), typeof(FakeEntityLog)) // default(Type)
                 };
 
             public FakeAuditContext(
@@ -178,10 +178,10 @@ namespace FrameTests
         public class FakeIdentityContext : AuditDBContextWithIdentity<IdentityUser>
         {
             private static IEnumerable<EntityState> loggedStates = new List<EntityState> { EntityState.Added, EntityState.Deleted, EntityState.Modified };
-            private static IEnumerable<Tuple<Type, Type>> loggedEntries =
-                new List<Tuple<Type, Type>>
+            private static IEnumerable<(Type, Type)> loggedEntries =
+                new List<(Type, Type)>
                 {
-                    Tuple.Create(typeof(FakeIdentity), typeof(FakeIdentityLog)) // default(Type)
+                    (typeof(FakeIdentity), typeof(FakeIdentityLog)) // default(Type)
                 };
 
             public FakeIdentityContext(
@@ -285,9 +285,9 @@ namespace FrameTests
 
                 // back to the defaults
                 db.common.loggedEntries =
-                    new List<Tuple<Type, Type>>
+                    new List<(Type, Type)>
                     {
-                        Tuple.Create(typeof(FakeIdentity), typeof(FakeIdentityLog))
+                        (typeof(FakeIdentity), typeof(FakeIdentityLog))
                     };
                 db.common.loggedStates = new List<EntityState> { EntityState.Added, EntityState.Deleted, EntityState.Modified };
             }
