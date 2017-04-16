@@ -12,6 +12,8 @@ using System.IO;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using AutoMapper;
+using System.Reflection;
+using FrameSearch.ElasticSearchProvider;
 
 namespace FrameAuth
 {
@@ -34,7 +36,8 @@ namespace FrameAuth
             if (environment.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                builder.AddUserSecrets();
+                //builder.AddUserSecrets(); wont work by design
+                builder.AddUserSecrets(typeof(Startup).GetTypeInfo().Assembly);
 
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
@@ -121,9 +124,10 @@ namespace FrameAuth
             services.AddCors();
 
             // Add application services.
-
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            services.AddTransient(typeof(IEntitySearchProvider<,,>), typeof(EntitySearchProvider<,,>));
 
         }
 

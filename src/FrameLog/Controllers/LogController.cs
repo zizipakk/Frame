@@ -7,11 +7,12 @@ using FrameLog.Services;
 using AutoMapper;
 using FrameLog.Models;
 using Microsoft.Extensions.Logging;
+using FrameHelper;
 
 namespace FrameLog.Controllers
 {
     [Route("api/[controller]")]
-    public class LogController : Controller
+    public class LogController : ControllerHelpers
     {
         private readonly ILogService logService;
         private readonly ILogger logger;
@@ -25,13 +26,12 @@ namespace FrameLog.Controllers
         }
 
         // TODO: Test
-        // GET api/log
-        [HttpGet]
-        public async Task<IEnumerable<string>> Get()
-        {
+        //[HttpGet]
+        //public async Task<IEnumerable<string>> Get()
+        //{
 
-            return await Task.Run(() => new string[] { "value1", "value2" });
-        }
+        //    return await Task.Run(() => new string[] { "value1", "value2" });
+        //}
 
         // GET api/log/id
         [HttpGet("{id}")]
@@ -44,8 +44,8 @@ namespace FrameLog.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(1, e.Message);
-                return BadRequest(new JsonResult(e.Message));
+                logger.LogError(new EventId(1, nameof(Get)), e.Message);
+                return await ExceptionResponse(e);
             }
         }
 
@@ -60,8 +60,8 @@ namespace FrameLog.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(2, e.Message);
-                return BadRequest(e.Message);
+                logger.LogError(new EventId(2, nameof(GetByUser)), e.Message);
+                return await ExceptionResponse(e);
             }
         }
 
@@ -83,8 +83,8 @@ namespace FrameLog.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(3, e.Message);
-                return BadRequest(e.Message);
+                logger.LogError(new EventId(3, nameof(Post)), e.Message);
+                return await ExceptionResponse(e);
             }
         }
 

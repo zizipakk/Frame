@@ -13,11 +13,16 @@ using FrameAuth.Data;
 using AutoMapper;
 using System;
 using Microsoft.Extensions.Logging;
+using FrameHelper;
 
 namespace FrameAuth.Controllers
 {
+    /// <summary>
+    /// SPA auth controller, with openid tokenhandler, and identity claims handler
+    /// exceptionhandling to response
+    /// </summary>
     [Authorize]
-    public class ConnectController : Controller
+    public class ConnectController : ControllerHelpers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
@@ -136,20 +141,12 @@ namespace FrameAuth.Controllers
                 ticket.SetScopes(scope);
 
                 // Sign in the user
-                //var response = _mapper.Map<OpenIdConnectResponse>(SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme));
-                //response.State = request.State;
-                //return Ok(response);
                 return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
             }
             catch (Exception e) 
             {
-                logger.LogError(5, e.Message);
-                // TODO 500-at elnyomja a kestrel, szóval ezt nem engedi át
-                return BadRequest(new OpenIdConnectResponse
-                {
-                    Error = e.Message,
-                    ErrorDescription = e.InnerException.Message ?? e.InnerException.InnerException.Message
-                });
+                logger.LogError(new EventId(5, nameof(Token)), e.Message);
+                return await ExceptionResponse(e);
             }
         }
 
@@ -159,10 +156,17 @@ namespace FrameAuth.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LogOff() //TODO ?????????????
         {
-            await signInManager.SignOutAsync();
-            logger.LogInformation(3, "User logged out.");
-
-            return Ok(new JsonResult(null));
+            try
+            {
+                await signInManager.SignOutAsync();
+                logger.LogInformation(3, "User logged out.");
+                return Ok(new JsonResult(null));
+            }
+            catch(Exception e)
+            {
+                logger.LogError(new EventId(6, nameof(Token)), e.Message);
+                return await ExceptionResponse(e);
+            }
         }
     }
 }

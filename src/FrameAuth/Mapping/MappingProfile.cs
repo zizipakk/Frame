@@ -11,6 +11,8 @@ namespace FrameAuth.Mapping
         {
             CreateMap<ApplicationUser, UserViewModel>();
             CreateMap<List<ApplicationUser>, List<UserViewModel>>();
+            //Shadows
+            CreateMap<ApplicationUser, ApplicationUserLog>();
         }
     }
 }

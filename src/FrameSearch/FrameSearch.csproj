@@ -12,7 +12,12 @@
 
   <ItemGroup>
     <PackageReference Include="ElasticsearchCrud" Version="2.4.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.2" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FrameHelper\FrameHelper.csproj" />
   </ItemGroup>
 
 </Project>

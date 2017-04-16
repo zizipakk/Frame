@@ -1,106 +1,99 @@
-using AutoMapper;
-using AutoMapper.Configuration;
-using FrameAudit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Moq;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Xunit;
+using static FrameTests.FrameAuditTestFixtures;
 
 namespace FrameTests
 {
-    public class FakeEntity
+    public class FrameAuditTests : IClassFixture<FrameAuditContextFixture>
     {
-        public FakeEntity()
+        FrameAuditContextFixture fixture;
+        int testCount;
+
+        public FrameAuditTests(FrameAuditContextFixture fixture)
         {
-            Id = Guid.NewGuid();
+            this.fixture = fixture;
+            testCount = fixture.testList.Count();
         }
-
-        public Guid Id { get; set; }
-        public string FakeProperty { get; set; }
-    }
-
-    public class FakeEntityLog : LogModelExtension
-    {
-        public string FakeProperty { get; set; }
-    }
-
-    public class FakeMappingProfile : MapperConfigurationExpression //Profile
-    {
-        public FakeMappingProfile()
-        {
-            CreateMap<FakeEntity, FakeEntityLog>();
-        }
-    }
-
-    public class FakeContext : AuditDBContext
-    {
-        public static IEnumerable<EntityState> loggedStates = new List<EntityState> { EntityState.Added, EntityState.Deleted, EntityState.Modified };
-        public static IEnumerable<Tuple<Type, Type>> loggedEntries =
-            new List<Tuple<Type, Type>>
-            {
-                Tuple.Create(typeof(FakeEntity), typeof(FakeEntityLog)) // default(Type)
-            };
-
-        public FakeContext(
-            DbContextOptions<FakeContext> options, 
-            IHttpContextAccessor context, 
-            AutoMapper.IMapper mapper) 
-            : base(options, context, loggedStates, loggedEntries, mapper)
-        {
-        }
-
-        public virtual DbSet<FakeEntity> FakeEntities { get; set; }
-        public virtual DbSet<FakeEntityLog> FakeEntityLogs { get; set; }
-    }
-
-    //[TestClass]
-    public class FrameAuditTests
-    {
-        //[TestInitialize]
-        //public void MsTestInit()
-        //{}
-
-        //[TestMethod]
-        //public void MsTestMethod()
-        //{}
-
-        //[TestCleanup]
-        //public void MsTestFinalize()
-        //{}
 
         [Fact]
-        public void TestAuditAndLogAsync()
+        public async void TestAuditAndLogAsync()
         {
-            var userId = "Joci";
-            // Instead of mocking dbcontext, we use factory memory-instance
-            var optionsBuilder = new DbContextOptionsBuilder<FakeContext>();
-            optionsBuilder.UseInMemoryDatabase();
-            var contextMock = new Mock<IHttpContextAccessor>();
-            contextMock.SetupGet(s => s.HttpContext.User.Identity.Name).Returns(userId);
-            var mapper = new Mapper(new MapperConfiguration(new FakeMappingProfile()));
-            var db = new FakeContext(optionsBuilder.Options, contextMock.Object, mapper);
+            await fixture.db.AddRangeAsync(fixture.testList);
+            var count = await fixture.db.SaveChangesAsync();
 
-            var testList = new List<FakeEntity>
-            {
-                new FakeEntity { FakeProperty = "1" },
-                new FakeEntity { FakeProperty = "2" },
-                new FakeEntity { FakeProperty = "3" }
-            };
+            // insert assertion
+            Assert.Equal(count, 9);
+            Assert.Equal(testCount, fixture.db.FakeEntities.SelectMany(s => fixture.testList.Where(w => w.FakeProperty == s.FakeProperty)).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.CreatorId == fixture.userId).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.State == EntityState.Added.ToString()).Count());
+            Assert.Equal(testCount, fixture.db.FakeEntityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
 
-            db.AddRangeAsync(testList);
+            // modify
+            fixture.db.FakeEntities.ToList().ForEach(f => f.FakeProperty = $"1{f.FakeProperty}"); // FakeEntiites attached to testList, so both changed
+            fixture.db.UpdateRange(fixture.db.FakeEntities);
+            count = await fixture.db.SaveChangesAsync();
 
-            db.SaveChangesAsync();
+            // modify assertion
+            Assert.Equal(count, 9);
+            Assert.Equal(testCount, fixture.db.FakeEntities.SelectMany(s => fixture.testList.Where(w => w.FakeProperty == s.FakeProperty)).Count());
+            Assert.Equal(2 * testCount, fixture.db.AuditLogs.Where(w => w.CreatorId == fixture.userId).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.State == EntityState.Modified.ToString()).Count());
+            Assert.Equal(2 * testCount, fixture.db.FakeEntityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
 
-            var resultEntities = db.FakeEntities.ToListAsync();
-            var resultAudits = db.AuditLogs.ToListAsync();
-            var resultLogs = db.FakeEntityLogs.ToListAsync();
+            // delete
+            fixture.db.RemoveRange(fixture.db.FakeEntities);
+            count = await fixture.db.SaveChangesAsync();
 
-            Assert.Equal(testList.Count(), resultAudits.Result.Where(w => w.CreatorId == userId).Count());
-            Assert.Equal(testList.Count(), resultLogs.Result.Where(w => w.ExecutiveId == userId).Count());
+            // delete assertion
+            Assert.Equal(count, 9);
+            Assert.Equal(fixture.db.FakeEntities.Count(), 0);
+            Assert.Equal(3 * testCount, fixture.db.AuditLogs.Where(w => w.CreatorId == fixture.userId).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.State == EntityState.Deleted.ToString()).Count());
+            Assert.Equal(3 * testCount, fixture.db.FakeEntityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+
+            fixture.Clean();
+        }
+
+        [Fact]
+        public void TestAuditAndLog()
+        {
+            // insert
+            fixture.db.AddRange(fixture.testList);
+            var count = fixture.db.SaveChanges();
+
+            // insert assertion
+            Assert.Equal(count, 9);
+            Assert.Equal(testCount, fixture.db.FakeEntities.SelectMany(s => fixture.testList.Where(w => w.FakeProperty == s.FakeProperty)).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.CreatorId == fixture.userId).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.State == EntityState.Added.ToString()).Count());
+            Assert.Equal(testCount, fixture.db.FakeEntityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+
+            // modify
+            fixture.db.FakeEntities.ToList().ForEach(f => f.FakeProperty = $"1{f.FakeProperty}"); // FakeEntiites attached to testList, so both changed
+            fixture.db.UpdateRange(fixture.db.FakeEntities);
+            count = fixture.db.SaveChanges();
+
+            // modify assertion
+            Assert.Equal(count, 9);
+            Assert.Equal(testCount, fixture.db.FakeEntities.SelectMany(s => fixture.testList.Where(w => w.FakeProperty == s.FakeProperty)).Count());
+            Assert.Equal(2 * testCount, fixture.db.AuditLogs.Where(w => w.CreatorId == fixture.userId).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.State == EntityState.Modified.ToString()).Count());
+            Assert.Equal(2 * testCount, fixture.db.FakeEntityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+
+            // delete
+            fixture.db.RemoveRange(fixture.db.FakeEntities);
+            count = fixture.db.SaveChanges();
+
+            // delete assertion
+            Assert.Equal(count, 9);
+            Assert.Equal(fixture.db.FakeEntities.Count(), 0);
+            Assert.Equal(3 * testCount, fixture.db.AuditLogs.Where(w => w.CreatorId == fixture.userId).Count());
+            Assert.Equal(testCount, fixture.db.AuditLogs.Where(w => w.State == EntityState.Deleted.ToString()).Count());
+            Assert.Equal(3 * testCount, fixture.db.FakeEntityLogs.Where(w => w.ExecutiveId == fixture.userId).Count());
+
+            fixture.Clean();
         }
     }
+
 }
