@@ -7,16 +7,41 @@ using System.Text;
 
 namespace FrameHelper
 {
-    class DBContextHelper<TTEntity> : DbContext
+    class DBContextHelper : DbContext
     {
-        public virtual IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, bool>> order = null, int? page = null, int? size = null)
+        public virtual IQueryable<TEntity> Query<TEntity>(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includes = "", 
+            int? page = null, 
+            int? size = null) where TEntity : class
         {
-            return GetAll().Where(predicate);
+            var query = GetAll<TEntity>();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            includes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .ToList()
+                .ForEach(include => query = query.Include(include));
+
+            if (orderBy != null)
+                query = orderBy(query);
+
+            if (page != null && size != null)
+                query = query.Skip((int)page * (int)size);
+
+            if (size != null)
+                query = query.Take((int)size);
+
+            return query;            
         }
 
-        public virtual IQueryable<TEntity> GetAll()
+        public virtual IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
         {
-            return Set<TEntity>()
+            return Set<TEntity>();
         }
 
         //Todo usercontext and methods for my entities
