@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.3
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C70B92FE-2872-454A-94AB-4D8632B86BD1}"
 EndProject
@@ -20,6 +20,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameTests", "src\FrameTests\FrameTests.csproj", "{D00BACBE-D9AD-413F-B9F6-57B73244E321}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameHelper", "src\FrameHelper\FrameHelper.csproj", "{E06E4858-FEF3-4E88-A0E7-42039A2C2E35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrameIO", "src\FrameIO\FrameIO.csproj", "{0B814652-AB47-4EC6-A59D-E0E00F1EB934}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{827927E8-EE65-49F3-9CE7-6DC93C846040}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +59,14 @@ Global
 		{E06E4858-FEF3-4E88-A0E7-42039A2C2E35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E06E4858-FEF3-4E88-A0E7-42039A2C2E35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E06E4858-FEF3-4E88-A0E7-42039A2C2E35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B814652-AB47-4EC6-A59D-E0E00F1EB934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B814652-AB47-4EC6-A59D-E0E00F1EB934}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B814652-AB47-4EC6-A59D-E0E00F1EB934}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B814652-AB47-4EC6-A59D-E0E00F1EB934}.Release|Any CPU.Build.0 = Release|Any CPU
+		{827927E8-EE65-49F3-9CE7-6DC93C846040}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{827927E8-EE65-49F3-9CE7-6DC93C846040}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{827927E8-EE65-49F3-9CE7-6DC93C846040}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{827927E8-EE65-49F3-9CE7-6DC93C846040}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +79,7 @@ Global
 		{29A75D93-8DD1-4EC8-8A0C-91B779DF32F8} = {C70B92FE-2872-454A-94AB-4D8632B86BD1}
 		{D00BACBE-D9AD-413F-B9F6-57B73244E321} = {C70B92FE-2872-454A-94AB-4D8632B86BD1}
 		{E06E4858-FEF3-4E88-A0E7-42039A2C2E35} = {C70B92FE-2872-454A-94AB-4D8632B86BD1}
+		{0B814652-AB47-4EC6-A59D-E0E00F1EB934} = {C70B92FE-2872-454A-94AB-4D8632B86BD1}
+		{827927E8-EE65-49F3-9CE7-6DC93C846040} = {C70B92FE-2872-454A-94AB-4D8632B86BD1}
 	EndGlobalSection
 EndGlobal

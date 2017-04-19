@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using FrameLog.Data;
 using FrameLog.Models;
-using FrameLog.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FrameLog.Services
@@ -11,36 +12,39 @@ namespace FrameLog.Services
     public interface ILogService
     {
         Task<IEnumerable<ILogDTO>> GetListByUserIdAsync(Guid userid);
-        ILogDTO GetByIdAsync(Guid id);
+        Task<ILogDTO> GetByIdAsync(Guid id);
         Task<int> SetAsync(ILogDTO log);
     }
 
     public class LogService : ILogService
     {
-        private readonly ILogRepository repo;
+        private readonly ApplicationDbContext db;
         private readonly IMapper mapper;
 
-        public LogService(ILogRepository repo, IMapper mapper)
+        public LogService(ApplicationDbContext db, IMapper mapper)
         {
-            this.repo = repo;
+            this.db = db;
             this.mapper = mapper;
         }
 
         public async Task<IEnumerable<ILogDTO>> GetListByUserIdAsync(Guid userid)
         {
-            var result = await repo.GetListByUserIdAsync(userid);
+            var result = await db.Logs
+                            .Where(w => w.UserId == userid)
+                            .ToListAsync();
             return mapper.Map<IEnumerable<ILogDTO>>(result);
         }
 
-        public ILogDTO GetByIdAsync(Guid id)
+        public async Task<ILogDTO> GetByIdAsync(Guid id)
         {
-            return mapper.Map<ILogDTO>(repo.GetByIdAsync(id));
+            var res = await db.Logs.FindAsync(id);
+            return mapper.Map<ILogDTO>(res);
         }
 
         public async Task<int> SetAsync(ILogDTO log)
         {
-            var model = mapper.Map<Log>(log);
-            return await repo.SetAsync(model);
+            db.Logs.Add(mapper.Map<Log>(log));
+            return await db.SaveChangesAsync();
         }
     }
 }
