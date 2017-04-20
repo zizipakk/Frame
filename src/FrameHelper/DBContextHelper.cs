@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace FrameHelper
 {
@@ -19,13 +17,12 @@ namespace FrameHelper
             var query = GetAll<TEntity>();
 
             if (filter != null)
-            {
                 query = query.Where(filter);
-            }
 
-            includes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .ToList()
-                .ForEach(include => query = query.Include(include));
+            if (includes != null)
+                includes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .ToList()
+                    .ForEach(include => query = query.Include(include));
 
             if (orderBy != null)
                 query = orderBy(query);
