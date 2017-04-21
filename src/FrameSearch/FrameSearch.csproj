@@ -1,13 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <AssemblyName>FrameSearch</AssemblyName>
-    <PackageId>FrameSearch</PackageId>
-    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <TargetFramework>netcoreapp1.1</TargetFramework>    
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,6 +12,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FrameHelper\FrameHelper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

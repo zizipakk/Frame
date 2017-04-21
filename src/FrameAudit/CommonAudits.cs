@@ -20,19 +20,19 @@ namespace FrameAudit
 
     public class CommonAudits : ICommonAudits
     {
-        private readonly IHttpContextAccessor context;
+        private readonly IHttpContextAccessor httpContext;
         private readonly IMapper mapper;
         public IEnumerable<EntityState> loggedStates { get; set; } // reconfigurable
         public IEnumerable<(Type, Type)> loggedEntries { get; set; } // reconfigurable
 
         public CommonAudits(
-            IHttpContextAccessor context,
+            IHttpContextAccessor httpContext,
             IEnumerable<EntityState> loggedStates,
             IEnumerable<(Type, Type)> loggedEntries,
             IMapper mapper
         )
         {
-            this.context = context;
+            this.httpContext = httpContext;
             this.loggedStates = loggedStates.Distinct();
             this.loggedEntries = loggedEntries.Distinct();
             this.mapper = mapper;
@@ -85,10 +85,10 @@ namespace FrameAudit
                         // freez tracker like bulk insert
                         dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                        var id = context.HttpContext?.User?.Identity;
+                        var id = httpContext.HttpContext?.User?.Identity;
                         // By sign necessary put userID into claims
                         var userId = (id as ClaimsIdentity)?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? id?.Name;
-                        var location = context.HttpContext?.Request?.Host.Host;
+                        var location = httpContext.HttpContext?.Request?.Host.Host;
 
                         // audit
                         dbContext.AddRange(

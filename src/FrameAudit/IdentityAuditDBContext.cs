@@ -7,23 +7,24 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using AutoMapper;
 using System.Threading;
-using System.Diagnostics;
+using FrameHelper;
+//using System.Diagnostics; TODO: no stacktrace wo exception yet in framework
 
 namespace FrameAudit
 {
-    public class AuditDBContextWithIdentity<TUser> : IdentityDbContext<TUser> where TUser : IdentityUser
+    public class AuditDBContextWithIdentity<TUser> : DBContextWithIdentityHelper<TUser> where TUser : IdentityUser
     {        
         public ICommonAudits common;
 
         public AuditDBContextWithIdentity(
             DbContextOptions options,
-            IHttpContextAccessor context,
+            IHttpContextAccessor httpContext,
             IEnumerable<EntityState> loggedStates,
             IEnumerable<(Type, Type)> loggedEntries,
             IMapper mapper
         ) : base(options)
         {
-            this.common = new CommonAudits(context, loggedStates, loggedEntries, mapper); //TODO: or DI constructor arguments
+            this.common = new CommonAudits(httpContext, loggedStates, loggedEntries, mapper);
         }
 
         /// <summary>

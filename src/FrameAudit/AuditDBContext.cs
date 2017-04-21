@@ -6,10 +6,11 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using System.Threading;
+using FrameHelper;
 
 namespace FrameAudit
 {
-    public class AuditDBContext : DbContext
+    public class AuditDBContext : DBContextHelper
     {
         public ICommonAudits common;
 

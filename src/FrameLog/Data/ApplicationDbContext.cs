@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FrameHelper;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrameLog.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DBContextHelper
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -14,9 +15,6 @@ namespace FrameLog.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Add your customizations after calling base.OnModelCreating(builder);
         }
-
-        // TODO: concurrent update
     }
 }

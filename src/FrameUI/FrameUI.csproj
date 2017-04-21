@@ -1,14 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <DebugType>portable</DebugType>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>FrameUI</AssemblyName>
-    <OutputType>Exe</OutputType>
+    <OutputType>exe</OutputType>
     <PackageId>FrameUI</PackageId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
+    <ApplicationIcon />
+    <OutputTypeEx>exe</OutputTypeEx>
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
