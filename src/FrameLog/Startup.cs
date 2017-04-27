@@ -56,8 +56,6 @@ namespace FrameLog
             services.AddTransient<ILogService, LogService>();
         }
 
-        // TODO Not stable solution for seed data
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
         public void Configure(
             IApplicationBuilder app,
@@ -84,9 +82,6 @@ namespace FrameLog
             app.UseMvc();
 
             dbContext.Database.EnsureCreated();
-
-            // Seed
-            //Task.Run(() => ...);
         }
     }
 }

@@ -1,21 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using System.Reflection;
+using AutoMapper;
 
 namespace FrameIO
 {
     public class Startup
     {
         public readonly IHostingEnvironment environment;
-        public static IConfigurationRoot Configuration { get; set; }
+        public static IConfigurationRoot Configuration;
+
+        /// <summary>
+        /// Constructor for testing override
+        /// </summary>
+        public Startup()
+        { }
 
         public Startup(IHostingEnvironment environment)
         {
@@ -23,6 +24,8 @@ namespace FrameIO
                 .SetBasePath(environment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+                //.AddJsonFile("./Properties/launchSettings.json")
+                ;
             ;
 
             if (environment.IsDevelopment())
@@ -41,22 +44,37 @@ namespace FrameIO
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add framework services.
+            services.AddApplicationInsightsTelemetry(Configuration);
+                       
+            services.AddMvcCore();
+
+            services.AddAutoMapper();
+
+            //another client domain
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseApplicationInsightsRequestTelemetry();
 
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.UseApplicationInsightsExceptionTelemetry();
+
+            app.UseCors(builder =>
+                builder
+                .WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
+                //.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials()
+            );
+
+            app.UseMvc();
         }
     }
 }

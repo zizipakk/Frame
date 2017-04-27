@@ -1,12 +1,16 @@
-﻿namespace FrameIO
-{
-    using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-    public static class SerialConfiguration
+namespace FrameIO
+{
+    public class SerialConfiguration
     {
         private static object m_SyncLock = new object();
         private static string s_SourcePort = null;
         private static string s_DestPort = null;
+
+        static SerialConfiguration()
+        {
+        }
 
         public static string SourcePort
         {
