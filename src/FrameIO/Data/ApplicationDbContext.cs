@@ -5,12 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
-namespace FrameAuth.Data
+namespace FrameIO.Data
 {
-    public class ApplicationDbContext : AuditDBContextWithIdentity<ApplicationUser>
+    public class ApplicationDbContext : AuditDBContext
     {
         private static IEnumerable<EntityState> loggedStates = new List<EntityState> { EntityState.Added, EntityState.Deleted, EntityState.Modified };
-        private static IEnumerable<(Type, Type)> loggedEntries = new List<(Type, Type)> {(typeof(ApplicationUser), typeof(ApplicationUserLog))};
+        private static IEnumerable<(Type, Type)> loggedEntries = 
+            new List<(Type, Type)>
+            {
+                (typeof(ComPortConfig), typeof(ComPortConfigLog)),
+                 (typeof(ComDeviceConfig), typeof(ComPDeviceConfigLog))
+            };
 
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options,
@@ -22,10 +27,14 @@ namespace FrameAuth.Data
                       loggedStates,
                       loggedEntries,
                       mapper)
-            {
+        {
         }
 
-        public virtual DbSet<ApplicationUserLog> ApplicationUserLogs { get; set; }
+        public virtual DbSet<ComPortConfig> ComPortConfigs { get; set; }
+        public virtual DbSet<ComPortConfigLog> ComPortConfigLogs { get; set; }
+        public virtual DbSet<ComDeviceConfig> ComDeviceConfigs { get; set; }
+        public virtual DbSet<ComDeviceConfigLog> ComDeviceConfigLogs { get; set; }
+        public virtual DbSet<ComLog> ComLogs { get; set; }
 
         //protected override void OnModelCreating(ModelBuilder builder)
         //{

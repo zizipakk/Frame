@@ -1,16 +1,15 @@
 ﻿using FrameIO;
+using FrameIO.Configurations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.IO;
 using System.Net.Http;
 
 namespace FrameTests
 {
     public class FrameIOTestFixtures
     {
-
         public class FrameIOFixture : IDisposable
         {
             public readonly string c_SourcePort;
@@ -25,8 +24,8 @@ namespace FrameTests
                 server = new TestServer(builder);
                 client = server.CreateClient();
 
-                c_SourcePort = SerialConfiguration.SourcePort;
-                c_DestPort = SerialConfiguration.DestPort;
+                c_SourcePort = ComConfiguration.SourcePort;
+                c_DestPort = ComConfiguration.DestPort;
             }
 
             public void Dispose()
@@ -41,12 +40,10 @@ namespace FrameTests
         /// </summary>
         public class TestStartup : Startup
         {
-            //public TestStartup()
             public TestStartup(IHostingEnvironment environment)
             {
                 var builder = new ConfigurationBuilder()
                     .SetBasePath(environment.ContentRootPath)
-                    //.SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
                     .AddEnvironmentVariables();

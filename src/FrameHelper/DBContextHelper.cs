@@ -7,16 +7,35 @@ using System.Linq.Expressions;
 namespace FrameHelper
 {
     /// <summary>
+    /// Interface for filter query
+    /// </summary>
+    public interface IFilterModel<TEntity> where TEntity : class
+    {
+        Expression<Func<TEntity, bool>> Filter { get; set; }
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> OrderBy { get; set; }
+        string Includes { get; set; }
+        int? Page { get; set; }
+        int? Size { get; set; }
+    }
+
+    /// <summary>
+    /// Model class for filter query
+    /// </summary>
+    public class FilterModel<TEntity> : IFilterModel<TEntity> where TEntity : class
+    {
+        public Expression<Func<TEntity, bool>> Filter { get; set; }
+        public Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> OrderBy { get; set; }
+        public string Includes { get; set; }
+        public int? Page { get; set; }
+        public int? Size { get; set; }
+    }
+
+    /// <summary>
     /// This for common usage of extension methods
     /// </summary>
     internal interface ICommonContextHelper
     {
-        IQueryable<TEntity> Query<TEntity>(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includes = "",
-            int? page = null,
-            int? size = null) where TEntity : class;
+        IQueryable<TEntity> Query<TEntity>(IFilterModel<TEntity>) where TEntity : class;
 
         IQueryable<TEntity> GetAll<TEntity>() where TEntity : class;
 
@@ -35,31 +54,26 @@ namespace FrameHelper
             this.context = context;
         }
 
-        public IQueryable<TEntity> Query<TEntity>(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includes = "",
-            int? page = null,
-            int? size = null) where TEntity : class
+        public IQueryable<TEntity> Query<TEntity>(IFilterModel<TEntity> filter) where TEntity : class
         {
             var query = GetAll<TEntity>();
 
-            if (filter != null)
-                query = query.Where(filter);
+            if (filter?.Filter != null)
+                query = query.Where(filter.Filter);
 
-            if (includes != null)
-                includes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            if (filter?.Includes != null)
+                filter.Includes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                     .ToList()
                     .ForEach(include => query = query.Include(include));
 
-            if (orderBy != null)
-                query = orderBy(query);
+            if (filter?.OrderBy != null)
+                query = filter.OrderBy(query);
 
-            if (page != null && size != null)
-                query = query.Skip((int)page * (int)size);
+            if (filter?.Page != null && filter?.Size != null)
+                query = query.Skip((int)filter.Page * (int)filter.Size);
 
-            if (size != null)
-                query = query.Take((int)size);
+            if (filter?.Size != null)
+                query = query.Take((int)filter.Size);
 
             return query;
         }
@@ -83,14 +97,9 @@ namespace FrameHelper
             common = new CommonContextHelper(this);
         }
 
-        public virtual IQueryable<TEntity> Query<TEntity>(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includes = "", 
-            int? page = null, 
-            int? size = null) where TEntity : class
+        public virtual IQueryable<TEntity> Query<TEntity>(IFilterModel<TEntity> filter) where TEntity : class
         {
-            return common.Query(filter, orderBy, includes, page, size);            
+            return common.Query(filter);            
         }
 
         public virtual IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
@@ -112,14 +121,9 @@ namespace FrameHelper
             common = new CommonContextHelper(this);
         }
 
-        public virtual IQueryable<TEntity> Query<TEntity>(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            string includes = "",
-            int? page = null,
-            int? size = null) where TEntity : class
+        public virtual IQueryable<TEntity> Query<TEntity>(IFilterModel<TEntity> filter) where TEntity : class
         {
-            return common.Query(filter, orderBy, includes, page, size);
+            return common.Query(filter);
         }
 
         public virtual IQueryable<TEntity> GetAll<TEntity>() where TEntity : class

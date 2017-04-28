@@ -1,14 +1,14 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace FrameIO
+namespace FrameIO.Configurations
 {
-    public class SerialConfiguration
+    public class ComConfiguration
     {
         private static object m_SyncLock = new object();
         private static string s_SourcePort = null;
         private static string s_DestPort = null;
 
-        static SerialConfiguration()
+        static ComConfiguration()
         {
         }
 

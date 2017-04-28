@@ -2,15 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using RJCP.IO.Ports;
+using FrameIO.Configurations;
 
-namespace FrameIO
+namespace FrameIO.Services
 {
+    public interface IComConfigService
+    {
+        void OpenPort();
+
+        void ClosePort();
+
+        void WritePort();
+
+        void ReadPort();
+
+        void InitPort();
+
+        void DisposePort();
+    }
+
     // Singleton thread safe serial service
-    public sealed class ComService : IDisposable
+    public sealed class ComConfigService : IComConfigService, IDisposable
     {
         public SerialPortStream src = null;
 
-        ComService()
+        ComPortService()
         {
             InitPort();
         }
@@ -27,16 +43,16 @@ namespace FrameIO
         public void ReadPort()
         { }
 
-        private void InitPort()
+        public void InitPort()
         {
             if (src == null)
             {
-                var c_SourcePort = SerialConfiguration.SourcePort;
+                var c_SourcePort = ComConfiguration.SourcePort;
                 src = new SerialPortStream(c_SourcePort, 115200, 8, Parity.None, StopBits.One);
             }
         }
 
-        private void DisposePort()
+        public void DisposePort()
         {
             if (src != null)
                 src.Dispose();
