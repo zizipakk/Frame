@@ -4,6 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
+using FrameIO.Data;
+using FrameIO.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrameIO
 {
@@ -46,13 +49,22 @@ namespace FrameIO
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-                       
+
+            services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"))
+            );
+
             services.AddMvcCore();
 
             services.AddAutoMapper();
 
             //another client domain
             services.AddCors();
+
+            // Add application services.
+            services.AddSingleton<IComPortService, ComPortService>();
+
+            services.AddTransient<IComConfigService, ComConfigService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

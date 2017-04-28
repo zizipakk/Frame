@@ -1,67 +1,81 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using RJCP.IO.Ports;
-using FrameIO.Configurations;
+﻿using System.Collections.Generic;
+using FrameIO.Data;
+using System.Threading.Tasks;
+using FrameHelper;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using FrameIO.Models;
 
 namespace FrameIO.Services
 {
     public interface IComConfigService
     {
-        void OpenPort();
+        Task<IEnumerable<IComPortTypeDTO>> GetPortType();
 
-        void ClosePort();
+        Task<int> SetPortType(IComPortTypeDTO model);
 
-        void WritePort();
+        Task<IEnumerable<IComPortConfigDTO>> GetPortConfig();
 
-        void ReadPort();
+        Task<int> SetPortConfig(IComPortConfigDTO model);
 
-        void InitPort();
+        Task<IEnumerable<IComDeviceConfigDTO>> GetDeviceConfig();
 
-        void DisposePort();
+        Task<int> SetDeviceConfig(IComDeviceConfigDTO model);
+
+        Task<IEnumerable<IComLogDTO>> GetComLog(FilterModel<ComLog> filter);
     }
 
-    // Singleton thread safe serial service
-    public sealed class ComConfigService : IComConfigService, IDisposable
+    public class ComConfigService : IComConfigService
     {
-        public SerialPortStream src = null;
+        private readonly ApplicationDbContext db;
+        private readonly IMapper mapper;
 
-        ComPortService()
+        public ComConfigService(ApplicationDbContext db, IMapper mapper)
         {
-            InitPort();
+            this.db = db;
+            this.mapper = mapper;
         }
 
-        public void OpenPort()
-        { }
-
-        public void ClosePort()
-        { }
-
-        public void WritePort()
-        { }
-
-        public void ReadPort()
-        { }
-
-        public void InitPort()
+        public async Task<IEnumerable<IComPortTypeDTO>> GetPortType()
         {
-            if (src == null)
-            {
-                var c_SourcePort = ComConfiguration.SourcePort;
-                src = new SerialPortStream(c_SourcePort, 115200, 8, Parity.None, StopBits.One);
-            }
+            var result = await db.ComPortTypes.ToListAsync();
+            return mapper.Map<IEnumerable<IComPortTypeDTO>>(result);
         }
 
-        public void DisposePort()
+        public async Task<int> SetPortType(IComPortTypeDTO model)
         {
-            if (src != null)
-                src.Dispose();
+            db.ComPortTypes.Add(mapper.Map<ComPortType>(model));
+            return await db.SaveChangesAsync();
         }
 
-        public void Dispose()
+        public async Task<IEnumerable<IComPortConfigDTO>> GetPortConfig()
         {
-            if (src?.IsDisposed == false)
-                DisposePort();
+            var result = await db.ComPortConfigs.ToListAsync();
+            return mapper.Map<IEnumerable<IComPortConfigDTO>>(result);
+        }
+
+        public async Task<int> SetPortConfig(IComPortConfigDTO model)
+        {
+            db.ComPortConfigs.Add(mapper.Map<ComPortConfig>(model));
+            return await db.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<IComDeviceConfigDTO>> GetDeviceConfig()
+        {
+            var result = await db.ComDeviceConfigs.ToListAsync();
+            return mapper.Map<IEnumerable<IComDeviceConfigDTO>>(result);
+        }
+
+        public async Task<int> SetDeviceConfig(IComDeviceConfigDTO model)
+        {
+            db.ComDeviceConfigs.Add(mapper.Map<ComDeviceConfig>(model));
+            return await db.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<IComLogDTO>> GetComLog(FilterModel<ComLog> filter)
+        {
+            var result = await db.Query(filter).ToListAsync();
+            return mapper.Map<IEnumerable<IComLogDTO>>(result);
         }
     }
 }

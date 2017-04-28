@@ -13,9 +13,9 @@ namespace FrameIO.Services
 
         void ClosePort();
 
-        void WritePort();
+        bool WritePort(string text);
 
-        Task<string> ReadPort();
+        string ReadPort();
 
         void InitPort();
 
@@ -28,49 +28,80 @@ namespace FrameIO.Services
         public SerialPortStream src = null;
         private static object lockObject = new object();
 
-        ComPortService()
+        public ComPortService()
         {
             InitPort();
         }
 
         public void OpenPort()
         {
+            lock (lockObject)
+                if (src?.IsOpen == false)
+                    src.Open();
         }
 
         public void ClosePort()
-        { }
+        {
+            lock (lockObject)
+                if (src?.IsOpen == true)
+                    src.Close();
+        }
 
-        public void WritePort()
-        { }
+        public bool WritePort(string text)
+        {
+            lock (lockObject)
+            {
+                if (src?.CanWrite == true)
+                {
+                    src.Write(text);
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
 
         public string ReadPort()
         {
             lock (lockObject)
-                if (src.CanRead)
-                    return src.Read();
+            {
+                var response = "";
+                if (src?.CanRead == true)
+                    return src.ReadTo(response);
                 else
-                    return $"{src} port can not read";
+                    return response;
+            }
         }
 
         public void InitPort()
         {
-            if (src == null)
+            lock (lockObject)
             {
-                var c_SourcePort = ComConfiguration.SourcePort;
-                src = new SerialPortStream(c_SourcePort, 115200, 8, Parity.None, StopBits.One);
+                if (src == null)
+                {
+                    var c_SourcePort = ComConfiguration.SourcePort;
+                    // TODO: from portconfig
+                    src = new SerialPortStream(c_SourcePort, 115200, 8, Parity.None, StopBits.One);
+                }
+                OpenPort();
             }
         }
 
         public void DisposePort()
         {
-            if (src != null)
-                src.Dispose();
+            lock (lockObject)
+                if (src != null)
+                {
+                    ClosePort();
+                    src.Dispose();
+                }
         }
 
         public void Dispose()
         {
-            if (src?.IsDisposed == false)
-                DisposePort();
+            lock (lockObject)
+                if (src?.IsDisposed == false)
+                    DisposePort();
         }
     }
 }
