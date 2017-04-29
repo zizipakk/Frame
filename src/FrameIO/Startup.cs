@@ -53,15 +53,15 @@ namespace FrameIO
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"))
             );
+           
+            //TODO: get a trip to the auth service, so setup identity
 
             services.AddMvcCore();
 
             services.AddAutoMapper();
 
-            //another client domain
             services.AddCors();
 
-            // Add application services.
             services.AddSingleton<IComPortService, ComPortService>();
 
             services.AddTransient<IComConfigService, ComConfigService>();

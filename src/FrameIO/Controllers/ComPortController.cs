@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using FrameHelper;
+using FrameIO.Models;
 using FrameIO.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FrameIO.Controllers
@@ -39,11 +41,15 @@ namespace FrameIO.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]string text)
+        public async Task<IActionResult> Post([FromBody]ComLogView model)
         {
             try
             {
-                return await Task.Run(() => comPortService.WritePort(text)) 
+                var id = User?.Identity;
+                model.UserId = (id as ClaimsIdentity)?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? id?.Name;
+                model.Location = Request?.Host.Host;
+                
+                return await Task.Run(() => comPortService.WritePort(model)) 
                     ? Ok() 
                     : throw new Exception("Can not write COM port");
             }

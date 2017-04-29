@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using RJCP.IO.Ports;
 using FrameIO.Configurations;
-using System.Threading.Tasks;
+using FrameIO.Data;
+using FrameIO.Models;
+using AutoMapper;
 
 namespace FrameIO.Services
 {
@@ -13,7 +13,7 @@ namespace FrameIO.Services
 
         void ClosePort();
 
-        bool WritePort(string text);
+        bool WritePort(ComLogDTO model);
 
         string ReadPort();
 
@@ -25,11 +25,15 @@ namespace FrameIO.Services
     // Singleton thread safe serial service
     public sealed class ComPortService : IComPortService, IDisposable
     {
+        private readonly IMapper mapper;
+        private readonly ApplicationDbContext db;
         public SerialPortStream src = null;
         private static object lockObject = new object();
 
-        public ComPortService()
+        public ComPortService(ApplicationDbContext db, IMapper mapper)
         {
+            this.db = db;
+            this.mapper = mapper;
             InitPort();
         }
 
@@ -47,13 +51,17 @@ namespace FrameIO.Services
                     src.Close();
         }
 
-        public bool WritePort(string text)
+        public bool WritePort(ComLogDTO model)
         {
             lock (lockObject)
             {
                 if (src?.CanWrite == true)
                 {
+                    //TODO: stringformat from config protokol, with matching validation ...
+                    var text = model.Port + model.Action;
                     src.Write(text);
+                    db.ComLogs.Add(mapper.Map<ComLog>(model));
+                    db.SaveChanges();
                     return true;
                 }
                 else
