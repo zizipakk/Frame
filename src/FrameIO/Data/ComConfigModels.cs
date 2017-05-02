@@ -1,6 +1,7 @@
 ﻿using FrameAudit;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static FrameHelper.EntityHelpers;
 
 namespace FrameIO.Data
@@ -54,11 +55,14 @@ namespace FrameIO.Data
     
     public class ComDeviceConfig : WithInit
     {
+        //[Key]
+        //public override Guid Id { get; set; }
+
         public string DeviceName { get; set; }
     }
 
-    public class ComDeviceConfigLog : ComPortConfig, ILogModelExtension
-    {
+    public class ComDeviceConfigLog : ComDeviceConfig, ILogModelExtension
+    {        
         public ComDeviceConfigLog()
         {
             LogId = Guid.NewGuid();

@@ -12,7 +12,7 @@ namespace FrameIO.Models
         string WriteProtocol { get; set; }
     }
 
-    public interface IComPortTypeDTO : IComPortTypeBase, WithIdAndTimeStamp
+    public interface IComPortTypeDTO : IComPortTypeBase, IWithIdAndTimeStamp
     {
     }
 
@@ -34,7 +34,7 @@ namespace FrameIO.Models
         public string WriteProtocol { get; set; }
     }
 
-    public interface IComPortTypeView : IComPortTypeBase, WithIdAndTimeStamp
+    public interface IComPortTypeView : IComPortTypeBase, IWithIdAndTimeStamp
     {
     }
 

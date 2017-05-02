@@ -9,7 +9,7 @@ namespace FrameIO.Models
         string DeviceName { get; set; }
     }
 
-    public interface IComDeviceConfigDTO : IComDeviceConfigBase, WithIdAndTimeStamp
+    public interface IComDeviceConfigDTO : IComDeviceConfigBase, IWithIdAndTimeStamp
     {
     }
 
@@ -25,7 +25,7 @@ namespace FrameIO.Models
         public string DeviceName { get; set; }
     }
 
-    public interface IComDeviceConfigView : IComDeviceConfigBase, WithIdAndTimeStamp
+    public interface IComDeviceConfigView : IComDeviceConfigBase, IWithIdAndTimeStamp
     {
     }
 

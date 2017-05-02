@@ -12,7 +12,7 @@ namespace FrameIO.Models
         Guid ComDeviceConfigId { get; set; }
     }
 
-    public interface IComPortConfigDTO : IComPortConfigBase, WithIdAndTimeStamp
+    public interface IComPortConfigDTO : IComPortConfigBase, IWithIdAndTimeStamp
     {
     }
 
@@ -34,7 +34,7 @@ namespace FrameIO.Models
         public Guid ComDeviceConfigId { get; set; }
     }
 
-    public interface IComPortConfigView : IComPortConfigBase, WithIdAndTimeStamp
+    public interface IComPortConfigView : IComPortConfigBase, IWithIdAndTimeStamp
     {
     }
 

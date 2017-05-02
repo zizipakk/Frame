@@ -15,12 +15,6 @@ namespace FrameIO
         public readonly IHostingEnvironment environment;
         public static IConfigurationRoot Configuration;
 
-        /// <summary>
-        /// Constructor for testing override
-        /// </summary>
-        public Startup()
-        { }
-
         public Startup(IHostingEnvironment environment)
         {
             var builder = new ConfigurationBuilder()
@@ -28,8 +22,7 @@ namespace FrameIO
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
                 //.AddJsonFile("./Properties/launchSettings.json")
-                ;
-            ;
+                ;            
 
             if (environment.IsDevelopment())
             {

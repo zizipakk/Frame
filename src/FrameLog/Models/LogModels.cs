@@ -13,7 +13,7 @@ namespace FrameLog.Models
         string Location { get; set; }
     }
 
-    public interface ILogDTO : ILogBase, WithIdAndTimeStamp
+    public interface ILogDTO : ILogBase, IWithIdAndTimeStamp
     {
     }
 
@@ -37,7 +37,7 @@ namespace FrameLog.Models
         public string Location { get; set; }
     }
 
-    public interface ILogView : ILogBase, WithIdAndTimeStamp
+    public interface ILogView : ILogBase, IWithIdAndTimeStamp
     {
     }
 
