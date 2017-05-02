@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using FrameHelper;
+using FrameIO.Models;
 using FrameIO.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FrameIO.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class ComPortController : ControllerHelpers
     {
@@ -23,14 +25,13 @@ namespace FrameIO.Controllers
             logger = loggerFactory.CreateLogger<ComPortController>();
             this.mapper = mapper;
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetComLog(FilterModel<ComLog> filter)
+        
+        /// TODO: poolozás helyett majd signalR push
+        public async Task<IActionResult> Get(Guid userid)
         {
             try
             {
-                var result = await Task.Run(() => comPortService.GetByIdAsync(id));
-                return Ok(mapper.Map<ILogView>(result));
+                return Ok(await Task.Run(() => comPortService.ReadPort()));
             }
             catch (Exception e)
             {
@@ -39,39 +40,22 @@ namespace FrameIO.Controllers
             }
         }
 
-        /// TODO: poolozás helyett majd signalR push
-        public async Task<IActionResult> Get(Guid userid)
-        {
-            try
-            {
-                var result = await comPortService.GetListByUserIdAsync(userid);
-                return Ok(mapper.Map<IEnumerable<ILogView>>(result));
-            }
-            catch (Exception e)
-            {
-                logger.LogError(new EventId(2, nameof(GetByUser)), e.Message);
-                return await ExceptionResponse(e);
-            }
-        }
-
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]LogView log)
+        public async Task<IActionResult> Post([FromBody]ComLogView model)
         {
             try
             {
-                var model = mapper.Map<ILogDTO>(log);
-                if (await comPortService.SetAsync(model) == 1)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    throw new Exception("Badly db handling");
-                }
+                var id = User?.Identity;
+                model.UserId = (id as ClaimsIdentity)?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? id?.Name;
+                model.Location = Request?.Host.Host;
+                
+                return await Task.Run(() => comPortService.WritePort(model)) 
+                    ? Ok() 
+                    : throw new Exception("Can not write COM port");
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId(3, nameof(Post)), e.Message);
+                logger.LogError(new EventId(2, nameof(Post)), e.Message);
                 return await ExceptionResponse(e);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using FrameLog.Data;
 using System;
+using static FrameHelper.EntityHelpers;
 
 namespace FrameLog.Models
 {
@@ -12,10 +13,8 @@ namespace FrameLog.Models
         string Location { get; set; }
     }
 
-    public interface ILogDTO : ILogBase
+    public interface ILogDTO : ILogBase, IWithIdAndTimeStamp
     {
-        Guid Id { get; set; }
-        DateTime TimeStamp { get; set; }
     }
 
     public class LogDTO : ILogDTO
@@ -38,10 +37,8 @@ namespace FrameLog.Models
         public string Location { get; set; }
     }
 
-    public interface ILogView : ILogBase
+    public interface ILogView : ILogBase, IWithIdAndTimeStamp
     {
-        Guid Id { get; set; }
-        DateTime TimeStamp { get; set; }
     }
 
     public class LogView : LogDTO, ILogView

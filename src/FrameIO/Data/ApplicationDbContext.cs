@@ -13,23 +13,24 @@ namespace FrameIO.Data
         private static IEnumerable<(Type, Type)> loggedEntries = 
             new List<(Type, Type)>
             {
+                (typeof(ComPortType), typeof(ComPortTypeLog)),
                 (typeof(ComPortConfig), typeof(ComPortConfigLog)),
-                 (typeof(ComDeviceConfig), typeof(ComPDeviceConfigLog))
+                (typeof(ComDeviceConfig), typeof(ComDeviceConfigLog))
             };
 
         public ApplicationDbContext(
             DbContextOptions<ApplicationDbContext> options,
             IHttpContextAccessor context,
             IMapper mapper)
-                : base(
-                      options,
+                : base(options,
                       context,
                       loggedStates,
                       loggedEntries,
                       mapper)
-        {
-        }
+        {}
 
+        public virtual DbSet<ComPortType> ComPortTypes { get; set; }
+        public virtual DbSet<ComPortTypeLog> ComPortTypeLogs { get; set; }
         public virtual DbSet<ComPortConfig> ComPortConfigs { get; set; }
         public virtual DbSet<ComPortConfigLog> ComPortConfigLogs { get; set; }
         public virtual DbSet<ComDeviceConfig> ComDeviceConfigs { get; set; }

@@ -40,14 +40,14 @@ namespace FrameTests
         /// </summary>
         public class TestStartup : Startup
         {
-            public TestStartup(IHostingEnvironment environment)
+            public TestStartup(IHostingEnvironment environment) : base(environment)
             {
-                var builder = new ConfigurationBuilder()
-                    .SetBasePath(environment.ContentRootPath)
-                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
-                    .AddEnvironmentVariables();
-                Configuration = builder.Build();
+                //var builder = new ConfigurationBuilder()
+                //    .SetBasePath(environment.ContentRootPath)
+                //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                //    .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+                //    .AddEnvironmentVariables();
+                //Configuration = builder.Build();
             }
 
             //public void ConfigureTestServices(IServiceCollection services)

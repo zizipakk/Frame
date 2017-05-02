@@ -4,6 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
+using FrameIO.Data;
+using FrameIO.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrameIO
 {
@@ -12,12 +15,6 @@ namespace FrameIO
         public readonly IHostingEnvironment environment;
         public static IConfigurationRoot Configuration;
 
-        /// <summary>
-        /// Constructor for testing override
-        /// </summary>
-        public Startup()
-        { }
-
         public Startup(IHostingEnvironment environment)
         {
             var builder = new ConfigurationBuilder()
@@ -25,8 +22,7 @@ namespace FrameIO
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
                 //.AddJsonFile("./Properties/launchSettings.json")
-                ;
-            ;
+                ;            
 
             if (environment.IsDevelopment())
             {
@@ -46,13 +42,22 @@ namespace FrameIO
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-                       
+
+            services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"))
+            );
+           
+            //TODO: get a trip to the auth service, so setup identity
+
             services.AddMvcCore();
 
             services.AddAutoMapper();
 
-            //another client domain
             services.AddCors();
+
+            services.AddSingleton<IComPortService, ComPortService>();
+
+            services.AddTransient<IComConfigService, ComConfigService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

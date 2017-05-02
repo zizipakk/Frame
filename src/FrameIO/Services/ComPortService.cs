@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using RJCP.IO.Ports;
 using FrameIO.Configurations;
-using System.Threading.Tasks;
+using FrameIO.Data;
+using FrameIO.Models;
+using AutoMapper;
 
 namespace FrameIO.Services
 {
@@ -13,9 +13,9 @@ namespace FrameIO.Services
 
         void ClosePort();
 
-        void WritePort();
+        bool WritePort(ComLogDTO model);
 
-        Task<string> ReadPort();
+        string ReadPort();
 
         void InitPort();
 
@@ -25,51 +25,91 @@ namespace FrameIO.Services
     // Singleton thread safe serial service
     public sealed class ComPortService : IComPortService, IDisposable
     {
+        private readonly IMapper mapper;
+        private readonly ApplicationDbContext db;
         public SerialPortStream src = null;
         private static object lockObject = new object();
 
-        ComPortService()
+        public ComPortService(ApplicationDbContext db, IMapper mapper)
         {
+            this.db = db;
+            this.mapper = mapper;
             InitPort();
         }
 
         public void OpenPort()
-        { }
+        {
+            lock (lockObject)
+                if (src?.IsOpen == false)
+                    src.Open();
+        }
 
         public void ClosePort()
-        { }
+        {
+            lock (lockObject)
+                if (src?.IsOpen == true)
+                    src.Close();
+        }
 
-        public void WritePort()
-        { }
+        public bool WritePort(ComLogDTO model)
+        {
+            lock (lockObject)
+            {
+                if (src?.CanWrite == true)
+                {
+                    //TODO: stringformat from config protokol, with matching validation ...
+                    var text = model.Port + model.Action;
+                    src.Write(text);
+                    db.ComLogs.Add(mapper.Map<ComLog>(model));
+                    db.SaveChanges();
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
 
         public string ReadPort()
         {
             lock (lockObject)
-                if (src.CanRead)
-                    return src.Read();
+            {
+                var response = "";
+                if (src?.CanRead == true)
+                    return src.ReadTo(response);
                 else
-                    return $"{src} port can not read";
+                    return response;
+            }
         }
 
         public void InitPort()
         {
-            if (src == null)
+            lock (lockObject)
             {
-                var c_SourcePort = ComConfiguration.SourcePort;
-                src = new SerialPortStream(c_SourcePort, 115200, 8, Parity.None, StopBits.One);
+                if (src == null)
+                {
+                    var c_SourcePort = ComConfiguration.SourcePort;
+                    // TODO: from portconfig
+                    src = new SerialPortStream(c_SourcePort, 115200, 8, Parity.None, StopBits.One);
+                }
+                OpenPort();
             }
         }
 
         public void DisposePort()
         {
-            if (src != null)
-                src.Dispose();
+            lock (lockObject)
+                if (src != null)
+                {
+                    ClosePort();
+                    src.Dispose();
+                }
         }
 
         public void Dispose()
         {
-            if (src?.IsDisposed == false)
-                DisposePort();
+            lock (lockObject)
+                if (src?.IsDisposed == false)
+                    DisposePort();
         }
     }
 }

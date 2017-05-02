@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace FrameHelper
 {
@@ -35,7 +36,7 @@ namespace FrameHelper
     /// </summary>
     internal interface ICommonContextHelper
     {
-        IQueryable<TEntity> Query<TEntity>(IFilterModel<TEntity>) where TEntity : class;
+        IQueryable<TEntity> Query<TEntity>(IFilterModel<TEntity> filter) where TEntity : class;
 
         IQueryable<TEntity> GetAll<TEntity>() where TEntity : class;
 
@@ -82,6 +83,7 @@ namespace FrameHelper
         {
             return context.Set<TEntity>(); // we used only this one, fromDBContext instance
         }
+
     }
 
     /// <summary>

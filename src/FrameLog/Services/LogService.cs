@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FrameHelper;
 using FrameLog.Data;
 using FrameLog.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace FrameLog.Services
         Task<IEnumerable<ILogDTO>> GetListByUserIdAsync(Guid userid);
         Task<ILogDTO> GetByIdAsync(Guid id);
         Task<int> SetAsync(ILogDTO log);
+        Task<IEnumerable<ILogDTO>> Query(FilterModel<Log> filter);
     }
 
     public class LogService : ILogService
@@ -37,14 +39,20 @@ namespace FrameLog.Services
 
         public async Task<ILogDTO> GetByIdAsync(Guid id)
         {
-            var res = await db.Logs.FindAsync(id);
-            return mapper.Map<ILogDTO>(res);
+            var result = await db.Logs.FindAsync(id);
+            return mapper.Map<ILogDTO>(result);
         }
 
         public async Task<int> SetAsync(ILogDTO log)
         {
             db.Logs.Add(mapper.Map<Log>(log));
             return await db.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<ILogDTO>> Query(FilterModel<Log> filter)
+        {
+            var result = await db.Query<Log>(filter).ToListAsync();
+            return mapper.Map<IEnumerable<ILogDTO>>(result);
         }
     }
 }

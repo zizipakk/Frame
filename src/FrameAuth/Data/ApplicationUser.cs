@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FrameAudit;
 using ElasticsearchCRUD.ContextAddDeleteUpdate.CoreTypeAttributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace FrameAuth.Data
 {
@@ -19,6 +20,7 @@ namespace FrameAuth.Data
             TimeStamp = DateTime.UtcNow;
         }
 
+        [Key]
         public Guid LogId { get; set; }
         public DateTime TimeStamp { get; set; }
         public string ExecutiveId { get; set; }
