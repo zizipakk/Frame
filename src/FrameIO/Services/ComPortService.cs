@@ -34,8 +34,7 @@ namespace FrameIO.Services
         }
 
         public void OpenPort()
-        {
-        }
+        { }
 
         public void ClosePort()
         { }
