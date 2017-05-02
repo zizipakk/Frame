@@ -1,16 +1,16 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using static FrameHelper.EntityHelpers;
 
 namespace FrameAudit
 {
-    public interface ILogModelExtension
+    public interface ILogModelExtension : IWithTimeStamp
     {
         Guid LogId { get; set; }
-        DateTime TimeStamp { get; set; }
         string ExecutiveId { get; set; }
     }
 
-    public class LogModelExtension
+    public class LogModelExtension : ILogModelExtension
     {
         public LogModelExtension()
         {

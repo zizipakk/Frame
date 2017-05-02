@@ -5,10 +5,14 @@ namespace FrameHelper
 {
     public class EntityHelpers
     {
-        public interface IWithIdAndTimeStamp
+        public interface IWithTimeStamp
+        {
+            DateTime TimeStamp { get; set; }
+        }
+
+        public interface IWithIdAndTimeStamp : IWithTimeStamp
         {
             Guid Id { get; set; }
-            DateTime TimeStamp { get; set; }
         }
 
         public class WithInit : IWithIdAndTimeStamp
@@ -19,8 +23,10 @@ namespace FrameHelper
                 TimeStamp = DateTime.UtcNow;
             }
 
+            [Key]
             public virtual Guid Id { get; set; }
             public DateTime TimeStamp { get; set; }
         }
+
     }
 }
