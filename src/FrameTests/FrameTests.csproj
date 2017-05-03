@@ -32,10 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FrameAudit\FrameAudit.csproj" />
-    <ProjectReference Include="..\FrameAuth\FrameAuth.csproj" />
     <ProjectReference Include="..\FrameIO\FrameIO.csproj" />
-    <ProjectReference Include="..\FrameLog\FrameLog.csproj" />
-    <ProjectReference Include="..\FrameSearch\FrameSearch.csproj" />
   </ItemGroup>
 
   <ItemGroup>

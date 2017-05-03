@@ -6,3 +6,15 @@ services:
     build:
       context: ./src/FrameIO
       dockerfile: Dockerfile
+
+  framelog:
+    image: framelog
+    build:
+      context: ./src/FrameLog
+      dockerfile: Dockerfile
+
+  frameauth:
+    image: frameauth
+    build:
+      context: ./src/FrameAuth
+      dockerfile: Dockerfile

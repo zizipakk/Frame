@@ -5,4 +5,16 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "80"
+      - "7200:80"
+
+  framelog:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "6200:80"
+
+  frameauth:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5200:80"
