@@ -1,6 +1,7 @@
 // ng
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
@@ -58,6 +59,7 @@ import { AppErrorHandler } from './app.error';
   imports: [
     AppRouting, // inherited from ModuleWithProviders, so it is singleton, and have instance in first steps
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     HttpModule,
 
