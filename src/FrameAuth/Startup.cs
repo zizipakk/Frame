@@ -14,6 +14,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using System.Reflection;
 using FrameSearch.ElasticSearchProvider;
+using System;
+using System.Threading;
+using OpenIddict.Models;
+using OpenIddict.Core;
+using System.Linq;
+using System.Collections.Generic;
+//using AspNet.Security.OpenIdConnect.Primitives;
 
 namespace FrameAuth
 {
@@ -82,6 +89,16 @@ namespace FrameAuth
                 .AddDefaultTokenProviders(
                 );
 
+            // Configure Identity to use the same JWT claims as OpenIddict instead
+            // of the legacy WS-Federation claims it uses by default (ClaimTypes),
+            // which saves you from doing the mapping in your authorization controller.
+            //services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
+            //    options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
+            //    options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
+            //});
+
             // Register the OpenIddict services.
             // Note: use the generic overload if you need
             // to replace the default OpenIddict entities.
@@ -95,24 +112,26 @@ namespace FrameAuth
                 .AddMvcBinders()
 
                 // Enable the token endpoint (required to use the password flow).
-                .EnableTokenEndpoint("/connect/token")                
+                .EnableTokenEndpoint("/connect/token")
+                //.EnableIntrospectionEndpoint("/connect/introspect")
 
                 // Allow client applications to use the grant_type=password flow.
                 .AllowPasswordFlow()
+                //.AllowRefreshTokenFlow()
 
                 // TODO
                 // During development, you can disable the HTTPS requirement.
                 .DisableHttpsRequirement()
-                
-                .UseJsonWebTokens()
 
-                .AddSigningCertificate(cert)
-
-                // TODO
+                // Note: to use JWT access tokens instead of the default
+                // encrypted format, the following lines are required:
+                //.UseJsonWebTokens()
                 // Register a new ephemeral key, that is discarded when the application
                 // shuts down. Tokens signed using this key are automatically invalidated.
                 // This method should only be used during development.
-                .AddEphemeralSigningKey()
+                //.AddEphemeralSigningKey()
+
+                .AddSigningCertificate(cert)
 
                 ;
 
@@ -131,31 +150,17 @@ namespace FrameAuth
 
         }
 
-        // TODO Not stable solution for seed data
-        private string[] roles = new[] { "User", "Admin" };
-        private async Task InitializeRoles(RoleManager<IdentityRole> roleManager)
-        {
-            foreach (var role in roles)
-            {
-                if (!await roleManager.RoleExistsAsync(role))
-                {
-                    var newRole = new IdentityRole(role);
-                    await roleManager.CreateAsync(newRole);
-                    // In the real world, there might be claims associated with roles
-                    // _roleManager.AddClaimAsync(newRole, new )
-                }
-            }
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app, 
             IHostingEnvironment env, 
             ILoggerFactory loggerFactory, 
             ApplicationDbContext dbContext,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            OpenIddictApplicationManager<OpenIddictApplication> appManager)
         {
-            //// .Net Core 1.1 could'nt us in same pipeline more CORS, so we change headers manual for auth server CORS
+            // TODO: Maybe obsolate
+            //// .Net Core 1.1 could'nt use in same pipeline more CORS, so we change headers manual for auth server CORS
             //// So the response status codes will be right for Angular HTTP
             //app.Use(async (context, next) =>
             //{
@@ -200,7 +205,7 @@ namespace FrameAuth
 
             app.UseCors(builder =>
                 builder
-                .WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
+                .WithOrigins(Configuration["CORS:ClientDomain"], Configuration["CORS:AppDomain"]) //client and app host path in config
                 //.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
@@ -211,17 +216,46 @@ namespace FrameAuth
 
             app.UseOpenIddict();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //        name: "default",
+            //        template: "{controller=Home}/{action=Index}/{id?}");
+            //});
+            app.UseMvcWithDefaultRoute();
 
             dbContext.Database.EnsureCreated();
 
-            // Seed
-            Task.Run(() => InitializeRoles(roleManager));
+            // Seed the database with the sample applications.
+            // Note: in a real world application, this step should be part of a setup script.
+            InitializeAsync(CancellationToken.None, roleManager, appManager).GetAwaiter().GetResult();
+
+            dbContext.Dispose();
+        }
+
+        private async Task InitializeAsync(CancellationToken cancellationToken, RoleManager<IdentityRole> roleManager, OpenIddictApplicationManager<OpenIddictApplication> appManager)
+        {            
+            var roles = new List<string> { "User", "Admin" };
+            roles.ToList().ForEach(async role =>
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                {
+                    var newRole = new IdentityRole(role);
+                    await roleManager.CreateAsync(newRole);
+                    // In the real world, there might be claims associated with roles
+                    // _roleManager.AddClaimAsync(newRole, new )
+                }
+            });
+
+            if (await appManager.FindByClientIdAsync("FrameIO", cancellationToken) == null)
+            {
+                var application = new OpenIddictApplication
+                {
+                    ClientId = "FrameIO"
+                };
+
+                await appManager.CreateAsync(application, "846B62D0-DEF9-4215-A99D-86E6B8DAB342", cancellationToken);
+            }
 
         }
     }

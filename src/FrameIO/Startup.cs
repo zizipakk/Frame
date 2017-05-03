@@ -7,6 +7,8 @@ using AutoMapper;
 using FrameIO.Data;
 using FrameIO.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System;
 
 namespace FrameIO
 {
@@ -21,7 +23,7 @@ namespace FrameIO
                 .SetBasePath(environment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
-                //.AddJsonFile("./Properties/launchSettings.json")
+                .AddJsonFile("./Properties/launchSettings.json")
                 ;            
 
             if (environment.IsDevelopment())
@@ -46,17 +48,17 @@ namespace FrameIO
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"))
             );
-           
+
             //TODO: get a trip to the auth service, so setup identity
+            services.AddAuthentication(options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
 
             services.AddMvcCore();
-
             services.AddAutoMapper();
-
             services.AddCors();
-
             services.AddSingleton<IComPortService, ComPortService>();
-
             services.AddTransient<IComConfigService, ComConfigService>();
         }
 
@@ -78,6 +80,20 @@ namespace FrameIO
                 .AllowAnyHeader()
                 .AllowCredentials()
             );
+
+            app.UseOAuthIntrospection(options =>
+            {
+                options.Authority = new Uri(Configuration["AuthServer"]);
+                options.Audiences.Add("FrameIO");
+                options.ClientId = "FrameIO";
+                options.ClientSecret = "846B62D0-DEF9-4215-A99D-86E6B8DAB342";
+                options.RequireHttpsMetadata = false;
+
+                // Note: you can override the default name and role claims:
+                // options.NameClaimType = "custom_name_claim";
+                // options.RoleClaimType = "custom_role_claim";
+            });
+
 
             app.UseMvc();
         }
