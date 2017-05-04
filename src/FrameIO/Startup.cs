@@ -9,6 +9,7 @@ using FrameIO.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace FrameIO
 {
@@ -49,6 +50,8 @@ namespace FrameIO
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"))
             );
 
+            services.AddDistributedMemoryCache(); //need introspect
+
             //TODO: get a trip to the auth service, so setup identity
             services.AddAuthentication(options =>
             {
@@ -88,6 +91,8 @@ namespace FrameIO
                 options.ClientId = "FrameIO";
                 options.ClientSecret = "846B62D0-DEF9-4215-A99D-86E6B8DAB342";
                 options.RequireHttpsMetadata = false;
+                options.AutomaticAuthenticate = true;
+                options.AutomaticChallenge = true;
 
                 // Note: you can override the default name and role claims:
                 // options.NameClaimType = "custom_name_claim";
