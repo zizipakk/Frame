@@ -49,9 +49,6 @@ namespace FrameAuth.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
@@ -92,8 +89,50 @@ namespace FrameAuth.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+                });
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
+            modelBuilder.Entity("FrameAuth.Data.ApplicationUserLog", b =>
+                {
+                    b.Property<Guid>("LogId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("AccessFailedCount");
+
+                    b.Property<string>("ConcurrencyStamp");
+
+                    b.Property<string>("Email");
+
+                    b.Property<bool>("EmailConfirmed");
+
+                    b.Property<string>("ExecutiveId");
+
+                    b.Property<Guid>("Id");
+
+                    b.Property<bool>("LockoutEnabled");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd");
+
+                    b.Property<string>("NormalizedEmail");
+
+                    b.Property<string>("NormalizedUserName");
+
+                    b.Property<string>("PasswordHash");
+
+                    b.Property<string>("PhoneNumber");
+
+                    b.Property<bool>("PhoneNumberConfirmed");
+
+                    b.Property<string>("SecurityStamp");
+
+                    b.Property<DateTime>("TimeStamp");
+
+                    b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<string>("UserName");
+
+                    b.HasKey("LogId");
+
+                    b.ToTable("ApplicationUserLogs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
@@ -278,21 +317,6 @@ namespace FrameAuth.Migrations
                     b.HasIndex("AuthorizationId");
 
                     b.ToTable("OpenIddictTokens");
-                });
-
-            modelBuilder.Entity("FrameAuth.Data.ApplicationUserLog", b =>
-                {
-                    b.HasBaseType("FrameAuth.Data.ApplicationUser");
-
-                    b.Property<string>("ExecutiveId");
-
-                    b.Property<Guid>("LogId");
-
-                    b.Property<DateTime>("TimeStamp");
-
-                    b.ToTable("ApplicationUserLog");
-
-                    b.HasDiscriminator().HasValue("ApplicationUserLog");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>

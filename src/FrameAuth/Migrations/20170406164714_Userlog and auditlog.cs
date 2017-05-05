@@ -8,27 +8,6 @@ namespace FrameAuth.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Discriminator",
-                table: "AspNetUsers",
-                nullable: false,
-                defaultValue: "");
-
-            migrationBuilder.AddColumn<string>(
-                name: "ExecutiveId",
-                table: "AspNetUsers",
-                nullable: true);
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "LogId",
-                table: "AspNetUsers",
-                nullable: true);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "TimeStamp",
-                table: "AspNetUsers",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "AuditLogs",
                 columns: table => new
@@ -52,22 +31,6 @@ namespace FrameAuth.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AuditLogs");
-
-            migrationBuilder.DropColumn(
-                name: "Discriminator",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "ExecutiveId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "LogId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "TimeStamp",
-                table: "AspNetUsers");
         }
     }
 }

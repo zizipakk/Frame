@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v1.1",
-    "signature": "2bcecfb62be31a7c8c01963dc5d25e3ea40525c2"
+    "signature": "fa224c59b19847b9c1a16c177b3f46a3bdd86114"
   },
   "compilationOptions": {
     "defines": [
@@ -32,7 +32,6 @@
           "Microsoft.AspNetCore.StaticFiles": "1.1.1",
           "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.1",
           "Microsoft.Extensions.Configuration.Json": "1.1.1",
-          "Microsoft.Extensions.Configuration.UserSecrets": "1.1.1",
           "Microsoft.Extensions.Logging": "1.1.1",
           "Microsoft.Extensions.Logging.Console": "1.1.1",
           "Microsoft.Extensions.Logging.Debug": "1.1.1",
@@ -497,18 +496,6 @@
         },
         "compile": {
           "lib/netstandard1.3/Microsoft.Extensions.Configuration.Json.dll": {}
-        }
-      },
-      "microsoft.extensions.configuration.usersecrets/1.1.1": {
-        "dependencies": {
-          "Microsoft.Extensions.Configuration.Json": "1.1.1",
-          "NETStandard.Library": "1.6.1"
-        },
-        "runtime": {
-          "lib/netstandard1.5/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
-        },
-        "compile": {
-          "lib/netstandard1.5/Microsoft.Extensions.Configuration.UserSecrets.dll": {}
         }
       },
       "microsoft.extensions.dependencyinjection/1.1.0": {
@@ -2797,13 +2784,6 @@
       "sha512": "sha512-blWKZSsNKtToH5ApwIIbctMTwrGucrTG4nsVSqosgDHm5UawE1I1/jP0UdhbICxPGTv8D+2ruKaqUK7/6In1qQ==",
       "path": "microsoft.extensions.configuration.json/1.1.1",
       "hashPath": "microsoft.extensions.configuration.json.1.1.1.nupkg.sha512"
-    },
-    "microsoft.extensions.configuration.usersecrets/1.1.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-Mlzhf4rYd8mAa1hEMW0qCuptu3nLmIrCUi0+XtS4FMb0fJCP4f+FPmDjnIXqfPQuYVlrchqXZnpfZlDdAJjzBQ==",
-      "path": "microsoft.extensions.configuration.usersecrets/1.1.1",
-      "hashPath": "microsoft.extensions.configuration.usersecrets.1.1.1.nupkg.sha512"
     },
     "microsoft.extensions.dependencyinjection/1.1.0": {
       "type": "package",

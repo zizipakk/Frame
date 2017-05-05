@@ -49,6 +49,7 @@ namespace FrameIO
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"))
             );
 
+            services.AddAuthentication();
             services.AddDistributedMemoryCache(); //need introspect
 
             services.AddMvcCore();
@@ -59,7 +60,11 @@ namespace FrameIO
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(
+            IApplicationBuilder app, 
+            IHostingEnvironment env, 
+            ILoggerFactory loggerFactory,
+            ApplicationDbContext dbContext)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -95,6 +100,9 @@ namespace FrameIO
 
 
             app.UseMvc();
+
+            using (dbContext)
+                dbContext.Database.EnsureCreated();
         }
     }
 }

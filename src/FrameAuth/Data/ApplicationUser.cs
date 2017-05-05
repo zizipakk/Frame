@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FrameAudit;
 using ElasticsearchCRUD.ContextAddDeleteUpdate.CoreTypeAttributes;
 using System.ComponentModel.DataAnnotations;
+using static FrameHelper.EntityHelpers;
+using System.Collections.Generic;
 
 namespace FrameAuth.Data
 {
@@ -12,18 +14,41 @@ namespace FrameAuth.Data
         public bool IsAdmin { get; set; }
     }
 
-    public class ApplicationUserLog : ApplicationUser, ILogModelExtension
+    public interface IApplicationUserLog : IWithIdAndTimeStamp
     {
-        public ApplicationUserLog()
-        {
-            LogId = Guid.NewGuid();
-            TimeStamp = DateTime.UtcNow;
-        }
+        int AccessFailedCount { get; set; }
+        bool LockoutEnabled { get; set; }
+        DateTimeOffset? LockoutEnd { get; set; }
+        bool TwoFactorEnabled { get; set; }
+        bool PhoneNumberConfirmed { get; set; }
+        string PhoneNumber { get; set; }
+        string ConcurrencyStamp { get; set; }
+        string SecurityStamp { get; set; }
+        string PasswordHash { get; set; }
+        bool EmailConfirmed { get; set; }
+        string NormalizedEmail { get; set; }
+        string Email { get; set; }
+        string NormalizedUserName { get; set; }
+        string UserName { get; set; }
+    }
 
-        [Key]
-        public Guid LogId { get; set; }
-        public DateTime TimeStamp { get; set; }
-        public string ExecutiveId { get; set; }
+    public class ApplicationUserLog : LogModelExtension, IWithIdAndTimeStamp, IApplicationUserLog
+    {
+        public Guid Id { get; set; }
+        public int AccessFailedCount { get; set; }
+        public bool LockoutEnabled { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }
+        public bool TwoFactorEnabled { get; set; }
+        public bool PhoneNumberConfirmed { get; set; }
+        public string PhoneNumber { get; set; }
+        public string ConcurrencyStamp { get; set; }
+        public string SecurityStamp { get; set; }
+        public string PasswordHash { get; set; }
+        public bool EmailConfirmed { get; set; }
+        public string NormalizedEmail { get; set; }
+        public string Email { get; set; }
+        public string NormalizedUserName { get; set; }
+        public string UserName { get; set; }
     }
 
     public class ApplicationUserSearch : ApplicationUser
