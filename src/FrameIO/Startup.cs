@@ -29,7 +29,6 @@ namespace FrameIO
 
             if (environment.IsDevelopment())
             {
-                //builder.AddUserSecrets(typeof(Startup).GetTypeInfo().Assembly);
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
 
@@ -51,12 +50,6 @@ namespace FrameIO
             );
 
             services.AddDistributedMemoryCache(); //need introspect
-
-            //TODO: get a trip to the auth service, so setup identity
-            services.AddAuthentication(options =>
-            {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            });
 
             services.AddMvcCore();
             services.AddAutoMapper();
@@ -84,6 +77,7 @@ namespace FrameIO
                 .AllowCredentials()
             );
 
+            //TODO: get a trip to the auth service, so setup identity
             app.UseOAuthIntrospection(options =>
             {
                 options.Authority = new Uri(Configuration["AuthServer"]);

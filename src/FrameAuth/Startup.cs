@@ -20,6 +20,7 @@ using OpenIddict.Models;
 using OpenIddict.Core;
 using System.Linq;
 using System.Collections.Generic;
+using AspNet.Security.OpenIdConnect.Primitives;
 //using AspNet.Security.OpenIdConnect.Primitives;
 
 namespace FrameAuth
@@ -42,10 +43,6 @@ namespace FrameAuth
 
             if (environment.IsDevelopment())
             {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                //builder.AddUserSecrets(); wont work by design
-                builder.AddUserSecrets(typeof(Startup).GetTypeInfo().Assembly);
-
                 // This will push telemetry data through Application Insights pipeline faster, allowing you to view results immediately.
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
@@ -99,6 +96,16 @@ namespace FrameAuth
             //    options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
             //});
 
+            // Configure Identity to use the same JWT claims as OpenIddict instead
+            // of the legacy WS-Federation claims it uses by default (ClaimTypes),
+            // which saves you from doing the mapping in your authorization controller.
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
+                options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
+                options.ClaimsIdentity.RoleClaimType = "role";
+            });
+
             // Register the OpenIddict services.
             // Note: use the generic overload if you need
             // to replace the default OpenIddict entities.
@@ -113,11 +120,18 @@ namespace FrameAuth
 
                 // Enable the token endpoint (required to use the password flow).
                 .EnableTokenEndpoint("/connect/token")
-                //.EnableIntrospectionEndpoint("/connect/introspect")
+                // This is in library, and need to implicit flow
+                .EnableIntrospectionEndpoint("/connect/introspect")
+                .EnableAuthorizationEndpoint("/connect/authorize")
+                // Close grant
+                .EnableLogoutEndpoint("/connect/logoff")
+                // Get profil data
+                .EnableUserinfoEndpoint("/user/userinfo")
 
                 // Allow client applications to use the grant_type=password flow.
                 .AllowPasswordFlow()
-                //.AllowRefreshTokenFlow()
+                // Independent services auth
+                .AllowImplicitFlow()
 
                 // TODO
                 // During development, you can disable the HTTPS requirement.
@@ -132,7 +146,6 @@ namespace FrameAuth
                 //.AddEphemeralSigningKey()
 
                 .AddSigningCertificate(cert)
-
                 ;
 
             services.AddMvc();
@@ -205,7 +218,7 @@ namespace FrameAuth
 
             app.UseCors(builder =>
                 builder
-                .WithOrigins(Configuration["CORS:ClientDomain"], Configuration["CORS:AppDomain"]) //client and app host path in config
+                .WithOrigins(Configuration["CORS:ClientDomain"], Configuration["CORS:FrameIO"]) //client and app host path in config
                 //.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
@@ -224,13 +237,14 @@ namespace FrameAuth
             //});
             app.UseMvcWithDefaultRoute();
 
-            dbContext.Database.EnsureCreated();
+            using (dbContext)
+            {
+                dbContext.Database.EnsureCreated();
 
-            // Seed the database with the sample applications.
-            // Note: in a real world application, this step should be part of a setup script.
-            InitializeAsync(CancellationToken.None, roleManager, appManager).GetAwaiter().GetResult();
-
-            dbContext.Dispose();
+                // Seed the database with the sample applications.
+                // Note: in a real world application, this step should be part of a setup script.
+                InitializeAsync(CancellationToken.None, roleManager, appManager).GetAwaiter().GetResult();
+            }
         }
 
         private async Task InitializeAsync(CancellationToken cancellationToken, RoleManager<IdentityRole> roleManager, OpenIddictApplicationManager<OpenIddictApplication> appManager)

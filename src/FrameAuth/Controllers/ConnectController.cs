@@ -14,6 +14,10 @@ using AutoMapper;
 using System;
 using Microsoft.Extensions.Logging;
 using FrameHelper;
+using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Builder;
+using System.Diagnostics;
 
 namespace FrameAuth.Controllers
 {
@@ -28,21 +32,24 @@ namespace FrameAuth.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger logger;
         private readonly IMapper mapper;
+        private readonly IOptions<IdentityOptions> identityOptions;
 
         public ConnectController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILoggerFactory loggerFactory,
-            IMapper mapper)
+            IMapper mapper,
+            IOptions<IdentityOptions> identityOptions)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             logger = loggerFactory.CreateLogger<ConnectController>();
             this.mapper = mapper;
+            this.identityOptions = identityOptions;
         }
 
         /// <summary>
-        /// Tokenhandler
+        /// Authentication and Tokenhandler
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -109,37 +116,9 @@ namespace FrameAuth.Controllers
                     await userManager.ResetAccessFailedCountAsync(user);
                 }
 
-                // Create the principal
-                var principal = await signInManager.CreateUserPrincipalAsync(user);
-
-                // Claims will not be associated with specific destinations by default, so we must indicate whether they should
-                // be included or not in access and identity tokens.
-                foreach (var claim in principal.Claims)
-                {
-                    // For this sample, just include all claims in all token types.
-                    // In reality, claims' destinations would probably differ by token type and depending on the scopes requested.
-                    claim.SetDestinations(OpenIdConnectConstants.Destinations.AccessToken, OpenIdConnectConstants.Destinations.IdentityToken);
-                }
-
-                // Create a new authentication ticket for the user's principal
-                var ticket = new AuthenticationTicket(
-                    principal,
-                    new AuthenticationProperties(),
-                    OpenIdConnectServerDefaults.AuthenticationScheme);
-
-                // Include resources and scopes, as appropriate
-                var scope = new[]
-                {
-                    OpenIdConnectConstants.Scopes.OpenId,
-                    OpenIdConnectConstants.Scopes.Email,
-                    OpenIdConnectConstants.Scopes.Profile,
-                    OpenIdConnectConstants.Scopes.OfflineAccess,
-                    OpenIddictConstants.Scopes.Roles
-                }.Intersect(request.GetScopes());
-
-                ticket.SetResources(Startup.StaticConfig["profiles:FrameAuth:launchUrl"]);
-                ticket.SetScopes(scope);
-
+                // Create a new authentication ticket.
+                var ticket = await CreateTicketAsync(request, user);
+                               
                 // Sign in the user
                 return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
             }
@@ -150,14 +129,64 @@ namespace FrameAuth.Controllers
             }
         }
 
-        //
-        // POST: /Account/LogOff
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
+        public async Task<IActionResult> Authorize(OpenIdConnectRequest request)
+        {
+            Debug.Assert(request.IsAuthorizationRequest(),
+                "The OpenIddict binder for ASP.NET Core MVC is not registered. " +
+                "Make sure services.AddOpenIddict().AddMvcBinders() is correctly called.");
+
+            try
+            {
+                if (!User.Identity.IsAuthenticated)
+                {
+                    //// If the client application request promptless authentication,
+                    //// return an error indicating that the user is not logged in.
+                    //if (request.HasPrompt(OpenIdConnectConstants.Prompts.None))
+                    //{
+                    //    var properties = new AuthenticationProperties(new Dictionary<string, string>
+                    //    {
+                    //        [OpenIdConnectConstants.Properties.Error] = OpenIdConnectConstants.Errors.LoginRequired,
+                    //        [OpenIdConnectConstants.Properties.ErrorDescription] = "The user is not logged in."
+                    //    });
+
+                    //    // Ask OpenIddict to return a login_required error to the client application.
+                    //    return Forbid(properties, OpenIdConnectServerDefaults.AuthenticationScheme);
+                    //}
+                    return Challenge();
+                }
+
+                // Retrieve the profile of the logged in user.
+                var user = await userManager.GetUserAsync(User);
+                if (user == null)
+                    throw new Exception("User is authenticated, but cannot resolve!");
+
+                // Create a new authentication ticket.
+                var ticket = await CreateTicketAsync(request, user);
+
+                // Returning a SignInResult will ask OpenIddict to issue the appropriate access/identity tokens.
+                return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(new EventId(5, nameof(Authorize)), e.Message);
+                return await ExceptionResponse(e);
+            }
+        }
+
+        /// <summary>
+        /// End of auth session
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]        
         public async Task<IActionResult> LogOff() //TODO ?????????????
         {
             try
             {
+                // Ask ASP.NET Core Identity to delete the local and external cookies created
+                // when the user agent is redirected from the external identity provider
+                // after a successful authentication flow (e.g Google or Facebook).
                 await signInManager.SignOutAsync();
                 logger.LogInformation(3, "User logged out.");
                 return Ok(new JsonResult(null));
@@ -167,6 +196,59 @@ namespace FrameAuth.Controllers
                 logger.LogError(new EventId(6, nameof(Token)), e.Message);
                 return await ExceptionResponse(e);
             }
+        }
+
+        private async Task<AuthenticationTicket> CreateTicketAsync(OpenIdConnectRequest request, ApplicationUser user)
+        {
+            // Create the principal
+            var principal = await signInManager.CreateUserPrincipalAsync(user);
+
+            // Create a new authentication ticket for the user's principal
+            var ticket = new AuthenticationTicket(
+                principal,
+                new AuthenticationProperties(),
+                OpenIdConnectServerDefaults.AuthenticationScheme);
+
+            // Include resources and scopes, as appropriate
+            ticket.SetScopes(new[]
+            {
+                    OpenIdConnectConstants.Scopes.OpenId,
+                    OpenIdConnectConstants.Scopes.Email,
+                    OpenIdConnectConstants.Scopes.Profile,
+                    OpenIddictConstants.Scopes.Roles
+                }.Intersect(request.GetScopes()));
+
+            // TODO: authorized (external) resources audiences
+            ticket.SetResources(
+                Startup.StaticConfig["profiles:FrameAuth:launchUrl"],
+                Startup.StaticConfig["AppSources:FrameIO"]
+            );
+
+            ticket.Principal.Claims.ToList().ForEach(claim =>
+            {
+                // Never include the security stamp in the access and identity tokens, as it's a secret value.
+                if (claim.Type != identityOptions.Value.ClaimsIdentity.SecurityStampClaimType)
+                {
+
+                    var destinations = new List<string>
+                        {
+                            OpenIdConnectConstants.Destinations.AccessToken
+                        };
+
+                    // Only add the iterated claim to the id_token if the corresponding scope was granted to the client application.
+                    // The other claims will only be added to the access_token, which is encrypted when using the default format.
+                    if ((claim.Type == OpenIdConnectConstants.Claims.Name && ticket.HasScope(OpenIdConnectConstants.Scopes.Profile)) ||
+                        (claim.Type == OpenIdConnectConstants.Claims.Email && ticket.HasScope(OpenIdConnectConstants.Scopes.Email)) ||
+                        (claim.Type == "role" && ticket.HasScope(OpenIddictConstants.Claims.Roles)))
+                    {
+                        destinations.Add(OpenIdConnectConstants.Destinations.IdentityToken);
+                    }
+
+                    claim.SetDestinations(destinations);
+                }
+            });
+
+            return ticket;
         }
     }
 }

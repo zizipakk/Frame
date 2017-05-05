@@ -11,6 +11,10 @@ using System.Collections.Generic;
 using FrameAuth.Models.UserViewModels;
 using FrameSearch.Controllers;
 using FrameSearch.ElasticSearchProvider;
+using AspNet.Security.OAuth.Validation;
+using Newtonsoft.Json.Linq;
+using AspNet.Security.OpenIdConnect.Primitives;
+using OpenIddict.Core;
 
 namespace FrameAuth.Controllers
 {
@@ -37,6 +41,10 @@ namespace FrameAuth.Controllers
             this.mapper = mapper;
         }
 
+        /// <summary>
+        /// For testing
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetUsers()
@@ -53,6 +61,32 @@ namespace FrameAuth.Controllers
             }
         }
 
-        
+        // GET: /api/userinfo
+        [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
+        [HttpGet]
+        public async Task<IActionResult> Userinfo()
+        {
+            try
+            {
+                var user = await userManager.GetUserAsync(User);
+
+                if (user == null)
+                    throw new Exception("Can not resolve current user!");
+
+                // TODO: improve scope cheking
+                // Note: the complete list of standard claims supported by the OpenID Connect specification
+                // can be found here: http://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+                if (!User.HasClaim(OpenIdConnectConstants.Claims.Scope, OpenIdConnectConstants.Scopes.Email))
+                    user.Email = "Not allowed";
+                // ...
+
+                return Ok(mapper.Map<UserViewModel>(user));
+            }
+            catch(Exception e)
+            {
+                logger.LogError(new EventId(2, nameof(Userinfo)), e.Message);
+                return await ExceptionResponse(e);
+            }
+        }
     }   
 }
