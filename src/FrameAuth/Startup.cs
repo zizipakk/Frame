@@ -1,26 +1,26 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AspNet.Security.OAuth.Validation;
+using AspNet.Security.OpenIdConnect.Primitives;
+using AutoMapper;
+using FrameAuth.Data;
+using FrameAuth.Services;
+using FrameSearch.ElasticSearchProvider;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using FrameAuth.Data;
-using FrameAuth.Services;
-using System.Security.Cryptography.X509Certificates;
-using System.IO;
-using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
-using AutoMapper;
-using System.Reflection;
-using FrameSearch.ElasticSearchProvider;
-using System;
-using System.Threading;
-using OpenIddict.Models;
+using OpenIddict;
 using OpenIddict.Core;
-using System.Linq;
+using OpenIddict.Models;
 using System.Collections.Generic;
-using AspNet.Security.OpenIdConnect.Primitives;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
 //using AspNet.Security.OpenIdConnect.Primitives;
 
 namespace FrameAuth
@@ -28,6 +28,7 @@ namespace FrameAuth
     public class Startup
     {
         private readonly IHostingEnvironment environment;
+        public static IHostingEnvironment StaticEnvironment;
         public IConfigurationRoot Configuration { get; }
         public static IConfigurationRoot StaticConfig { get; set; }
 
@@ -48,22 +49,25 @@ namespace FrameAuth
             }
 
             this.environment = environment;
+            StaticEnvironment = environment;
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
             StaticConfig = Configuration;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        private static X509Certificate2 GetCert()
         {
-            //TODO
-            var cert = new X509Certificate2(
-                Path.Combine(environment.ContentRootPath, "CARoot.pfx"),
+            return new X509Certificate2(
+                Path.Combine(StaticEnvironment.ContentRootPath, "CARoot.pfx"),
                 "PassPort",
                 X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet
             );
+        }
 
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
 
@@ -83,18 +87,10 @@ namespace FrameAuth
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders(
-                );
+                .AddDefaultTokenProviders()
+                ;
 
-            // Configure Identity to use the same JWT claims as OpenIddict instead
-            // of the legacy WS-Federation claims it uses by default (ClaimTypes),
-            // which saves you from doing the mapping in your authorization controller.
-            //services.Configure<IdentityOptions>(options =>
-            //{
-            //    options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
-            //    options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
-            //    options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
-            //});
+            //services.AddAuthentication();
 
             // Configure Identity to use the same JWT claims as OpenIddict instead
             // of the legacy WS-Federation claims it uses by default (ClaimTypes),
@@ -128,24 +124,25 @@ namespace FrameAuth
                 // Get profil data
                 .EnableUserinfoEndpoint("/user/userinfo")
 
-                // Allow client applications to use the grant_type=password flow.
+                // Allow client applications to use the grant_type=password flow. ...
                 .AllowPasswordFlow()
-                // Independent services auth
+                
+
+                // Independent services retrospect auth
                 .AllowImplicitFlow()
 
                 // TODO
                 // During development, you can disable the HTTPS requirement.
                 .DisableHttpsRequirement()
 
-                // Note: to use JWT access tokens instead of the default
-                // encrypted format, the following lines are required:
-                //.UseJsonWebTokens()
-                // Register a new ephemeral key, that is discarded when the application
-                // shuts down. Tokens signed using this key are automatically invalidated.
-                // This method should only be used during development.
+                //// ... JWT
+                //.UseJsonWebTokens()                
+                //// Register a new ephemeral key, that is discarded when the application
+                //// shuts down. Tokens signed using this key are automatically invalidated.
+                //// This method should only be used during development.
                 //.AddEphemeralSigningKey()
 
-                .AddSigningCertificate(cert)
+                .AddSigningCertificate(GetCert())
                 ;
 
             services.AddMvc();
@@ -211,6 +208,35 @@ namespace FrameAuth
             }
 
             app.UseStaticFiles();
+                       
+            app.UseOAuthValidation(o =>
+            {
+                o.SaveToken = true;
+                o.AuthenticationScheme = OAuthValidationDefaults.AuthenticationScheme;
+                o.AutomaticAuthenticate = true;
+                o.AutomaticChallenge = true;
+                o.IncludeErrorDetails = true;                
+            });
+
+            ////This is for direct client auth
+            //var jwtOptions = new JwtBearerOptions()
+            //{
+            //    AutomaticAuthenticate = true,
+            //    AutomaticChallenge = true,
+            //    RequireHttpsMetadata = false,
+            //    Audience = StaticConfig["AppSources:FrameAuth"],
+            //    ClaimsIssuer = StaticConfig["AppSources:FrameAuth"],
+            //    TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        NameClaimType = OpenIdConnectConstants.Claims.Subject,
+            //        RoleClaimType = "role"
+            //    }
+            //};
+
+            //jwtOptions.TokenValidationParameters.ValidAudience = StaticConfig["AppSources:FrameAuth"];
+            //jwtOptions.TokenValidationParameters.ValidIssuer = StaticConfig["AppSources:FrameAuth"];
+            //jwtOptions.TokenValidationParameters.IssuerSigningKey = new RsaSecurityKey(GetCert().GetRSAPrivateKey().ExportParameters(false));
+            //app.UseJwtBearerAuthentication(jwtOptions);
 
             app.UseIdentity();
 
@@ -224,8 +250,6 @@ namespace FrameAuth
                 .AllowAnyHeader()
                 .AllowCredentials()
             );
-
-            app.UseOAuthValidation();
 
             app.UseOpenIddict();
 

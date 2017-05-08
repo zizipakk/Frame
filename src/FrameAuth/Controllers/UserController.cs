@@ -21,6 +21,7 @@ namespace FrameAuth.Controllers
     /// <summary>
     /// SPA controller
     /// </summary>
+    [Route("user/[controller]")]
     [Authorize]
     public class UserController : EntitySearchController<ApplicationUser, ApplicationUserSearch, string>
     {
@@ -45,8 +46,8 @@ namespace FrameAuth.Controllers
         /// For testing
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet]
+        [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
+        [HttpGet("getusers")]
         public async Task<IActionResult> GetUsers()
         {
             try

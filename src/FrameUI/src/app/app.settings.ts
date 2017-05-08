@@ -18,11 +18,22 @@ export class AppHeaders {
         headers.append('Accept', 'application/json');
         
         /** Set token if available */
-        let token = sessionStorage.getItem("authorizationData"); //localStorage
-        if (token !== "" && token !== '""') {
-            headers.append('Authorization', 'Bearer ' + token);
-        }
+        this.AddToken(headers);
 
+        return headers; 
+    }
+
+    private static get TOKEN() {
+        /** Set token if available */
+        return sessionStorage.getItem("authorizationData"); //localStorage
+    }
+
+    public static AddToken(headers: Headers) {
+        let token = AppHeaders.TOKEN.replace(new RegExp("\"", 'g'), "");
+
+        if (token !== "" && token !== '""') {
+            headers.append('Authorization', 'Bearer ' + token);            
+        }
         return headers; 
     }
 }
@@ -36,3 +47,12 @@ export class AuthHeaders {
     }
 }
 
+export class AuthWithTokenHeaders {
+    public static get HEADERS(): Headers { 
+        /** Set content type for auth*/
+        let headers: Headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
+        /** Set token if available */
+        AppHeaders.AddToken(headers);
+        return headers; 
+    }
+}

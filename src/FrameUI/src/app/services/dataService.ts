@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { IappState } from '../models/appState';
 import { ActionTypes } from '../reducers/reducer.settings'
-import { AuthHeaders, AppHeaders } from '../app.settings';
+import { AuthHeaders, AppHeaders, AuthWithTokenHeaders } from '../app.settings';
 import { Observable } from 'rxjs/Rx'; //http://stackoverflow.com/questions/37030963/angular-2-2-0-0-rc-1-property-map-does-not-exist-on-type-observableresponse
 import 'rxjs/add/operator/map';
 
@@ -64,6 +64,15 @@ export class DataService {
         let args: RequestOptionsArgs = ({
             method: RequestMethod.Post,
             headers: AuthHeaders.HEADERS,
+            body: data
+        });
+        return this.httpRequest<T>(baseUri, args);
+    }
+
+    postAuthhWithToken<T>(baseUri: string, data?: any) {
+        let args: RequestOptionsArgs = ({
+            method: RequestMethod.Post,
+            headers: AuthWithTokenHeaders.HEADERS,
             body: data
         });
         return this.httpRequest<T>(baseUri, args);

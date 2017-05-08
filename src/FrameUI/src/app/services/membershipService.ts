@@ -142,11 +142,11 @@ export class MembershipService {
                 }
         }
 
-        if (data.username)
+        if (data.name)
         {
-            console.log('User: ' + data.username);
+            console.log('User: ' + data.name);
             user.userName = data.username;
-            this.store('UserName', data.username);
+            this.store('UserName', data.name);
         }
 
         if (data.sub)
@@ -198,10 +198,7 @@ export class MembershipService {
     }
 
     logout() {
-
-        //let id_token_hint = this.retrieve("authorizationDataIdToken");
-        //return this.dataService.post(this.idLogout, "id_token_hint=" + id_token_hint);
-        return this.dataService.post<any>(this.idLogout);
+        return this.dataService.postAuthhWithToken<any>(this.idLogout);
     }
 
     logoutCallback() {

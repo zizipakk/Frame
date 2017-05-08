@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
+using AspNet.Security.OAuth.Validation;
 
 namespace FrameAuth.Controllers
 {
@@ -179,7 +180,8 @@ namespace FrameAuth.Controllers
         /// End of auth session
         /// </summary>
         /// <returns></returns>
-        [HttpPost]        
+        [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
+        [HttpPost]
         public async Task<IActionResult> LogOff() //TODO ?????????????
         {
             try
@@ -189,9 +191,13 @@ namespace FrameAuth.Controllers
                 // after a successful authentication flow (e.g Google or Facebook).
                 await signInManager.SignOutAsync();
                 logger.LogInformation(3, "User logged out.");
-                return Ok(new JsonResult(null));
+                //return Ok(new JsonResult(null));
+                // Returning a SignOutResult will ask OpenIddict to redirect the user agent
+                // to the post_logout_redirect_uri specified by the client application.
+                return SignOut(OpenIdConnectServerDefaults.AuthenticationScheme);
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 logger.LogError(new EventId(6, nameof(Token)), e.Message);
                 return await ExceptionResponse(e);
@@ -220,7 +226,8 @@ namespace FrameAuth.Controllers
 
             // TODO: authorized (external) resources audiences
             ticket.SetResources(
-                Startup.StaticConfig["profiles:FrameAuth:launchUrl"],
+                //Startup.StaticConfig["profiles:FrameAuth:launchUrl"],
+                Startup.StaticConfig["AppSources:FrameAuth"],
                 Startup.StaticConfig["AppSources:FrameIO"]
             );
 
