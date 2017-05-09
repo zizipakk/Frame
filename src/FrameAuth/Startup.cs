@@ -129,7 +129,7 @@ namespace FrameAuth
 
                 // Allow client applications to use the grant_type=password flow. ...
                 .AllowPasswordFlow()
-                
+
                 // Independent services retrospect auth
                 .AllowImplicitFlow()
 
@@ -138,14 +138,14 @@ namespace FrameAuth
                 .DisableHttpsRequirement()
 
                 //// ... JWT
-                //.UseJsonWebTokens()                
-                //// Register a new ephemeral key, that is discarded when the application
-                //// shuts down. Tokens signed using this key are automatically invalidated.
-                //// This method should only be used during development.
-                //.AddEphemeralSigningKey()
+                //.UseJsonWebTokens()  
 
-                .AddSigningCertificate(GetCert())
-                ;
+                // Register a new ephemeral key, that is discarded when the application
+                // shuts down. Tokens signed using this key are automatically invalidated.
+                // This method should only be used during development.
+                .AddEphemeralSigningKey();
+
+                //.AddSigningCertificate(GetCert());
 
             services
                 .AddMvc()
@@ -214,37 +214,61 @@ namespace FrameAuth
             }
 
             app.UseStaticFiles();
-                       
-            app.UseOAuthValidation(o =>
-            {
-                o.SaveToken = true;
-                o.AuthenticationScheme = OAuthValidationDefaults.AuthenticationScheme;
-                o.AutomaticAuthenticate = true;
-                o.AutomaticChallenge = true;
-                o.IncludeErrorDetails = true;                
-            });
 
-            ////This is for direct client auth
-            //var jwtOptions = new JwtBearerOptions()
+            app.UseWhen(
+                context => 
+                    (context.Request.Path.StartsWithSegments("/home")
+                    || context.Request.Path.StartsWithSegments("/account")
+                    || context.Request.Path.StartsWithSegments("/manage"))
+                ,branch =>
+                    {
+                        branch.UseIdentity();
+                        // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+                    });
+
+            app.UseWhen(
+                context =>
+                    !(context.Request.Path.StartsWithSegments("/home")
+                    || context.Request.Path.StartsWithSegments("/account")
+                    || context.Request.Path.StartsWithSegments("/manage"))
+                ,branch =>
+                    {
+                        branch.UseOAuthValidation();
+                    });
+
+            //app.UseOAuthValidation(o =>
             //{
-            //    AutomaticAuthenticate = true,
-            //    AutomaticChallenge = true,
-            //    RequireHttpsMetadata = false,
-            //    Audience = StaticConfig["AppSources:FrameAuth"],
-            //    ClaimsIssuer = StaticConfig["AppSources:FrameAuth"],
-            //    TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        NameClaimType = OpenIdConnectConstants.Claims.Subject,
-            //        RoleClaimType = "role"
-            //    }
-            //};
+            //    o.SaveToken = true;
+            //    //o.AuthenticationScheme = OAuthValidationDefaults.AuthenticationScheme;
+            //    //o.AutomaticAuthenticate = false;
+            //    //o.AutomaticChallenge = false;
+            //    //o.IncludeErrorDetails = true;
+            //    //o.AccessTokenFormat = "";
+            //    //o.Audiences = "";
+            //    o.AccessTokenFormat = 
+            //});
 
-            //jwtOptions.TokenValidationParameters.ValidAudience = StaticConfig["AppSources:FrameAuth"];
-            //jwtOptions.TokenValidationParameters.ValidIssuer = StaticConfig["AppSources:FrameAuth"];
-            //jwtOptions.TokenValidationParameters.IssuerSigningKey = new RsaSecurityKey(GetCert().GetRSAPrivateKey().ExportParameters(false));
-            //app.UseJwtBearerAuthentication(jwtOptions);
+            //////This is for direct client auth
+            ////var jwtOptions = new JwtBearerOptions()
+            ////{
+            ////    AutomaticAuthenticate = true,
+            ////    AutomaticChallenge = true,
+            ////    RequireHttpsMetadata = false,
+            ////    Audience = StaticConfig["AppSources:FrameAuth"],
+            ////    ClaimsIssuer = StaticConfig["AppSources:FrameAuth"],
+            ////    TokenValidationParameters = new TokenValidationParameters
+            ////    {
+            ////        NameClaimType = OpenIdConnectConstants.Claims.Subject,
+            ////        RoleClaimType = "role"
+            ////    }
+            ////};
 
-            app.UseIdentity();
+            ////jwtOptions.TokenValidationParameters.ValidAudience = StaticConfig["AppSources:FrameAuth"];
+            ////jwtOptions.TokenValidationParameters.ValidIssuer = StaticConfig["AppSources:FrameAuth"];
+            ////jwtOptions.TokenValidationParameters.IssuerSigningKey = new RsaSecurityKey(GetCert().GetRSAPrivateKey().ExportParameters(false));
+            ////app.UseJwtBearerAuthentication(jwtOptions);
+
+            //app.UseIdentity();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
@@ -259,13 +283,7 @@ namespace FrameAuth
 
             app.UseOpenIddict();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
-            //app.UseMvcWithDefaultRoute();
+            app.UseMvcWithDefaultRoute();
 
             using (dbContext)
             {

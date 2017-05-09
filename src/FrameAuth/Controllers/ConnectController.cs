@@ -186,11 +186,7 @@ namespace FrameAuth.Controllers
         public async Task<IActionResult> LogOff() //TODO ?????????????
         {
             try
-            {
-                // Ask ASP.NET Core Identity to delete the local and external cookies created
-                // when the user agent is redirected from the external identity provider
-                // after a successful authentication flow (e.g Google or Facebook).
-                await signInManager.SignOutAsync();
+            {               
                 logger.LogInformation(3, "User logged out.");
                 //return Ok(new JsonResult(null));
                 // Returning a SignOutResult will ask OpenIddict to redirect the user agent
