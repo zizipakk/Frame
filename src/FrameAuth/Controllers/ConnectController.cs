@@ -180,8 +180,9 @@ namespace FrameAuth.Controllers
         /// End of auth session
         /// </summary>
         /// <returns></returns>
-        [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
+        //[Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> LogOff() //TODO ?????????????
         {
             try

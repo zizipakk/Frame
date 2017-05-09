@@ -19,6 +19,7 @@ namespace FrameSearch.ElasticSearchProvider
         where TEntity : IEntityWithId<TId>
     {
         private readonly IElasticsearchMappingResolver _elasticsearchMappingResolver = new ElasticsearchMappingResolver();
+        // TODO: from config
         private const string ConnectionString = "http://localhost:32771";
         private readonly ElasticsearchContext _context;
 

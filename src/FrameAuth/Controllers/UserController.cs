@@ -21,14 +21,12 @@ namespace FrameAuth.Controllers
     /// <summary>
     /// SPA controller
     /// </summary>
-    [Route("user/[controller]")]
     [Authorize]
     public class UserController : EntitySearchController<ApplicationUser, ApplicationUserSearch, string>
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ILogger logger;
         private readonly IMapper mapper;
-        private readonly IEntitySearchProvider<ApplicationUser, ApplicationUserSearch, string> entitySearchProvider;
 
         public UserController(
             UserManager<ApplicationUser> userManager,
@@ -38,7 +36,7 @@ namespace FrameAuth.Controllers
             : base(entitySearchProvider, loggerFactory)
         {
             this.userManager = userManager;
-            this.logger = loggerFactory.CreateLogger<UserController>();
+            logger = loggerFactory.CreateLogger<UserController>();
             this.mapper = mapper;
         }
 
@@ -47,7 +45,7 @@ namespace FrameAuth.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
-        [HttpGet("getusers")]
+        [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
             try

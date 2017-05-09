@@ -73,8 +73,8 @@ export class AppErrorHandler implements ErrorHandler, OnDestroy {
               location: unwrappedError.location ? unwrappedError.location.href : ''
           };
         this.dataService.post<string>(
-          this.apiLog,
-          data
+            this.apiLog,
+            data
           )
           .subscribe(result => {
               this.notificationService.printInfoNotification(new Array<string>('We succesfull sent the error to us. Your ticked id: ' + result));

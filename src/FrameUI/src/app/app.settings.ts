@@ -15,7 +15,7 @@ export class AppHeaders {
     public static get HEADERS(): Headers { 
         /** Set content type */
         let headers: Headers = new Headers({ 'Content-Type': 'application/json' });
-        headers.append('Accept', 'application/json');
+        //headers.append('Accept', 'application/json');
         
         /** Set token if available */
         this.AddToken(headers);

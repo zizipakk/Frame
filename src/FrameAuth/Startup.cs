@@ -1,8 +1,10 @@
 ﻿using AspNet.Security.OAuth.Validation;
 using AspNet.Security.OpenIdConnect.Primitives;
 using AutoMapper;
+using FrameAuth.Controllers;
 using FrameAuth.Data;
 using FrameAuth.Services;
+using FrameSearch.Controllers;
 using FrameSearch.ElasticSearchProvider;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +24,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 //using AspNet.Security.OpenIdConnect.Primitives;
+using System.Reflection;
 
 namespace FrameAuth
 {
@@ -86,7 +89,7 @@ namespace FrameAuth
             );                
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddEntityFrameworkStores<ApplicationDbContext, string>() // TODO: Type of Id necessary?
                 .AddDefaultTokenProviders()
                 ;
 
@@ -127,7 +130,6 @@ namespace FrameAuth
                 // Allow client applications to use the grant_type=password flow. ...
                 .AllowPasswordFlow()
                 
-
                 // Independent services retrospect auth
                 .AllowImplicitFlow()
 
@@ -145,7 +147,11 @@ namespace FrameAuth
                 .AddSigningCertificate(GetCert())
                 ;
 
-            services.AddMvc();
+            services
+                .AddMvc()
+                //.AddApplicationPart(typeof(EntitySearchController<,,>).GetTypeInfo().Assembly)
+                //.AddControllersAsServices();
+                ;
 
             services.AddAutoMapper();
 
@@ -157,7 +163,7 @@ namespace FrameAuth
             services.AddTransient<ISmsSender, AuthMessageSender>();
 
             services.AddTransient(typeof(IEntitySearchProvider<,,>), typeof(EntitySearchProvider<,,>));
-
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FrameSearch.Controllers
 {
-    [Route("api/[controller]")]
+    // Because derived, disabled to change routing
     public class EntitySearchController<TEntity, TDTO, TId> : ControllerHelpers
     {
         private readonly IEntitySearchProvider<TEntity, TDTO, TId> entitySearchProvider;
@@ -15,9 +15,12 @@ namespace FrameSearch.Controllers
 
         public EntitySearchController(IEntitySearchProvider<TEntity, TDTO, TId> entitySearchProvider, ILoggerFactory loggerFactory)
         {
-            this.entitySearchProvider = entitySearchProvider;
-            this.logger = loggerFactory.CreateLogger<EntitySearchController<TEntity, TDTO, TId>>();
+            this.entitySearchProvider = entitySearchProvider ?? throw new ArgumentNullException("entitySearchProvider is missing.");
+            logger = loggerFactory?.CreateLogger<EntitySearchController<TEntity, TDTO, TId>>() ?? throw new ArgumentNullException("loggerFactory is missing.");
         }
+
+        public string Test()
+        { return "TEST"; }
 
         [HttpGet("search/{from}/{searchtext}")]
         public virtual async Task<IActionResult> SearchAsync(string searchtext, int from)

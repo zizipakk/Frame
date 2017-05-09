@@ -5,11 +5,12 @@ using ElasticsearchCRUD.ContextAddDeleteUpdate.CoreTypeAttributes;
 using System.ComponentModel.DataAnnotations;
 using static FrameHelper.EntityHelpers;
 using System.Collections.Generic;
+using FrameSearch.ElasticSearchProvider;
 
 namespace FrameAuth.Data
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser, IEntityWithId<string>
     {
         public bool IsAdmin { get; set; }
     }
