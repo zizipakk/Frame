@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
-using AspNet.Security.OAuth.Validation;
 
 namespace FrameAuth.Controllers
 {
@@ -180,9 +179,7 @@ namespace FrameAuth.Controllers
         /// End of auth session
         /// </summary>
         /// <returns></returns>
-        //[Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> LogOff() //TODO ?????????????
         {
             try
@@ -221,7 +218,7 @@ namespace FrameAuth.Controllers
                     OpenIddictConstants.Scopes.Roles
                 }.Intersect(request.GetScopes()));
 
-            // TODO: authorized (external) resources audiences
+            //TODO: authorized(external) resources audiences
             ticket.SetResources(
                 //Startup.StaticConfig["profiles:FrameAuth:launchUrl"],
                 Startup.StaticConfig["AppSources:FrameAuth"],
@@ -243,7 +240,7 @@ namespace FrameAuth.Controllers
                     // The other claims will only be added to the access_token, which is encrypted when using the default format.
                     if ((claim.Type == OpenIdConnectConstants.Claims.Name && ticket.HasScope(OpenIdConnectConstants.Scopes.Profile)) ||
                         (claim.Type == OpenIdConnectConstants.Claims.Email && ticket.HasScope(OpenIdConnectConstants.Scopes.Email)) ||
-                        (claim.Type == "role" && ticket.HasScope(OpenIddictConstants.Claims.Roles)))
+                        (claim.Type == OpenIdConnectConstants.Claims.Role && ticket.HasScope(OpenIddictConstants.Claims.Roles)))
                     {
                         destinations.Add(OpenIdConnectConstants.Destinations.IdentityToken);
                     }

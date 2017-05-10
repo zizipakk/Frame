@@ -76,7 +76,7 @@ export class MembershipService {
 
         // TODO ?
         let offlineaccess = creds.rememberLogin ? ' offlineaccess' : '';
-        let scope = 'openid profile roles' + offlineaccess;
+        let scope = 'openid email profile roles' + offlineaccess;
 
         this.store('authNonce', nonce);
 
@@ -145,7 +145,7 @@ export class MembershipService {
         if (data.name)
         {
             console.log('User: ' + data.name);
-            user.userName = data.username;
+            user.userName = data.name;
             this.store('UserName', data.name);
         }
 

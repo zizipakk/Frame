@@ -80,7 +80,8 @@ namespace FrameAuth
             services.AddDbContext<ApplicationDbContext>(
                 options =>
                 {
-                    options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"));
+                    options.UseInMemoryDatabase();
+                    // options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"));
                     // Register the entity sets needed by OpenIddict.
                     // Note: use the generic overload if you need
                     // to replace the default OpenIddict entities.
@@ -102,7 +103,7 @@ namespace FrameAuth
             {
                 options.ClaimsIdentity.UserNameClaimType = OpenIdConnectConstants.Claims.Name;
                 options.ClaimsIdentity.UserIdClaimType = OpenIdConnectConstants.Claims.Subject;
-                options.ClaimsIdentity.RoleClaimType = "role";
+                options.ClaimsIdentity.RoleClaimType = OpenIdConnectConstants.Claims.Role;
             });
 
             // Register the OpenIddict services.
@@ -137,8 +138,6 @@ namespace FrameAuth
                 // During development, you can disable the HTTPS requirement.
                 .DisableHttpsRequirement()
 
-                //// ... JWT
-                //.UseJsonWebTokens()  
 
                 // Register a new ephemeral key, that is discarded when the application
                 // shuts down. Tokens signed using this key are automatically invalidated.
@@ -173,6 +172,7 @@ namespace FrameAuth
             ILoggerFactory loggerFactory, 
             ApplicationDbContext dbContext,
             RoleManager<IdentityRole> roleManager,
+            UserManager<ApplicationUser> userManager,
             OpenIddictApplicationManager<OpenIddictApplication> appManager)
         {
             // TODO: Maybe obsolate
@@ -236,42 +236,6 @@ namespace FrameAuth
                         branch.UseOAuthValidation();
                     });
 
-            //app.UseOAuthValidation(o =>
-            //{
-            //    o.SaveToken = true;
-            //    //o.AuthenticationScheme = OAuthValidationDefaults.AuthenticationScheme;
-            //    //o.AutomaticAuthenticate = false;
-            //    //o.AutomaticChallenge = false;
-            //    //o.IncludeErrorDetails = true;
-            //    //o.AccessTokenFormat = "";
-            //    //o.Audiences = "";
-            //    o.AccessTokenFormat = 
-            //});
-
-            //////This is for direct client auth
-            ////var jwtOptions = new JwtBearerOptions()
-            ////{
-            ////    AutomaticAuthenticate = true,
-            ////    AutomaticChallenge = true,
-            ////    RequireHttpsMetadata = false,
-            ////    Audience = StaticConfig["AppSources:FrameAuth"],
-            ////    ClaimsIssuer = StaticConfig["AppSources:FrameAuth"],
-            ////    TokenValidationParameters = new TokenValidationParameters
-            ////    {
-            ////        NameClaimType = OpenIdConnectConstants.Claims.Subject,
-            ////        RoleClaimType = "role"
-            ////    }
-            ////};
-
-            ////jwtOptions.TokenValidationParameters.ValidAudience = StaticConfig["AppSources:FrameAuth"];
-            ////jwtOptions.TokenValidationParameters.ValidIssuer = StaticConfig["AppSources:FrameAuth"];
-            ////jwtOptions.TokenValidationParameters.IssuerSigningKey = new RsaSecurityKey(GetCert().GetRSAPrivateKey().ExportParameters(false));
-            ////app.UseJwtBearerAuthentication(jwtOptions);
-
-            //app.UseIdentity();
-
-            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
-
             app.UseCors(builder =>
                 builder
                 .WithOrigins(Configuration["CORS:ClientDomain"], Configuration["CORS:FrameIO"]) //client and app host path in config
@@ -291,23 +255,42 @@ namespace FrameAuth
 
                 // Seed the database with the sample applications.
                 // Note: in a real world application, this step should be part of a setup script.
-                InitializeAsync(CancellationToken.None, roleManager, appManager).GetAwaiter().GetResult();
+                InitializeAsync(CancellationToken.None, roleManager, userManager, appManager).GetAwaiter().GetResult();
             }
         }
 
-        private async Task InitializeAsync(CancellationToken cancellationToken, RoleManager<IdentityRole> roleManager, OpenIddictApplicationManager<OpenIddictApplication> appManager)
-        {            
-            var roles = new List<string> { "User", "Admin" };
-            roles.ToList().ForEach(async role =>
+        private async Task InitializeAsync(
+            CancellationToken cancellationToken, 
+            RoleManager<IdentityRole> roleManager, 
+            UserManager<ApplicationUser> userManager, 
+            OpenIddictApplicationManager<OpenIddictApplication> appManager)
+        {   
+            if (await userManager.FindByNameAsync("_Admin123@a") == null)
             {
-                if (!await roleManager.RoleExistsAsync(role))
+                var hasher = new PasswordHasher<ApplicationUser>();
+                var user = new ApplicationUser
                 {
-                    var newRole = new IdentityRole(role);
-                    await roleManager.CreateAsync(newRole);
-                    // In the real world, there might be claims associated with roles
-                    // _roleManager.AddClaimAsync(newRole, new )
-                }
-            });
+                    Email = "_Admin123@a",
+                    IsAdmin = true,
+                    UserName = "_Admin123@a"
+                };
+                user.PasswordHash = hasher.HashPassword(user, "_Admin123");
+                await userManager.CreateAsync(user);
+
+                var roles = new List<string> { "User", "Admin" };
+                roles.ToList().ForEach(role =>
+                {
+                    if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+                    {
+                        var newRole = new IdentityRole(role);
+                        roleManager.CreateAsync(newRole).GetAwaiter().GetResult();
+                        // In the real world, there might be claims associated with roles
+                        // roleManager.AddClaimAsync(newRole, new ).GetAwaiter().GetResult()
+
+                        userManager.AddToRoleAsync(user, role).GetAwaiter().GetResult(); //finally add user to roles
+                    }
+                });                
+            }
 
             if (await appManager.FindByClientIdAsync("FrameIO", cancellationToken) == null)
             {

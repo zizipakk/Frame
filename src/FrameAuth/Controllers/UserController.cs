@@ -44,7 +44,6 @@ namespace FrameAuth.Controllers
         /// For testing
         /// </summary>
         /// <returns></returns>
-        [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
@@ -61,7 +60,6 @@ namespace FrameAuth.Controllers
         }
 
         // GET: /api/userinfo
-        [Authorize(ActiveAuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
         [HttpGet]
         public async Task<IActionResult> Userinfo()
         {
