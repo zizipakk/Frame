@@ -80,8 +80,8 @@ namespace FrameAuth
             services.AddDbContext<ApplicationDbContext>(
                 options =>
                 {
-                    options.UseInMemoryDatabase();
-                    // options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"));
+                    // options.UseInMemoryDatabase();
+                    options.UseSqlite(Configuration.GetConnectionString("SqLiteConnection"));
                     // Register the entity sets needed by OpenIddict.
                     // Note: use the generic overload if you need
                     // to replace the default OpenIddict entities.
@@ -275,7 +275,7 @@ namespace FrameAuth
                     UserName = "_Admin123@a"
                 };
                 user.PasswordHash = hasher.HashPassword(user, "_Admin123");
-                await userManager.CreateAsync(user);
+                var userResult = await userManager.CreateAsync(user);
 
                 var roles = new List<string> { "User", "Admin" };
                 roles.ToList().ForEach(role =>
@@ -283,11 +283,12 @@ namespace FrameAuth
                     if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
                     {
                         var newRole = new IdentityRole(role);
-                        roleManager.CreateAsync(newRole).GetAwaiter().GetResult();
+                        var roleResult = roleManager.CreateAsync(newRole).GetAwaiter().GetResult();
                         // In the real world, there might be claims associated with roles
                         // roleManager.AddClaimAsync(newRole, new ).GetAwaiter().GetResult()
 
-                        userManager.AddToRoleAsync(user, role).GetAwaiter().GetResult(); //finally add user to roles
+                        if (userResult.Succeeded && roleResult.Succeeded)
+                            userManager.AddToRoleAsync(user, role).GetAwaiter().GetResult(); //finally add user to roles
                     }
                 });                
             }

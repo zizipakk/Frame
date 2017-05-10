@@ -1,41 +1,41 @@
 ﻿<p-dialog [(visible)]="display" width="600" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)"> 
-            <header>
-                <h1 class="text-center">
-                    <span class="fa-stack fa-1x">
-                        <i class="fa fa-circle fa-stack-2x color-blue"></i>
-                        <i class="fa fa-user-plus fa-stack-1x fa-inverse"></i>
-                    </span>Register
-                </h1>
-            </header>
-            <form class="ui-g" #hf="ngForm">
-                <div class="ui-g-12">
-                    <input class="ui-g-12" type="text" pInputText placeholder="Username" [(ngModel)]="newUser.Username"
-                            name="username" required #username="ngModel">
-                    <div [hidden]="username.valid || username.untouched" class="ui-message ui-messages-error ui-corner-all">
-                        <i class="fa fa-close"></i> Username is required
-                    </div>
-                </div>
-                <div class="ui-g-12">
-                    <input class="ui-g-12" type="email" pInputText placeholder="Email" [(ngModel)]="newUser.Email"
-                            name="email" required #email="ngModel">
-                    <div [hidden]="email.valid || email.untouched" class="ui-message ui-messages-error ui-corner-all">
-                        <i class="fa fa-close"></i> Email is required
-                    </div>
-                </div>
-                <div class="ui-g-12">
-                    <input class="ui-g-12" type="password" pPassword placeholder="Password" [(ngModel)]="newUser.Password"
-                            name="password" required #password="ngModel">
-                    <div [hidden]="password.valid || password.untouched" class="ui-message ui-messages-error ui-corner-all">
-                        <i class="fa fa-close"></i> Password is required
-                    </div>
-                </div>
-                <div class="ui-g-12">
-                    <button class="btn btn-primary btn-lg btn-block" (click)="register()" [disabled]="!hf.form.valid">Register</button>
-                </div>
-            </form>
-            <footer>
-                <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-                    <button class="button-red" type="button" pButton icon="fa-close" [routerLink]="['/account/login']" label="Cancel"></button>
-                </div>
-            </footer> 
+    <header>
+        <h1 class="text-center">
+            <span class="fa-stack fa-1x">
+                <i class="fa fa-circle fa-stack-2x color-blue"></i>
+                <i class="fa fa-user-plus fa-stack-1x fa-inverse"></i>
+            </span>Register
+        </h1>
+    </header>
+    <form class="ui-g" #hf="ngForm">
+        <div class="ui-g-12">
+            <input class="ui-g-12" type="email" pInputText placeholder="Email" [(ngModel)]="newUser.email"
+                    name="email" required #email="ngModel">
+            <div [hidden]="email.valid || email.untouched" class="ui-message ui-messages-error ui-corner-all">
+                <i class="fa fa-close"></i> Email is required
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <input class="ui-g-12" type="password" pInputText placeholder="Password" [(ngModel)]="newUser.password"
+                    name="password" required #password="ngModel">
+            <div [hidden]="password.valid || password.untouched" class="ui-message ui-messages-error ui-corner-all">
+                <i class="fa fa-close"></i> Password is required
+            </div>
+        </div>
+        <div class="ui-g-12">
+            <input class="ui-g-12" type="password" pPassword placeholder="Confirm Password" [(ngModel)]="newUser.confirmPassword"
+                    name="confirmPassword" pattern={{newUser.password}} required #confirmPassword="ngModel">
+            <div [hidden]="password.untouched && (confirmPassword.valid || confirmPassword.untouched)" class="ui-message ui-messages-error ui-corner-all">
+                <i class="fa fa-close"></i> Confirm password is required and equal with password
+            </div>
+        </div>        
+        <div class="ui-g-12">
+            <button class="ui-g-12" type="button" pButton [disabled]="!hf.form.valid" (click)="register()" label="Register"></button>
+        </div>
+    </form>
+    <footer>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <button class="button-red" type="button" pButton icon="fa-close" [routerLink]="['/account/login']" label="Cancel"></button>
+        </div>
+    </footer> 
 </p-dialog>

@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Builder;
 using System.Diagnostics;
+using FrameAuth.Models.AccountViewModels;
 
 namespace FrameAuth.Controllers
 {
@@ -33,6 +34,13 @@ namespace FrameAuth.Controllers
         private readonly ILogger logger;
         private readonly IMapper mapper;
         private readonly IOptions<IdentityOptions> identityOptions;
+        private readonly string[] defaultScopes = new[] 
+        {
+            OpenIdConnectConstants.Scopes.OpenId,
+            OpenIdConnectConstants.Scopes.Email,
+            OpenIdConnectConstants.Scopes.Profile,
+            OpenIddictConstants.Scopes.Roles
+        };
 
         public ConnectController(
             UserManager<ApplicationUser> userManager,
@@ -49,7 +57,42 @@ namespace FrameAuth.Controllers
         }
 
         /// <summary>
-        /// Authentication and Tokenhandler
+        /// Registration method
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = mapper.Map<ApplicationUser>(model);
+                user.UserName = model.Email;
+                var result = await userManager.CreateAsync(user, model.Password); // TODO: hash pw
+                if (result.Succeeded)
+                {
+                    // Create a new authentication ticket.
+                    var request = new OpenIdConnectRequest
+                    {
+                        Username = model.Email,
+                        Scope = string.Join(" ", defaultScopes)
+                    };
+                    var ticket = await CreateTicketAsync(request, user);
+
+                    // Sign in the user
+                    return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
+                }
+
+                result.Errors.ToList()
+                    .ForEach(error => ModelState.AddModelError(string.Empty, error.Description));
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        /// <summary>
+        /// Authentication and Tokencreator
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -141,19 +184,19 @@ namespace FrameAuth.Controllers
             {
                 if (!User.Identity.IsAuthenticated)
                 {
-                    //// If the client application request promptless authentication,
-                    //// return an error indicating that the user is not logged in.
-                    //if (request.HasPrompt(OpenIdConnectConstants.Prompts.None))
-                    //{
-                    //    var properties = new AuthenticationProperties(new Dictionary<string, string>
-                    //    {
-                    //        [OpenIdConnectConstants.Properties.Error] = OpenIdConnectConstants.Errors.LoginRequired,
-                    //        [OpenIdConnectConstants.Properties.ErrorDescription] = "The user is not logged in."
-                    //    });
+                    // If the client application request promptless authentication,
+                    // return an error indicating that the user is not logged in.
+                    if (request.HasPrompt(OpenIdConnectConstants.Prompts.None))
+                    {
+                        var properties = new AuthenticationProperties(new Dictionary<string, string>
+                        {
+                            [OpenIdConnectConstants.Properties.Error] = OpenIdConnectConstants.Errors.LoginRequired,
+                            [OpenIdConnectConstants.Properties.ErrorDescription] = "The user is not logged in."
+                        });
 
-                    //    // Ask OpenIddict to return a login_required error to the client application.
-                    //    return Forbid(properties, OpenIdConnectServerDefaults.AuthenticationScheme);
-                    //}
+                        // Ask OpenIddict to return a login_required error to the client application.
+                        return Forbid(properties, OpenIdConnectServerDefaults.AuthenticationScheme);
+                    }
                     return Challenge();
                 }
 
@@ -180,7 +223,7 @@ namespace FrameAuth.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> LogOff() //TODO ?????????????
+        public async Task<IActionResult> LogOff()
         {
             try
             {               
@@ -210,13 +253,7 @@ namespace FrameAuth.Controllers
                 OpenIdConnectServerDefaults.AuthenticationScheme);
 
             // Include resources and scopes, as appropriate
-            ticket.SetScopes(new[]
-            {
-                    OpenIdConnectConstants.Scopes.OpenId,
-                    OpenIdConnectConstants.Scopes.Email,
-                    OpenIdConnectConstants.Scopes.Profile,
-                    OpenIddictConstants.Scopes.Roles
-                }.Intersect(request.GetScopes()));
+            ticket.SetScopes(defaultScopes.Intersect(request.GetScopes()));
 
             //TODO: authorized(external) resources audiences
             ticket.SetResources(

@@ -56,7 +56,8 @@ export class MembershipService {
     }
 
     register(newUser: Iregistration) {
-        return this.dataService.post(this.idLogout, JSON.stringify(newUser));
+        //return this.dataService.post(this.idRegister, JSON.stringify(newUser));
+        return this.dataService.post(this.idRegister, newUser);
     }
 
     private encodeQueryData(data) {
@@ -74,9 +75,8 @@ export class MembershipService {
         let grant_type = 'password';
         let nonce = 'N' + Math.random() + '' + Date.now();
 
-        // TODO ?
-        let offlineaccess = creds.rememberLogin ? ' offlineaccess' : '';
-        let scope = 'openid email profile roles' + offlineaccess;
+        // let offlineaccess = creds.rememberLogin ? ' offlineaccess' : '';
+        let scope = 'openid email profile roles'; // + offlineaccess;
 
         this.store('authNonce', nonce);
 
@@ -111,7 +111,6 @@ export class MembershipService {
             console.log('AuthorizedCallback state and nonce validated, returning access token');
             this.setAuthorizationData(result.access_token, result.id_token, dataIdToken);
         }
-
     }
 
     setAuthorizationData(token: string, id_token: string, data: any) {

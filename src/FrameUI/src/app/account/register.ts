@@ -2,6 +2,7 @@
 import { Router } from '@angular/router'
 import { Iregistration, Registration } from '../models/registration'
 import { OperationResult } from '../models/operationResult'
+import { IloginInputModel, LoginInputModel } from '../models/user';
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
 
@@ -16,6 +17,7 @@ export class Register implements AfterViewInit {
     display: boolean = false;
 
     private newUser: Iregistration;
+    private user: IloginInputModel;
 
     constructor(
         private membershipService: MembershipService,
@@ -46,22 +48,12 @@ export class Register implements AfterViewInit {
     }
 
     register(): void {
-        var registrationResult: OperationResult = new OperationResult(false, '');
         this.membershipService.register(this.newUser)
             .subscribe(res => {
-                // registrationResult.Succeeded = res.Succeeded;
-                // registrationResult.Message = res.Message;
-
+                this.membershipService.loginCallback(res);
+                this.notificationService.printSuccessNotification(new Array<string>('Dear ' + this.newUser.email + ', your gracefull registered, and logged in!'));
+                this.router.navigate(['/']);
             },
-            error => console.error('Error: ' + error),
-            () => {
-                if (registrationResult.Succeeded) {
-                    this.notificationService.printSuccessMessage(new Array<string>('Dear ' + this.newUser.email + ', please login with your credentials'));
-                    this.router.navigate(['/account/login']);
-                }
-                else {
-                    this.notificationService.printErrorMessage([]);
-                }
-            });
+            error => console.error('Error: ' + error));
     };
 }

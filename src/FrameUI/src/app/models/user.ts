@@ -2,24 +2,24 @@
 export interface IloginInputModel {
     email: string,
     password: string,
-    rememberLogin: boolean
+    //rememberLogin: boolean
     
 }
 
 export class LoginInputModel implements IloginInputModel {
     public email: string;
     public password: string;
-    public rememberLogin: boolean;
+    //public rememberLogin: boolean;
     
     constructor(model?: IloginInputModel) {
         if (model) {
             this.email = model.email;
             this.password = model.password;
-            this.rememberLogin = model.rememberLogin;
+            //this.rememberLogin = model.rememberLogin;
         } else {
             this.email = '';
             this.password = '';
-            this.rememberLogin = false;
+            //this.rememberLogin = false;
         }
     }
 }

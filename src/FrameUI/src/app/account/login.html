@@ -10,7 +10,7 @@
     <form class="ui-g" #hf="ngForm">
         <p-messages [value]="message"></p-messages>
         <div class="ui-g-12">
-            <input class="ui-g-12" type="text" pInputText placeholder="Username" [(ngModel)]="user.email"
+            <input class="ui-g-12" type="text" pInputText placeholder="Email" [(ngModel)]="user.email"
                     name="email" required #email="ngModel" />
             <div [hidden]="email.valid || email.untouched" class="ui-message ui-messages-error ui-corner-all">
                 <i class="fa fa-close"></i> Email is required
@@ -29,9 +29,9 @@
                 <a class="nav-link" [routerLink]="['/account/register']"><h4>Register</h4></a>
             </span>
         </div>        
-        <div class="ui-g-12">
+        <!--<div class="ui-g-12">
             <p-checkbox name="remember" [(ngModel)]="user.rememberLogin" binary="true" label="Remember me"></p-checkbox>
-        </div>
+        </div>-->
     </form>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
