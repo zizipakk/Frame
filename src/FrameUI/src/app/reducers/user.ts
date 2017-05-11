@@ -1,5 +1,5 @@
 import { ActionReducer, Action } from '@ngrx/store';
-import { IuserModel, UserModel } from '../models/user';
+import { IuserModel, UserModel } from '../models/userModel';
 import { ActionTypes } from './reducer.settings';
 
 export const UserReducer = (state: IuserModel = new UserModel(), action: Action) => {

@@ -1,4 +1,4 @@
-import { UserModel } from './user';
+import { UserModel } from './userModel';
 import { Message } from 'primeng/primeng';
 
 export interface IappState {

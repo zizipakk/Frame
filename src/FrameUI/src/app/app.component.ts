@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Rx';
 import { MenuItem, Message } from 'primeng/primeng';
 import { IappState } from './models/appState';
 import { ActionTypes } from './reducers/reducer.settings'
-import { IuserModel } from './models/user';
+import { IuserModel } from './models/userModel';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 

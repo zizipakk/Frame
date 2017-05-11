@@ -4,16 +4,12 @@ using static FrameHelper.EntityHelpers;
 
 namespace FrameIO.Models
 {
-    public interface IComPortTypeBase
+    public interface IComPortTypeDTO : IWithIdAndTimeStamp
     {
         PortType PortType { get; set; }
         string AddressFormat { get; set; }
         string ReadProtocol { get; set; }
         string WriteProtocol { get; set; }
-    }
-
-    public interface IComPortTypeDTO : IComPortTypeBase, IWithIdAndTimeStamp
-    {
     }
 
     public class ComPortTypeDTO : IComPortTypeDTO
@@ -24,17 +20,10 @@ namespace FrameIO.Models
         public string AddressFormat { get; set; }
         public string ReadProtocol { get; set; }
         public string WriteProtocol { get; set; }
+
     }
 
-    public class ComPortTypeViewBase : IComPortTypeBase
-    {
-        public PortType PortType { get; set; }
-        public string AddressFormat { get; set; }
-        public string ReadProtocol { get; set; }
-        public string WriteProtocol { get; set; }
-    }
-
-    public interface IComPortTypeView : IComPortTypeBase, IWithIdAndTimeStamp
+    public interface IComPortTypeView : IComPortTypeDTO
     {
     }
 

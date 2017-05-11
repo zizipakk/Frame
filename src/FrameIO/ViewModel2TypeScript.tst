@@ -16,16 +16,18 @@
     }
 
     string ConstructorAddExtends(Class c) {
-        return c.BaseClass != null ?  "super(model);" : "";
+        return (c.BaseClass != null ?  "super(model);" : "");
     }
-}$Classes(c => 
-    (c.Name.EndsWith("ViewModel") 
-    || c.Name == "LoginInputModel" 
-    || c.Name == "ExternalProvider")
-    && 
-    (c.Name != "ManageLoginsViewModel" //this contains external dll refs
-    && c.Name != "SendCodeViewModel"
-    && c.Name != "ConfigureTwoFactorViewModel"))[export interface $InterfaceNameWithExtends {
+
+    string ImportOther(Class c) {
+        return (c.Name == "ComPortTypeDTO" ? "import { PortType } from './ComConfigModels';" : "");
+    }
+}$Enums(c => c.Name.EndsWith("PortType"))[
+export enum $Name {
+    $Values[
+    $Name = $Value][,]    
+}]$Classes(c => c.Name.EndsWith("View") || c.Name.EndsWith("DTO"))[$ImportOther
+export interface $InterfaceNameWithExtends {
     $Properties[$name: $Type;
     ]
 }
@@ -41,4 +43,4 @@ export class $ClassNameWithExtends implements I$name {
         }
     }
 }
-] 
+]

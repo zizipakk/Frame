@@ -4,11 +4,11 @@ import { ActionTypes } from '../reducers/reducer.settings'
 import { IappState } from '../models/appState';
 import { API } from '../app.settings';
 import { DataService } from './dataService';
-import { Iregistration } from '../models/registration';
-import { IloginInputModel } from '../models/user';
+import { IregisterViewModel } from '../models/RegisterViewModel';
+import { IloginInputModel } from '../models/LoginViewModel';
 import { IopenIdConnectRequest } from '../models/openIdConnectRequest';
 import { IsignInResult } from '../models/signInResult';
-import { IuserModel, UserModel } from '../models/user';
+import { IuserModel, UserModel } from '../models/userModel';
 
 /** 
     A class to manage user authentication
@@ -23,18 +23,19 @@ export class MembershipService {
     idRegister = API.AUTH + this.idAction + '/register';
     idLogout = API.AUTH + this.idAction + '/logoff';
     storage: any;
-
+    
     constructor(
         private appStore: Store<IappState>,
         private dataService: DataService
         ) {
+        // At first we check the persistent data in local storage
         this.storage = sessionStorage;
-        let user: IuserModel = { // At first we check the persistent data in local storage
-            userId: this.retrieve('UserId'),
-            isAuthorized: this.retrieve('IsAuthorized'),
-            hasAdminRole: this.retrieve('HasAdminRole'),            
-            userName: this.retrieve('UserName')
-        };
+        let user = new UserModel();
+        user.id = this.retrieve('UserId');
+        user.isAuthorized = this.retrieve('IsAuthorized');
+        user.hasAdminRole = this.retrieve('HasAdminRole');            
+        user.userName = this.retrieve('UserName');
+        
         // Memory init from local store
         this.appStore.dispatch({ type: ActionTypes.SET_User, payload: user });
     }
@@ -55,7 +56,7 @@ export class MembershipService {
         this.storage.setItem(key, JSON.stringify(value));
     }
 
-    register(newUser: Iregistration) {
+    register(newUser: IregisterViewModel) {
         //return this.dataService.post(this.idRegister, JSON.stringify(newUser));
         return this.dataService.post(this.idRegister, newUser);
     }
@@ -151,7 +152,7 @@ export class MembershipService {
         if (data.sub)
         {
             console.log('UserId: ' + data.sub);
-            user.userId = data.sub;
+            user.id = data.sub;
             this.store('UserId', data.sub);
         }
 

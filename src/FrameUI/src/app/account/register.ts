@@ -1,9 +1,9 @@
 ﻿import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router'
 import { Message } from 'primeng/primeng';
-import { Iregistration, Registration } from '../models/registration'
+import { IregisterViewModel, RegisterViewModel } from '../models/RegisterViewModel'
 import { OperationResult } from '../models/operationResult'
-import { IloginInputModel, LoginInputModel } from '../models/user';
+import { IloginViewModel, LoginViewModel } from '../models/LoginViewModel';
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
 
@@ -18,15 +18,15 @@ export class Register implements AfterViewInit {
     display: boolean = false;
     message: Message[];
 
-    newUser: Iregistration;
-    user: IloginInputModel;
+    newUser: IregisterViewModel;
+    user: IloginViewModel;
 
     constructor(
         private membershipService: MembershipService,
         private notificationService: NotificationService,
         private router: Router
     ) {
-        this.newUser = new Registration();
+        this.newUser = new RegisterViewModel();
         this.message = new Array<Message>();
     }
 
@@ -51,7 +51,9 @@ export class Register implements AfterViewInit {
     }
 
     register(): void {
-        this.user = new LoginInputModel(this.newUser as IloginInputModel);     
+        this.user = new LoginViewModel();
+        this.user.email = this.newUser.email;
+        this.user.password = this.newUser.password;
         this.membershipService.register(this.newUser)
             .mergeMap(() => this.membershipService.login(this.user)) //this is the way for chained http observables usage
             .subscribe(res => {

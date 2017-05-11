@@ -1,16 +1,18 @@
 
 
-    export interface IlogoutViewModel {
-        logoutId: string;
-        
-    }
+export interface IlogoutViewModel {
+    logoutId: string;
+    
+}
 
-    export class LogoutViewModel {
-        public logoutId: string;
-        
-        constructor(model: IlogoutViewModel) {
+export class LogoutViewModel implements IlogoutViewModel {
+    public logoutId: string;
+    
+    constructor(model?: IlogoutViewModel) {
+        if(model) {
             this.logoutId = model.logoutId;
             
         }
     }
+}
  

@@ -4,16 +4,12 @@ using static FrameHelper.EntityHelpers;
 
 namespace FrameIO.Models
 {
-    public interface IComPortConfigBase
+    public interface IComPortConfigDTO : IWithIdAndTimeStamp
     {
         int Number { get; set; }
         string PortName { get; set; }
         Guid ComPortTypeId { get; set; }
         Guid ComDeviceConfigId { get; set; }
-    }
-
-    public interface IComPortConfigDTO : IComPortConfigBase, IWithIdAndTimeStamp
-    {
     }
 
     public class ComPortConfigDTO : IComPortConfigDTO
@@ -26,15 +22,7 @@ namespace FrameIO.Models
         public Guid ComDeviceConfigId { get; set; }
     }
 
-    public class ComPortConfigViewBase : IComPortConfigBase
-    {
-        public int Number { get; set; }
-        public string PortName { get; set; }
-        public Guid ComPortTypeId { get; set; }
-        public Guid ComDeviceConfigId { get; set; }
-    }
-
-    public interface IComPortConfigView : IComPortConfigBase, IWithIdAndTimeStamp
+    public interface IComPortConfigView : IComPortConfigDTO
     {
     }
 

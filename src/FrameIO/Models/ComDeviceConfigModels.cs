@@ -4,13 +4,9 @@ using static FrameHelper.EntityHelpers;
 
 namespace FrameIO.Models
 {
-    public interface IComDeviceConfigBase
+    public interface IComDeviceConfigDTO : IWithIdAndTimeStamp
     {
         string DeviceName { get; set; }
-    }
-
-    public interface IComDeviceConfigDTO : IComDeviceConfigBase, IWithIdAndTimeStamp
-    {
     }
 
     public class ComDeviceConfigDTO : IComDeviceConfigDTO
@@ -20,12 +16,7 @@ namespace FrameIO.Models
         public string DeviceName { get; set; }
     }
 
-    public class ComDeviceConfigViewBase : IComDeviceConfigBase
-    {
-        public string DeviceName { get; set; }
-    }
-
-    public interface IComDeviceConfigView : IComDeviceConfigBase, IWithIdAndTimeStamp
+    public interface IComDeviceConfigView : IComDeviceConfigDTO
     {
     }
 

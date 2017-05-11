@@ -13,10 +13,16 @@ import { SelectItem } from 'primeng/primeng';
     selector: 'home',
     templateUrl: 'home.html',
 })
-export class Home {
+export class Controller {
     
-    readonly apiAction = 'user/getusers';
-    apiPath = API.AUTH + this.apiAction;
+    readonly apiActionGetPortType = 'comconfig/getporttype';
+    readonly apiActionSetPortType = 'comconfig/setporttype';
+    readonly apiActionGetPortConfig = 'comconfig/getportconfig';
+    readonly apiActionSetPortConfig = 'comconfig/setportconfig';
+    readonly apiActionGetDeviceConfig = 'comconfig/getdeviceconfig';
+    readonly apiActionSetDeviceConfig = 'comconfig/setdeviceconfig';
+    readonly apiActionGetComLog = 'comconfig/getcomlog';
+    //apiPath = API.APP + this.apiAction;
     user: IuserModel;
     subscriptions: Subscription[];
     users: IuserViewModel[];
@@ -52,7 +58,7 @@ export class Home {
 
             // TODO: LAZYLOADING            
             this.dataService.get<IuserViewModel>(
-                    this.apiPath
+                    ""//this.apiPath
                 )
                 .subscribe(
                     users => {

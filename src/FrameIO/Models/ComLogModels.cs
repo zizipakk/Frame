@@ -1,19 +1,14 @@
 ﻿using System;
+using static FrameHelper.EntityHelpers;
 
 namespace FrameIO.Models
 {
-    public interface IComLogBase
+    public interface IComLogDTO : IWithIdAndTimeStamp
     {
         string UserId { get; set; }
         string Port { get; set; }
         string Action { get; set; }
         string Location { get; set; }
-    }
-
-    public interface IComLogDTO : IComLogBase
-    {
-        Guid Id { get; set; }
-        DateTime TimeStamp { get; set; }
     }
 
     public class ComLogDTO : IComLogDTO
@@ -26,18 +21,8 @@ namespace FrameIO.Models
         public string Location { get; set; }
     }
 
-    public class ComLogViewBase : IComLogBase
+    public interface IComLogView : IComLogDTO
     {
-        public string UserId { get; set; }
-        public string Port { get; set; }
-        public string Action { get; set; }
-        public string Location { get; set; }
-    }
-
-    public interface IComLogView : IComLogBase
-    {
-        Guid Id { get; set; }
-        DateTime TimeStamp { get; set; }
     }
 
     public class ComLogView : ComLogDTO, IComLogView

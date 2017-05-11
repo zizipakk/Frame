@@ -1,16 +1,18 @@
 
 
-    export interface IaddPhoneNumberViewModel {
-        phoneNumber: string;
-        
-    }
+export interface IaddPhoneNumberViewModel {
+    phoneNumber: string;
+    
+}
 
-    export class AddPhoneNumberViewModel {
-        public phoneNumber: string;
-        
-        constructor(model: IaddPhoneNumberViewModel) {
+export class AddPhoneNumberViewModel implements IaddPhoneNumberViewModel {
+    public phoneNumber: string;
+    
+    constructor(model?: IaddPhoneNumberViewModel) {
+        if(model) {
             this.phoneNumber = model.phoneNumber;
             
         }
     }
+}
  

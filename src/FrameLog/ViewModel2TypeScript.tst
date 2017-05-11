@@ -18,14 +18,7 @@
     string ConstructorAddExtends(Class c) {
         return c.BaseClass != null ?  "super(model);" : "";
     }
-}$Classes(c => 
-    (c.Name.EndsWith("ViewModel") 
-    || c.Name == "LoginInputModel" 
-    || c.Name == "ExternalProvider")
-    && 
-    (c.Name != "ManageLoginsViewModel" //this contains external dll refs
-    && c.Name != "SendCodeViewModel"
-    && c.Name != "ConfigureTwoFactorViewModel"))[export interface $InterfaceNameWithExtends {
+}$Classes(c => c.Name == "LogView" || c.Name == "LogDTO")[export interface $InterfaceNameWithExtends {
     $Properties[$name: $Type;
     ]
 }

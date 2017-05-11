@@ -2,8 +2,8 @@ import { Injectable, Injector, ErrorHandler, OnDestroy } from "@angular/core";
 import { Subscription } from 'rxjs/Rx';
 import { Store } from '@ngrx/store';
 import { IappState } from './models/appState';
-import { IuserModel } from './models/user';
-import { IlogModel } from './models/log';
+import { IuserModel } from './models/userModel';
+import { IlogView } from './models/LogModels';
 import { API } from './app.settings';
 import { DataService } from './services/dataService';
 import { NotificationService } from './services/notificationService'; 
@@ -64,9 +64,11 @@ export class AppErrorHandler implements ErrorHandler, OnDestroy {
         this.sendToConsole(unwrappedError, 'ErrorHandler');
 
         // TODO viewmodel
-        let data: IlogModel =
+        let data: IlogView =
           { 
-              userId: this.user.userId,
+              id: null,
+              timeStamp: null,              
+              userId: this.user.id,
               type: unwrappedError.name,
               message: unwrappedError.message,
               stack: unwrappedError.stack,

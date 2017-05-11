@@ -1,20 +1,21 @@
 
 
-    export interface IregisterViewModel {
-        email: string;
-        password: string;
-        confirmPassword: string;
-        isAdmin: boolean;
-        
-    }
+export interface IregisterViewModel {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    isAdmin: boolean;
+    
+}
 
-    export class RegisterViewModel {
-        public email: string;
-        public password: string;
-        public confirmPassword: string;
-        public isAdmin: boolean;
-        
-        constructor(model: IregisterViewModel) {
+export class RegisterViewModel implements IregisterViewModel {
+    public email: string;
+    public password: string;
+    public confirmPassword: string;
+    public isAdmin: boolean;
+    
+    constructor(model?: IregisterViewModel) {
+        if(model) {
             this.email = model.email;
             this.password = model.password;
             this.confirmPassword = model.confirmPassword;
@@ -22,4 +23,5 @@
             
         }
     }
+}
  
