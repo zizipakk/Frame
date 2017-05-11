@@ -1,5 +1,6 @@
 ﻿import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router'
+import { Message } from 'primeng/primeng';
 import { Iregistration, Registration } from '../models/registration'
 import { OperationResult } from '../models/operationResult'
 import { IloginInputModel, LoginInputModel } from '../models/user';
@@ -15,9 +16,10 @@ export class Register implements AfterViewInit {
 
     /** primeng show/hide prop */
     display: boolean = false;
+    message: Message[];
 
-    private newUser: Iregistration;
-    private user: IloginInputModel;
+    newUser: Iregistration;
+    user: IloginInputModel;
 
     constructor(
         private membershipService: MembershipService,
@@ -25,6 +27,7 @@ export class Register implements AfterViewInit {
         private router: Router
     ) {
         this.newUser = new Registration();
+        this.message = new Array<Message>();
     }
 
     /** ng event */
@@ -48,12 +51,18 @@ export class Register implements AfterViewInit {
     }
 
     register(): void {
+        this.user = new LoginInputModel(this.newUser as IloginInputModel);     
         this.membershipService.register(this.newUser)
+            .mergeMap(() => this.membershipService.login(this.user)) //this is the way for chained http observables usage
             .subscribe(res => {
+                this.notificationService.printSuccessNotification(new Array<string>('Dear ' + this.newUser.email + ', your gracefull registered and logged in!'));    
                 this.membershipService.loginCallback(res);
-                this.notificationService.printSuccessNotification(new Array<string>('Dear ' + this.newUser.email + ', your gracefull registered, and logged in!'));
-                this.router.navigate(['/']);
+                this.router.navigate(['/']);                       
             },
-            error => console.error('Error: ' + error));
-    };
+            error => 
+            {   
+                this.membershipService.resetAuthorizationData();
+                this.message.push({severity: 'error', summary: 'Error Message', detail: error});
+            });
+    }
 }

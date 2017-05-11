@@ -238,7 +238,7 @@ namespace FrameAuth
 
             app.UseCors(builder =>
                 builder
-                .WithOrigins(Configuration["CORS:ClientDomain"], Configuration["CORS:FrameIO"]) //client and app host path in config
+                .WithOrigins(Configuration["server.urls"], Configuration["CORS:ClientDomain"], Configuration["CORS:FrameIO"]) //self redirection, client and app host path in config
                 //.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
@@ -267,15 +267,13 @@ namespace FrameAuth
         {   
             if (await userManager.FindByNameAsync("_Admin123@a") == null)
             {
-                var hasher = new PasswordHasher<ApplicationUser>();
                 var user = new ApplicationUser
                 {
                     Email = "_Admin123@a",
                     IsAdmin = true,
                     UserName = "_Admin123@a"
                 };
-                user.PasswordHash = hasher.HashPassword(user, "_Admin123");
-                var userResult = await userManager.CreateAsync(user);
+                var userResult = await userManager.CreateAsync(user, "_Admin123");
 
                 var roles = new List<string> { "User", "Admin" };
                 roles.ToList().ForEach(role =>

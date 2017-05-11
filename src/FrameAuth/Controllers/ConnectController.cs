@@ -65,30 +65,36 @@ namespace FrameAuth.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var user = mapper.Map<ApplicationUser>(model);
-                user.UserName = model.Email;
-                var result = await userManager.CreateAsync(user, model.Password); // TODO: hash pw
-                if (result.Succeeded)
+                if (ModelState.IsValid)
                 {
-                    // Create a new authentication ticket.
-                    var request = new OpenIdConnectRequest
-                    {
-                        Username = model.Email,
-                        Scope = string.Join(" ", defaultScopes)
-                    };
-                    var ticket = await CreateTicketAsync(request, user);
+                    var user = mapper.Map<ApplicationUser>(model);
+                    user.UserName = model.Email;
+                    var result = await userManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                        return Ok();
 
-                    // Sign in the user
-                    return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
+                    result.Errors.ToList()
+                        .ForEach(error => ModelState.AddModelError(string.Empty, error.Description));
                 }
 
-                result.Errors.ToList()
-                    .ForEach(error => ModelState.AddModelError(string.Empty, error.Description));
-            }
+                var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(error => new { Error = error.ErrorMessage, ErrorDescription = error.Exception?.StackTrace }));
+                var errorRaw = string.Empty;
+                var descriptionRaw = string.Empty;
+                errorList.ToList().ForEach(error =>
+                {
+                    errorRaw = string.Join(" | ", error.Error);
+                    descriptionRaw = string.Join(" | ", error.ErrorDescription);
+                });
 
-            return BadRequest(ModelState);
+                return BadRequest(new { Error = errorRaw, ErrorDescription = descriptionRaw });
+            }
+            catch (Exception e)
+            {
+                logger.LogError(new EventId(1, nameof(Register)), e.Message);
+                return await ExceptionResponse(e);
+            }
         }
 
         /// <summary>
@@ -167,7 +173,7 @@ namespace FrameAuth.Controllers
             }
             catch (Exception e) 
             {
-                logger.LogError(new EventId(5, nameof(Token)), e.Message);
+                logger.LogError(new EventId(2, nameof(Token)), e.Message);
                 return await ExceptionResponse(e);
             }
         }
@@ -213,7 +219,7 @@ namespace FrameAuth.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId(5, nameof(Authorize)), e.Message);
+                logger.LogError(new EventId(3, nameof(Authorize)), e.Message);
                 return await ExceptionResponse(e);
             }
         }
@@ -236,7 +242,7 @@ namespace FrameAuth.Controllers
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId(6, nameof(Token)), e.Message);
+                logger.LogError(new EventId(64, nameof(Token)), e.Message);
                 return await ExceptionResponse(e);
             }
         }
