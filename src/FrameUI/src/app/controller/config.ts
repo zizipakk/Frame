@@ -4,16 +4,16 @@ import { Subscription } from 'rxjs/Rx';
 import { API } from '../app.settings';
 import { IappState } from '../models/appState';
 import { IuserModel } from '../models/userModel';
-import { IcomPortTypeView } from '../models/ComPortTypeModels';
+import { IuserViewModel } from '../models/UserViewModel';
 import { DataService } from '../services/dataService';
 import { NotificationService } from '../services/notificationService';
 import { SelectItem } from 'primeng/primeng';
 
 @Component({
-    selector: 'config',
-    templateUrl: 'config.html',
+    selector: 'home',
+    templateUrl: 'home.html',
 })
-export class ControllerConfig {
+export class Controller {
     
     readonly apiActionGetPortType = 'comconfig/getporttype';
     readonly apiActionSetPortType = 'comconfig/setporttype';
@@ -25,7 +25,7 @@ export class ControllerConfig {
     //apiPath = API.APP + this.apiAction;
     user: IuserModel;
     subscriptions: Subscription[];
-    portTypes: IcomPortTypeView[];
+    users: IuserViewModel[];
     cols: any;
     names: SelectItem[];
     locks: number;
@@ -37,9 +37,12 @@ export class ControllerConfig {
         private notificationService: NotificationService,
         private dataService: DataService) {
         this.subscriptions = new Array<Subscription>();
-        this.portTypes = new Array<IcomPortTypeView>();
+        this.users = new Array<IuserViewModel>();
         this.cols = null;
         this.names = new Array<SelectItem>();
+        this.locks = null;
+        this.locksMin = null;
+        this.locksMax = null;
     }
 
     ngOnInit() {        
@@ -52,27 +55,46 @@ export class ControllerConfig {
             )
         );
         this.subscriptions.push(
-            this.dataService.get<IcomPortTypeView>(
-                    API.APP + this.apiActionGetPortType
+
+            // TODO: LAZYLOADING            
+            this.dataService.get<IuserViewModel>(
+                    ""//this.apiPath
                 )
                 .subscribe(
-                    portTypes => {
-                        this.portTypes = portTypes;
+                    users => {
+                        this.users = users;
                         this.names = [{label: 'All', value: null}] // default filter
                                         .concat(
                                             [...new Set( // distinct
-                                                this.portTypes.map(
-                                                    m => { return {label: m.portType.toString(), value: m.portType.toString()};}
+                                                this.users.map(
+                                                    m => { return {label: m.userName, value: m.userName};}
                                                 )
                                             )
                                         ]);
+                        this.locks = this.locksMin = Math.min.apply(Math, this.users.map(m => m.accessFailedCount));
+                        this.locksMax = Math.max.apply(Math, this.users.map(m => m.accessFailedCount));
                     },
                     error =>
                         this.notificationService.printErrorMessage(new Array<string>(error))
                 )
         );
 
-        this.cols = Object.keys(this.portTypes).filter(f => { return {field: f, header: f.charAt(0).toUpperCase() + f.slice(1)}; });
+        // TODO: it clould be better from response model with localization
+        this.cols = [
+            {field: 'id', header: 'Id'},
+            {field: 'userName', header: 'Name'},
+            {field: 'normalizedUserName', header: 'Normalized Name'},
+            {field: 'email', header: 'Email'},
+            {field: 'normalizedEmail', header: 'Normalized Email'},
+            {field: 'emailConfirmed', header: 'Email Confirmed'},
+            {field: 'phoneNumber', header: 'Phone Number'},
+            {field: 'phoneNumberConfirmed', header: 'Phone Number Confirmed'},
+            {field: 'accessFailedCount', header: 'Failed Count'},
+            {field: 'twoFactorEnabled', header: 'TwoFactor Enabled'},
+            {field: 'lockoutEnabled', header: 'Lockout Enabled'},
+            {field: 'lockoutEnd', header: 'Lockout End'},
+            {field: 'isAdmin', header: 'Is Admin'}
+        ];
     }
 
     ngOnDestroy() {

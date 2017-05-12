@@ -44,7 +44,7 @@ namespace FrameIO.Services
 
         public async Task<int> SetPortType(IComPortTypeDTO model)
         {
-            await db.ComPortTypes.AddAsync(mapper.Map<ComPortType>(model));
+            db.ComPortTypes.Add(mapper.Map<ComPortType>(model));
             return await db.SaveChangesAsync();
         }
 
@@ -56,7 +56,7 @@ namespace FrameIO.Services
 
         public async Task<int> SetPortConfig(IComPortConfigDTO model)
         {
-            await db.ComPortConfigs.AddAsync(mapper.Map<ComPortConfig>(model));
+            db.ComPortConfigs.Add(mapper.Map<ComPortConfig>(model));
             return await db.SaveChangesAsync();
         }
 
@@ -68,7 +68,7 @@ namespace FrameIO.Services
 
         public async Task<int> SetDeviceConfig(IComDeviceConfigDTO model)
         {
-            await db.ComDeviceConfigs.AddAsync(mapper.Map<ComDeviceConfig>(model));
+            db.ComDeviceConfigs.Add(mapper.Map<ComDeviceConfig>(model));
             return await db.SaveChangesAsync();
         }
 

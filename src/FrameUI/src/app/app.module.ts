@@ -1,4 +1,4 @@
-﻿// ng
+// ng
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -36,7 +36,6 @@ import { Home } from './home/home';
 import { Account } from './account/account';
 import { Login } from './account/login';
 import { Register } from './account/register';
-import { ControllerConfig } from './controller/config';
 import { AppRouting } from './app.routes';
 // custom singleton services
 import { DataService } from './services/dataService';
@@ -55,8 +54,7 @@ import { AppErrorHandler } from './app.error';
     Home,
     Account,
     Login,
-    Register,
-    ControllerConfig
+    Register
   ],
   imports: [
     AppRouting, // inherited from ModuleWithProviders, so it is singleton, and have instance in first steps
