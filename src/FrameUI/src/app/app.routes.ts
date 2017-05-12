@@ -11,17 +11,11 @@ const appRoutes: Routes = [
     { path: '', component: Home, canActivate: [AuthGuard] }, // default
     { path: 'controller/config', component: ControllerConfig, canActivate: [AuthGuard] },
     {
-        path: 'account', component: Account, canActivate: [AuthGuard]
+        path: 'account', component: Account //Unauthorized pages
             ,children: [
-                {
-                    path: 'login',
-                    component: Login
-                },
-                {
-                    path: 'register',
-                    component: Register
-                }
-            ]
+                { path: 'login', component: Login },
+                { path: 'register', component: Register }
+            ]          
     },
     { path: '**', redirectTo: '/', pathMatch: 'full' } // if no match url...
 ];

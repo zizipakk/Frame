@@ -1,37 +1,34 @@
-﻿<p-dataTable 
-    [value]="portTypes" 
-    sortField="isAdmin" [sortOrder]="1" rowGroupMode="rowspan"
-    [rows]="10" [paginator]="true"
-    [resizableColumns]="true"
-    [reorderableColumns]="true"
-    [responsive]="true"
-    #dt>
-    <ng-container *ngFor="let col of cols">
-        <ng-container *ngIf="col.field === 'id'">
-            <!--Contains filtering-->
-            <p-column [field]="col.field" [filter]="true" filterMatchMode="contains">                
-            </p-column>
-        </ng-container>
-        <ng-container *ngIf="col.field === 'portType'">
-            <!--Dropdown filtering-->
-            <p-column 
-                [field]="col.field" [header]="col.header" 
-                [filter]="true" [style]="{'overflow':'visible'}" filterMatchMode="equals" >
-                <template let-col pTemplate="filter">
-                    <p-dropdown 
-                        [options]="names" [style]="{'width':'100%'}" 
-                        (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)" 
-                        styleClass="ui-column-filter">
-                    </p-dropdown>
-                </template>
-                <!--Template in all row in this column-->
-                <template let-col ylet-user="rowData" pTemplate="body"> 
-                    <span [style.color]="'orange'" [innerHtml]="portType[col.field]"></span>
-                </template>
-            </p-column>
-        </ng-container>        
-        <ng-container *ngIf="col.field !== 'id' && col.field !== 'portType'">
-            <p-column [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
-        </ng-container>
+﻿<<p-dataTable [value]="portTypes"
+              sortField="isAdmin" [sortOrder]="1" rowGroupMode="rowspan"
+              [rows]="10" [paginator]="true"
+              [resizableColumns]="true"
+              [reorderableColumns]="true"
+              [responsive]="true"
+              #dt>
+  <ng-container *ngFor="let col of cols">
+    <ng-container *ngIf="col.field === 'id'">
+      <!--Contains filtering-->
+      <p-column [field]="col.field" [filter]="true" filterMatchMode="contains">
+      </p-column>
     </ng-container>
+    <ng-container *ngIf="col.field === 'portType'">
+      <!--Dropdown filtering-->
+      <p-column [field]="col.field" [header]="col.header"
+                [filter]="true" [style]="{'overflow':'visible'}" filterMatchMode="equals">
+        <template let-col pTemplate="filter">
+          <p-dropdown [options]="names" [style]="{'width':'100%'}"
+                      (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"
+                      styleClass="ui-column-filter">
+          </p-dropdown>
+        </template>
+        <!--Template in all row in this column-->
+        <template let-col ylet-user="rowData" pTemplate="body">
+          <span [style.color]="'orange'" [innerHtml]="portType[col.field]"></span>
+        </template>
+      </p-column>
+    </ng-container>
+    <ng-container *ngIf="col.field !== 'id' && col.field !== 'portType'">
+      <p-column [field]="col.field" [header]="col.header" [sortable]="true"></p-column>
+    </ng-container>
+  </ng-container>
 </p-dataTable>

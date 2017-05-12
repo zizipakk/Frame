@@ -22,7 +22,6 @@ export class ControllerConfig {
     readonly apiActionGetDeviceConfig = 'comconfig/getdeviceconfig';
     readonly apiActionSetDeviceConfig = 'comconfig/setdeviceconfig';
     readonly apiActionGetComLog = 'comconfig/getcomlog';
-    //apiPath = API.APP + this.apiAction;
     user: IuserModel;
     subscriptions: Subscription[];
     portTypes: IcomPortTypeView[];
