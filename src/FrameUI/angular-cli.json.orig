@@ -69,5 +69,9 @@
     "module": false,
     "pipe": true,
     "service": true
+<<<<<<< HEAD
+  }  
+=======
   }
+>>>>>>> f85cdac7fe84c17ab3074b9349ec194f348a71fd
 }

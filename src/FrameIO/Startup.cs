@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using Microsoft.Extensions.Caching.Distributed;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace FrameIO
 {
@@ -25,7 +27,7 @@ namespace FrameIO
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
                 .AddJsonFile("./Properties/launchSettings.json")
-                ;            
+                ;
 
             if (environment.IsDevelopment())
             {
@@ -61,8 +63,8 @@ namespace FrameIO
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
-            IApplicationBuilder app, 
-            IHostingEnvironment env, 
+            IApplicationBuilder app,
+            IHostingEnvironment env,
             ILoggerFactory loggerFactory,
             ApplicationDbContext dbContext)
         {
@@ -76,7 +78,7 @@ namespace FrameIO
             app.UseCors(builder =>
                 builder
                 .WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
-                //.AllowAnyOrigin()
+                                                                 //.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
@@ -98,11 +100,48 @@ namespace FrameIO
                 // options.RoleClaimType = "custom_role_claim";
             });
 
+            app.UseMvcWithDefaultRoute();
 
             app.UseMvc();
 
             using (dbContext)
+            {
                 dbContext.Database.EnsureCreated();
+                InitializeAsync(dbContext).GetAwaiter().GetResult();
+            }
+        }
+
+        private async Task InitializeAsync(ApplicationDbContext dbContext)
+        {
+            if (!await dbContext.ComPortTypes.AnyAsync())
+            {
+                await dbContext.AddRangeAsync(
+                    new List<ComPortType>
+                    {
+                        new ComPortType
+                        {                        
+                            PortType = PortType.DigitalOutput,
+                            AddressFormat = "",
+                            ReadProtocol = "",
+                            WriteProtocol = ""                        
+                        },
+                        new ComPortType
+                        {
+                            PortType = PortType.DigitalInput,
+                            AddressFormat = "",
+                            ReadProtocol = "",
+                            WriteProtocol = ""
+                        },
+                        new ComPortType
+                        {
+                            PortType = PortType.AnalogeInput,
+                            AddressFormat = "",
+                            ReadProtocol = "",
+                            WriteProtocol = ""
+                        }
+                    });
+                await dbContext.SaveChangesAsync();
+            }       
         }
     }
 }
