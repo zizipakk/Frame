@@ -4,16 +4,16 @@ import { Subscription } from 'rxjs/Rx';
 import { API } from '../app.settings';
 import { IappState } from '../models/appState';
 import { IuserModel } from '../models/userModel';
-import { IuserViewModel } from '../models/UserViewModel';
+import { IcomPortTypeView } from '../models/ComPortTypeModels';
 import { DataService } from '../services/dataService';
 import { NotificationService } from '../services/notificationService';
 import { SelectItem } from 'primeng/primeng';
 
 @Component({
-    selector: 'home',
-    templateUrl: 'home.html',
+    selector: 'config',
+    templateUrl: 'config.html',
 })
-export class Controller {
+export class ControllerConfig {
     
     readonly apiActionGetPortType = 'comconfig/getporttype';
     readonly apiActionSetPortType = 'comconfig/setporttype';
@@ -25,7 +25,7 @@ export class Controller {
     //apiPath = API.APP + this.apiAction;
     user: IuserModel;
     subscriptions: Subscription[];
-    users: IuserViewModel[];
+    portTypes: IcomPortTypeView[];
     cols: any;
     names: SelectItem[];
     locks: number;
@@ -37,12 +37,9 @@ export class Controller {
         private notificationService: NotificationService,
         private dataService: DataService) {
         this.subscriptions = new Array<Subscription>();
-        this.users = new Array<IuserViewModel>();
+        this.portTypes = new Array<IcomPortTypeView>();
         this.cols = null;
         this.names = new Array<SelectItem>();
-        this.locks = null;
-        this.locksMin = null;
-        this.locksMax = null;
     }
 
     ngOnInit() {        
@@ -55,46 +52,27 @@ export class Controller {
             )
         );
         this.subscriptions.push(
-
-            // TODO: LAZYLOADING            
-            this.dataService.get<IuserViewModel>(
-                    ""//this.apiPath
+            this.dataService.get<IcomPortTypeView>(
+                    API.APP + this.apiActionGetPortType
                 )
                 .subscribe(
-                    users => {
-                        this.users = users;
+                    portTypes => {
+                        this.portTypes = portTypes;
                         this.names = [{label: 'All', value: null}] // default filter
                                         .concat(
                                             [...new Set( // distinct
-                                                this.users.map(
-                                                    m => { return {label: m.userName, value: m.userName};}
+                                                this.portTypes.map(
+                                                    m => { return {label: m.portType.toString(), value: m.portType.toString()};}
                                                 )
                                             )
                                         ]);
-                        this.locks = this.locksMin = Math.min.apply(Math, this.users.map(m => m.accessFailedCount));
-                        this.locksMax = Math.max.apply(Math, this.users.map(m => m.accessFailedCount));
                     },
                     error =>
                         this.notificationService.printErrorMessage(new Array<string>(error))
                 )
         );
 
-        // TODO: it clould be better from response model with localization
-        this.cols = [
-            {field: 'id', header: 'Id'},
-            {field: 'userName', header: 'Name'},
-            {field: 'normalizedUserName', header: 'Normalized Name'},
-            {field: 'email', header: 'Email'},
-            {field: 'normalizedEmail', header: 'Normalized Email'},
-            {field: 'emailConfirmed', header: 'Email Confirmed'},
-            {field: 'phoneNumber', header: 'Phone Number'},
-            {field: 'phoneNumberConfirmed', header: 'Phone Number Confirmed'},
-            {field: 'accessFailedCount', header: 'Failed Count'},
-            {field: 'twoFactorEnabled', header: 'TwoFactor Enabled'},
-            {field: 'lockoutEnabled', header: 'Lockout Enabled'},
-            {field: 'lockoutEnd', header: 'Lockout End'},
-            {field: 'isAdmin', header: 'Is Admin'}
-        ];
+        this.cols = Object.keys(this.portTypes).filter(f => { return {field: f, header: f.charAt(0).toUpperCase() + f.slice(1)}; });
     }
 
     ngOnDestroy() {
