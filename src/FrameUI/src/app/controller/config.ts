@@ -65,13 +65,13 @@ export class ControllerConfig {
                                                 )
                                             )
                                         ]);
+                        this.cols = Object.keys(this.portTypes).filter(f => { return {field: f, header: f.charAt(0).toUpperCase() + f.slice(1)}; });
                     },
                     error =>
                         this.notificationService.printErrorMessage(new Array<string>(error))
                 )
         );
-
-        this.cols = Object.keys(this.portTypes).filter(f => { return {field: f, header: f.charAt(0).toUpperCase() + f.slice(1)}; });
+        
     }
 
     ngOnDestroy() {

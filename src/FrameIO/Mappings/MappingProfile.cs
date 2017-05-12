@@ -42,6 +42,11 @@ namespace FrameIO.Mappings
 
             CreateMap<ComDeviceConfigView, ComDeviceConfigDTO>();
             CreateMap<ComDeviceConfigDTO, ComDeviceConfig>();
+
+            //Shadows
+            CreateMap<ComPortType, ComPortTypeLog>();
+            CreateMap<ComPortConfig, ComPortConfigLog>();
+            CreateMap<ComDeviceConfig, ComDeviceConfigLog>();
         }
     }
 }

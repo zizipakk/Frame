@@ -26,6 +26,7 @@ namespace FrameIO.Controllers
             this.mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetPortType()
         {

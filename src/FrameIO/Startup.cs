@@ -115,7 +115,7 @@ namespace FrameIO
         {
             if (!await dbContext.ComPortTypes.AnyAsync())
             {
-                await dbContext.AddRangeAsync(
+                await dbContext.ComPortTypes.AddRangeAsync(
                     new List<ComPortType>
                     {
                         new ComPortType
