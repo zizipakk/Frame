@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Rx';
@@ -98,6 +98,15 @@ export class AppComponent implements OnInit, OnDestroy
                 }
             );
         } else {
+            menuItems.push(
+                {
+                    label: 'Controller Configuration',
+                    icon: 'fa-signal',
+                    routerLink: ['/controller/config'],
+                    command: (event) => {},
+                    items: null
+                }
+            );
             menuItems.push(
                 {
                     label: this.user.userName,
