@@ -27,15 +27,13 @@ namespace FrameIO.Controllers
         }
 
         [HttpGet]
-        [Produces("application/json")]
+        //[Produces("application/json")]
         public async Task<IActionResult> GetPortTypes()
         {
             try
             {
                 var result = await comConfigService.GetPortTypes();
-                // TODO map or serialization bug
-                //return Ok(mapper.Map<IList<ComPortTypeView>>(result));
-                return Ok("OK");
+                return Ok(mapper.Map<IList<ComPortTypeView>>(result));
             }
             catch (Exception e)
             {
