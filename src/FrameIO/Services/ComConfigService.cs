@@ -10,19 +10,19 @@ namespace FrameIO.Services
 {
     public interface IComConfigService
     {
-        Task<IEnumerable<IComPortTypeDTO>> GetPortType();
+        Task<IList<ComPortTypeDTO>> GetPortTypes();
 
         Task<int> SetPortType(IComPortTypeDTO model);
 
-        Task<IEnumerable<IComPortConfigDTO>> GetPortConfig();
+        Task<IList<ComPortConfigDTO>> GetPortConfigs();
 
         Task<int> SetPortConfig(IComPortConfigDTO model);
 
-        Task<IEnumerable<IComDeviceConfigDTO>> GetDeviceConfig();
+        Task<IList<ComDeviceConfigDTO>> GetDeviceConfigs();
 
         Task<int> SetDeviceConfig(IComDeviceConfigDTO model);
 
-        Task<IEnumerable<IComLogDTO>> GetComLog(FilterModel<ComLog> filter);
+        Task<IList<ComLogDTO>> GetComLogs(FilterModel<ComLog> filter);
     }
 
     public class ComConfigService : IComConfigService
@@ -36,10 +36,10 @@ namespace FrameIO.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<IComPortTypeDTO>> GetPortType()
+        public async Task<IList<ComPortTypeDTO>> GetPortTypes()
         {
             var result = await db.ComPortTypes.ToListAsync();
-            return mapper.Map<IEnumerable<IComPortTypeDTO>>(result);
+            return mapper.Map<IList<ComPortTypeDTO>>(result);
         }
 
         public async Task<int> SetPortType(IComPortTypeDTO model)
@@ -48,10 +48,10 @@ namespace FrameIO.Services
             return await db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<IComPortConfigDTO>> GetPortConfig()
+        public async Task<IList<ComPortConfigDTO>> GetPortConfigs()
         {
             var result = await db.ComPortConfigs.ToListAsync();
-            return mapper.Map<IEnumerable<IComPortConfigDTO>>(result);
+            return mapper.Map<IList<ComPortConfigDTO>>(result);
         }
 
         public async Task<int> SetPortConfig(IComPortConfigDTO model)
@@ -60,10 +60,10 @@ namespace FrameIO.Services
             return await db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<IComDeviceConfigDTO>> GetDeviceConfig()
+        public async Task<IList<ComDeviceConfigDTO>> GetDeviceConfigs()
         {
             var result = await db.ComDeviceConfigs.ToListAsync();
-            return mapper.Map<IEnumerable<IComDeviceConfigDTO>>(result);
+            return mapper.Map<IList<ComDeviceConfigDTO>>(result);
         }
 
         public async Task<int> SetDeviceConfig(IComDeviceConfigDTO model)
@@ -72,10 +72,10 @@ namespace FrameIO.Services
             return await db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<IComLogDTO>> GetComLog(FilterModel<ComLog> filter)
+        public async Task<IList<ComLogDTO>> GetComLogs(FilterModel<ComLog> filter)
         {
             var result = await db.Query(filter).ToListAsync();
-            return mapper.Map<IEnumerable<IComLogDTO>>(result);
+            return mapper.Map<IList<ComLogDTO>>(result);
         }
     }
 }

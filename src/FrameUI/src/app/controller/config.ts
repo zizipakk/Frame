@@ -15,13 +15,13 @@ import { SelectItem } from 'primeng/primeng';
 })
 export class ControllerConfig {
     
-    readonly apiActionGetPortType = 'comconfig/getporttype';
+    readonly apiActionGetPortTypes = 'comconfig/getporttypes';
     readonly apiActionSetPortType = 'comconfig/setporttype';
-    readonly apiActionGetPortConfig = 'comconfig/getportconfig';
+    readonly apiActionGetPortConfigs = 'comconfig/getportconfigs';
     readonly apiActionSetPortConfig = 'comconfig/setportconfig';
-    readonly apiActionGetDeviceConfig = 'comconfig/getdeviceconfig';
+    readonly apiActionGetDeviceConfigs = 'comconfig/getdeviceconfigs';
     readonly apiActionSetDeviceConfig = 'comconfig/setdeviceconfig';
-    readonly apiActionGetComLog = 'comconfig/getcomlog';
+    readonly apiActionGetComLogs = 'comconfig/getcomlogs';
     user: IuserModel;
     subscriptions: Subscription[];
     portTypes: IcomPortTypeView[];
@@ -52,7 +52,7 @@ export class ControllerConfig {
         );
         this.subscriptions.push(
             this.dataService.get<IcomPortTypeView>(
-                    API.APP + this.apiActionGetPortType
+                    API.APP + this.apiActionGetPortTypes
                 )
                 .subscribe(
                     portTypes => {
