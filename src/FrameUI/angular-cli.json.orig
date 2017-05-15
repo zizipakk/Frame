@@ -60,14 +60,18 @@
     "inline": {
       "style": false,
       "template": false
-    },
-    "spec": {
-      "class": false,
-      "component": true,
-      "directive": true,
-      "module": false,
-      "pipe": true,
-      "service": true
     }
+  },
+  "spec": {
+    "class": false,
+    "component": true,
+    "directive": true,
+    "module": false,
+    "pipe": true,
+    "service": true
+<<<<<<< HEAD
+  }  
+=======
   }
+>>>>>>> f85cdac7fe84c17ab3074b9349ec194f348a71fd
 }

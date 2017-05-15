@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FrameIO.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
     public class ComConfigController : ControllerHelpers
     {
         private readonly IComConfigService comConfigService;
@@ -28,16 +28,17 @@ namespace FrameIO.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetPortType()
+        //[Produces("application/json")]
+        public async Task<IActionResult> GetPortTypes()
         {
             try
             {
-                var result = await comConfigService.GetPortType();
-                return Ok(mapper.Map<IComPortTypeView>(result));
+                var result = await comConfigService.GetPortTypes();
+                return Ok(mapper.Map<IList<ComPortTypeView>>(result));
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId(1, nameof(GetPortType)), e.Message);
+                logger.LogError(new EventId(1, nameof(GetPortTypes)), e.Message);
                 return await ExceptionResponse(e);
             }
         }
@@ -59,16 +60,16 @@ namespace FrameIO.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPortConfig()
+        public async Task<IActionResult> GetPortConfigs()
         {
             try
             {
-                var result = await comConfigService.GetPortConfig();
-                return Ok(mapper.Map<IComPortConfigView>(result));
+                var result = await comConfigService.GetPortConfigs();
+                return Ok(mapper.Map<IList<ComPortConfigView>>(result));
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId(3, nameof(GetPortConfig)), e.Message);
+                logger.LogError(new EventId(3, nameof(GetPortConfigs)), e.Message);
                 return await ExceptionResponse(e);
             }
         }
@@ -90,16 +91,16 @@ namespace FrameIO.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDeviceConfig()
+        public async Task<IActionResult> GetDeviceConfigs()
         {
             try
             {
-                var result = await comConfigService.GetDeviceConfig();
-                return Ok(mapper.Map<IComDeviceConfigView>(result));
+                var result = await comConfigService.GetDeviceConfigs();
+                return Ok(mapper.Map<IList<ComDeviceConfigView>>(result));
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId(5, nameof(GetDeviceConfig)), e.Message);
+                logger.LogError(new EventId(5, nameof(GetDeviceConfigs)), e.Message);
                 return await ExceptionResponse(e);
             }
         }
@@ -121,16 +122,16 @@ namespace FrameIO.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetComLog(FilterModel<ComLog> filter)
+        public async Task<IActionResult> GetComLogs(FilterModel<ComLog> filter)
         {
             try
             {
-                var result = await Task.Run(() => comConfigService.GetComLog(filter));
-                return Ok(mapper.Map<IComLogView>(result));
+                var result = await Task.Run(() => comConfigService.GetComLogs(filter));
+                return Ok(mapper.Map<IList<ComLogView>>(result));
             }
             catch (Exception e)
             {
-                logger.LogError(new EventId(7, nameof(GetComLog)), e.Message);
+                logger.LogError(new EventId(7, nameof(GetComLogs)), e.Message);
                 return await ExceptionResponse(e);
             }
         }

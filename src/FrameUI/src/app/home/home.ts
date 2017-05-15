@@ -64,7 +64,7 @@ export class Home {
                                                     m => { return {label: m.userName, value: m.userName};}
                                                 )
                                             )
-                                        ]);
+                                          ]);
                         this.locks = this.locksMin = Math.min.apply(Math, this.users.map(m => m.accessFailedCount));
                         this.locksMax = Math.max.apply(Math, this.users.map(m => m.accessFailedCount));
                     },

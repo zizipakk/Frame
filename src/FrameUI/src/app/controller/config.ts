@@ -15,13 +15,13 @@ import { SelectItem } from 'primeng/primeng';
 })
 export class ControllerConfig {
     
-    readonly apiActionGetPortType = 'comconfig/getporttype';
+    readonly apiActionGetPortTypes = 'comconfig/getporttypes';
     readonly apiActionSetPortType = 'comconfig/setporttype';
-    readonly apiActionGetPortConfig = 'comconfig/getportconfig';
+    readonly apiActionGetPortConfigs = 'comconfig/getportconfigs';
     readonly apiActionSetPortConfig = 'comconfig/setportconfig';
-    readonly apiActionGetDeviceConfig = 'comconfig/getdeviceconfig';
+    readonly apiActionGetDeviceConfigs = 'comconfig/getdeviceconfigs';
     readonly apiActionSetDeviceConfig = 'comconfig/setdeviceconfig';
-    readonly apiActionGetComLog = 'comconfig/getcomlog';
+    readonly apiActionGetComLogs = 'comconfig/getcomlogs';
     user: IuserModel;
     subscriptions: Subscription[];
     portTypes: IcomPortTypeView[];
@@ -52,7 +52,7 @@ export class ControllerConfig {
         );
         this.subscriptions.push(
             this.dataService.get<IcomPortTypeView>(
-                    API.APP + this.apiActionGetPortType
+                    API.APP + this.apiActionGetPortTypes
                 )
                 .subscribe(
                     portTypes => {
@@ -64,14 +64,13 @@ export class ControllerConfig {
                                                     m => { return {label: m.portType.toString(), value: m.portType.toString()};}
                                                 )
                                             )
-                                        ]);
-                        this.cols = Object.keys(this.portTypes).filter(f => { return {field: f, header: f.charAt(0).toUpperCase() + f.slice(1)}; });
+                            ]);
+                        this.cols = Object.keys(this.portTypes).filter(f => { return { field: f, header: f.charAt(0).toUpperCase() + f.slice(1) }; });
                     },
                     error =>
                         this.notificationService.printErrorMessage(new Array<string>(error))
                 )
-        );
-        
+        );        
     }
 
     ngOnDestroy() {

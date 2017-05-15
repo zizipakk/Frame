@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 namespace FrameIO.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
     public class ComPortController : ControllerHelpers
     {
         private readonly IComPortService comPortService;

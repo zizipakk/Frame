@@ -12,6 +12,7 @@ using System;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FrameIO
 {
@@ -54,9 +55,10 @@ namespace FrameIO
             services.AddAuthentication();
             services.AddDistributedMemoryCache(); //need introspect
 
-            services.AddMvcCore();
-            services.AddAutoMapper();
+            //services.AddMvcCore();
+            services.AddMvc();
             services.AddCors();
+            services.AddAutoMapper();
             services.AddSingleton<IComPortService, ComPortService>();
             services.AddTransient<IComConfigService, ComConfigService>();
         }
@@ -78,7 +80,7 @@ namespace FrameIO
             app.UseCors(builder =>
                 builder
                 .WithOrigins(Configuration["CORS:ClientDomain"]) //client host path in config
-                                                                 //.AllowAnyOrigin()
+                //.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()

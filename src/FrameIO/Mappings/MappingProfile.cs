@@ -11,24 +11,24 @@ namespace FrameIO.Mappings
         {
             // Entity > DTO > View
             CreateMap<ComLog, ComLogDTO>();
-            CreateMap<IEnumerable<ComLog>, IEnumerable<ComLogDTO>>();
+            CreateMap<List<ComLog>, List<ComLogDTO>>();
             CreateMap<ComLogDTO, ComLogView>();
-            CreateMap<IEnumerable<ComLogDTO>, IEnumerable<ComLogView>>();
+            CreateMap<List<ComLogDTO>, List<ComLogView>>();
 
             CreateMap<ComPortType, ComPortTypeDTO>();
-            CreateMap<IEnumerable<ComPortType>, IEnumerable<ComPortTypeDTO>>();
+            CreateMap<List<ComPortType>, List<ComPortTypeDTO>>();
             CreateMap<ComPortTypeDTO, ComPortTypeView>();
-            CreateMap<IEnumerable<ComPortTypeDTO>, IEnumerable<ComPortTypeView>>();
+            CreateMap<List<ComPortTypeDTO>, List<ComPortTypeView>>();
 
             CreateMap<ComPortConfig, ComPortConfigDTO>();
-            CreateMap<IEnumerable<ComPortConfig>, IEnumerable<ComPortConfigDTO>>();
+            CreateMap<List<ComPortConfig>, List<ComPortConfigDTO>>();
             CreateMap<ComPortConfigDTO, ComPortConfigView>();
-            CreateMap<IEnumerable<ComPortConfigDTO>, IEnumerable<ComPortConfigView>>();
+            CreateMap<List<ComPortConfigDTO>, List<ComPortConfigView>>();
 
             CreateMap<ComDeviceConfig, ComDeviceConfigDTO>();
-            CreateMap<IEnumerable<ComDeviceConfig>, IEnumerable<ComDeviceConfigDTO>>();
+            CreateMap<List<ComDeviceConfig>, List<ComDeviceConfigDTO>>();
             CreateMap<ComDeviceConfigDTO, ComDeviceConfigView>();
-            CreateMap<IEnumerable<ComDeviceConfigDTO>, IEnumerable<ComDeviceConfigView>>();
+            CreateMap<List<ComDeviceConfigDTO>, List<ComDeviceConfigView>>();
 
             // View > DTO > Entity
             CreateMap<ComLogView, ComLogDTO>();
