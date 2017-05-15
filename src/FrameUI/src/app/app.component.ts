@@ -128,16 +128,17 @@ export class AppComponent implements OnInit, OnDestroy
 
     logOut() {
         this.membershipService.logout()
-            .subscribe(() => {
-                this.membershipService.logoutCallback();
-                this.notificationService.printSuccessNotification(new Array<string>('By ' + this.user.userName + '!'));
-                this.router.navigate(['account/login']);
-            },
-            error => { 
-                this.membershipService.resetAuthorizationData();
-                this.notificationService.printErrorNotification(error);
-            },
-            () => {});
+            .subscribe(
+                () => {
+                    this.membershipService.logoutCallback();
+                    this.notificationService.printSuccessNotification(new Array<string>('By ' + this.user.userName + '!'));
+                },
+                error => { 
+                    this.membershipService.resetAuthorizationData();
+                    this.notificationService.printErrorNotification(error);
+                },
+                () => this.router.navigate(['account/login'])
+            );
     }
 
 }

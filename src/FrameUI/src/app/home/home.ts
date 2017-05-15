@@ -40,6 +40,11 @@ export class Home {
     }
 
     ngOnInit() {        
+        // clear messages & noti
+        this.notificationService.clearMessages();        
+        this.notificationService.clearNotifications();        
+
+        // init user
         this.subscriptions.push(            
             this.store.select(s => s.UserReducer)
                 .subscribe(
@@ -49,8 +54,6 @@ export class Home {
             )
         );
         this.subscriptions.push(
-
-            // TODO: LAZYLOADING            
             this.dataService.get<IuserViewModel>(
                     this.apiPath
                 )

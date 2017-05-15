@@ -50,7 +50,7 @@ export class ControllerConfig {
                 } 
             )
         );
-        this.subscriptions.push(
+       this.subscriptions.push(
             this.dataService.get<IcomPortTypeView>(
                     API.APP + this.apiActionGetPortTypes
                 )
@@ -65,12 +65,16 @@ export class ControllerConfig {
                                                 )
                                             )
                             ]);
-                        this.cols = Object.keys(this.portTypes).filter(f => { return { field: f, header: f.charAt(0).toUpperCase() + f.slice(1) }; });
+                        // TODO: intermediate solution
+                        if (this.portTypes)
+                            this.cols = Object.getOwnPropertyNames(this.portTypes[0]).map(name => { return { field: name, header: name.charAt(0).toUpperCase() + name.slice(1) }; });          
                     },
-                    error =>
-                        this.notificationService.printErrorMessage(new Array<string>(error))
+                    error => this.notificationService.printErrorMessage(new Array<string>(error))                    
                 )
-        );        
+        );
+
+        // TODO: stable with distributed resource cache
+        //this.cols = this.resourceService.Getresource<IcomPortTypeView>().map(name => { return { field: name, header: name.charAt(0).toUpperCase() + name.slice(1) }; });     
     }
 
     ngOnDestroy() {

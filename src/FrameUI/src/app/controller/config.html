@@ -1,4 +1,4 @@
-﻿<<p-dataTable [value]="portTypes"
+﻿<p-dataTable [value]="portTypes"
               sortField="isAdmin" [sortOrder]="1" rowGroupMode="rowspan"
               [rows]="10" [paginator]="true"
               [resizableColumns]="true"
@@ -23,7 +23,7 @@
         </template>
         <!--Template in all row in this column-->
         <template let-col ylet-user="rowData" pTemplate="body">
-          <span [style.color]="'orange'" [innerHtml]="portType[col.field]"></span>
+          <span [style.color]="'orange'" [innerHtml]="portTypes[col.field]"></span>
         </template>
       </p-column>
     </ng-container>

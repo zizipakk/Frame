@@ -12,6 +12,7 @@
     <StartupObject />
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.Introspection" Version="1.0.0" />
     <PackageReference Include="AutoMapper" Version="6.0.2" />
@@ -36,9 +37,11 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
     <PackageReference Include="SerialPortStreamCore" Version="2.1.0" />
   </ItemGroup>
+  
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\FrameAudit\FrameAudit.csproj" />
     <ProjectReference Include="..\FrameHelper\FrameHelper.csproj" />

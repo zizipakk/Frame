@@ -128,43 +128,48 @@ export class DataService {
         try {
             body =  error.json(); // this take exception, if body not json
         } catch(e) {
-            body =  error.text();
+            body =  error.text() ?  error.text() : error.statusText;
         }
 
         if (body)  // TODO: If we become Html body from MVC by 500...
         {
             switch(error.status)
             {
-                case 0:
+                case 0 as number:
                     messages.push('Network error. Connection refused.');
                     break;
-                case 400: // Error message from OpenIDDict server
-                    if (body.error) { // json object
+                case 400 as number:
+                    if (body.error) {
                         messages.push('Error: ' + body.error + ', Description: ' + body.error_description);
-                    } else { // text
+                    } else {
                         messages.push('Error: ' + body);
                     }
                     break;
-                case 401:
-                    messages.push('Unauthorized');
+                case 401 as number:
+                    messages.push('Unauthorized'); // TODO: convert to dialog message
+                    this.router.navigate(['account/login'])
                     break;
-                case 403:
+                case 403 as number:
                     messages.push('Forbidden');
                     break;
-                case 404:
+                case 404 as number:
                     messages.push('Not found url');
                     break;
-                // TODO: Wont work by 50X, because no allow origin header in response
-                case 500:
+                case 406 as number:
+                    messages.push('Unaccepted result');
+                    break;
+                case 500 as number:
                     messages.push('Internal Server Error');
                     break;
-                case 502:
+                case 502 as number:
                     messages.push('Bad Gateway / Time Out');
                     break;
                 default:
                     messages.push(error.statusText);
                     break;
             }
+        } else {
+            // TODO. display html on modal
         }
 
         return messages;

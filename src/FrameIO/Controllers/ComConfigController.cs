@@ -25,10 +25,8 @@ namespace FrameIO.Controllers
             logger = loggerFactory.CreateLogger<ComConfigController>();
             this.mapper = mapper;
         }
-
-        [AllowAnonymous]
+        
         [HttpGet]
-        //[Produces("application/json")]
         public async Task<IActionResult> GetPortTypes()
         {
             try

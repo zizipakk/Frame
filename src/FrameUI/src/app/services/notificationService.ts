@@ -61,4 +61,11 @@ export class NotificationService {
         this.store.dispatch({ type: ActionTypes.SET_Notification, payload: payload});
     }
 
+    clearMessages() {
+        this.store.dispatch({ type: ActionTypes.RESET_Message, payload: null});
+    }
+
+    clearNotifications() {
+        this.store.dispatch({ type: ActionTypes.RESET_Notification, payload: null});
+    }
 }
