@@ -32,6 +32,7 @@ namespace FrameIO.Controllers
             try
             {
                 var result = await comConfigService.GetPortTypes();
+                logger.LogInformation("All Porttype is catched from resource!");
                 return Ok(mapper.Map<IList<ComPortTypeView>>(result));
             }
             catch (Exception e)
@@ -46,9 +47,10 @@ namespace FrameIO.Controllers
         {
             try
             {
+                logger.LogInformation("Try to save portype.");
                 return await comConfigService.SetPortType(model) > 0
                     ? Ok()
-                    : throw new Exception("Can not write port type");
+                    : throw new Exception("Can not write port type!");
             }
             catch (Exception e)
             {
@@ -63,6 +65,7 @@ namespace FrameIO.Controllers
             try
             {
                 var result = await comConfigService.GetPortConfigs();
+                logger.LogInformation("All Portconfig is catched from resource!");
                 return Ok(mapper.Map<IList<ComPortConfigView>>(result));
             }
             catch (Exception e)
@@ -77,9 +80,10 @@ namespace FrameIO.Controllers
         {
             try
             {
+                logger.LogInformation("Try to save portconfig into resource.");
                 return await comConfigService.SetPortConfig(model) > 0
                     ? Ok() 
-                    : throw new Exception("Can not write port configuration");
+                    : throw new Exception("Can not write port configuration!");
             }
             catch (Exception e)
             {
@@ -94,6 +98,7 @@ namespace FrameIO.Controllers
             try
             {
                 var result = await comConfigService.GetDeviceConfigs();
+                logger.LogInformation("All Deviceconfig is catched from resource.");
                 return Ok(mapper.Map<IList<ComDeviceConfigView>>(result));
             }
             catch (Exception e)
@@ -108,9 +113,10 @@ namespace FrameIO.Controllers
         {
             try
             {
+                logger.LogInformation("Try to save deviceconfig into resource.");
                 return await comConfigService.SetDeviceConfig(model) > 0
                     ? Ok() 
-                    : throw new Exception("Can not write device configuration");
+                    : throw new Exception("Can not write device configuration!");
             }
             catch (Exception e)
             {
@@ -125,6 +131,7 @@ namespace FrameIO.Controllers
             try
             {
                 var result = await Task.Run(() => comConfigService.GetComLogs(filter));
+                logger.LogInformation("Query of logs are catched from resource.");
                 return Ok(mapper.Map<IList<ComLogView>>(result));
             }
             catch (Exception e)

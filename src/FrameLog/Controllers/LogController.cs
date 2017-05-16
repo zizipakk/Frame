@@ -40,6 +40,7 @@ namespace FrameLog.Controllers
             try
             {
                 var result = await Task.Run(() => logService.GetByIdAsync(id));
+                logger.LogInformation("Log got from resource by id.");
                 return Ok(mapper.Map<ILogView>(result));
             }
             catch (Exception e)
@@ -56,6 +57,7 @@ namespace FrameLog.Controllers
             try
             {
                 var result = await logService.GetListByUserIdAsync(userid);
+                logger.LogInformation("Logs got from resource by userid.");
                 return Ok(mapper.Map<IEnumerable<ILogView>>(result));
             }
             catch (Exception e)
@@ -74,12 +76,12 @@ namespace FrameLog.Controllers
                 var model = mapper.Map<ILogDTO>(log);
                 if (await logService.SetAsync(model) == 1)
                 {
+                    logger.LogInformation("Log is saved into resource.");
                     return Ok();
                 }
-                else
-                {
-                    throw new Exception("Badly db handling");
-                }
+
+                logger.LogError("Log not saved!");
+                throw new Exception("Badly db handling.");                
             }
             catch (Exception e)
             {

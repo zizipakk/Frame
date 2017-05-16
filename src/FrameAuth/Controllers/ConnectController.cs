@@ -73,12 +73,16 @@ namespace FrameAuth.Controllers
                     user.UserName = model.Email;
                     var result = await userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
+                    {
+                        logger.LogInformation("User is registered.");
                         return Ok();
+                    }
 
                     result.Errors.ToList()
                         .ForEach(error => ModelState.AddModelError(string.Empty, error.Description));
                 }
 
+                // TODO: error-hunting to helper class => return ModelErrorResponse(modelstate);
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(error => new { Error = error.ErrorMessage, ErrorDescription = error.Exception?.StackTrace }));
                 var errorRaw = string.Empty;
                 var descriptionRaw = string.Empty;
@@ -88,6 +92,7 @@ namespace FrameAuth.Controllers
                     descriptionRaw = string.Join(" | ", error.ErrorDescription);
                 });
 
+                logger.LogError($"Model is invalid: {errorRaw}");
                 return BadRequest(new { Error = errorRaw, ErrorDescription = descriptionRaw });
             }
             catch (Exception e)
@@ -167,7 +172,8 @@ namespace FrameAuth.Controllers
 
                 // Create a new authentication ticket.
                 var ticket = await CreateTicketAsync(request, user);
-                               
+                logger.LogInformation(1, "Ticket is created.");
+
                 // Sign in the user
                 return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
             }
@@ -201,20 +207,26 @@ namespace FrameAuth.Controllers
                         });
 
                         // Ask OpenIddict to return a login_required error to the client application.
+                        logger.LogError("Not logged in by promtless auth!");
                         return Forbid(properties, OpenIdConnectServerDefaults.AuthenticationScheme);
                     }
+                    logger.LogInformation("Challenge to auth, because not logged in.");
                     return Challenge();
                 }
 
                 // Retrieve the profile of the logged in user.
                 var user = await userManager.GetUserAsync(User);
                 if (user == null)
+                {
+                    logger.LogError("User is authenticated, but cannot resolve!");
                     throw new Exception("User is authenticated, but cannot resolve!");
+                }
 
                 // Create a new authentication ticket.
                 var ticket = await CreateTicketAsync(request, user);
 
                 // Returning a SignInResult will ask OpenIddict to issue the appropriate access/identity tokens.
+                logger.LogInformation("New ticket is created, and try to sign.");
                 return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
             }
             catch (Exception e)
@@ -233,7 +245,7 @@ namespace FrameAuth.Controllers
         {
             try
             {               
-                logger.LogInformation(3, "User logged out.");
+                logger.LogInformation(3, "User try to logged out.");
                 //return Ok(new JsonResult(null));
                 // Returning a SignOutResult will ask OpenIddict to redirect the user agent
                 // to the post_logout_redirect_uri specified by the client application.
@@ -251,22 +263,26 @@ namespace FrameAuth.Controllers
         {
             // Create the principal
             var principal = await signInManager.CreateUserPrincipalAsync(user);
+            logger.LogInformation("Principal is created.");
 
             // Create a new authentication ticket for the user's principal
             var ticket = new AuthenticationTicket(
                 principal,
                 new AuthenticationProperties(),
                 OpenIdConnectServerDefaults.AuthenticationScheme);
+            logger.LogInformation("Ticket is created.");
 
             // Include resources and scopes, as appropriate
             ticket.SetScopes(defaultScopes.Intersect(request.GetScopes()));
+            logger.LogInformation("Ticket-scopes are ok.");
+
 
             //TODO: authorized(external) resources audiences
             ticket.SetResources(
-                //Startup.StaticConfig["profiles:FrameAuth:launchUrl"],
                 Startup.StaticConfig["AppSources:FrameAuth"],
                 Startup.StaticConfig["AppSources:FrameIO"]
             );
+            logger.LogInformation("Ticket-resources are ok.");
 
             ticket.Principal.Claims.ToList().ForEach(claim =>
             {
@@ -291,6 +307,7 @@ namespace FrameAuth.Controllers
                     claim.SetDestinations(destinations);
                 }
             });
+            logger.LogInformation("Ticket-claims are filtered by, and added to access and id token.");
 
             return ticket;
         }

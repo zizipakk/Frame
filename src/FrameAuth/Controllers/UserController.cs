@@ -50,6 +50,7 @@ namespace FrameAuth.Controllers
             try
             {
                 var result = await userManager.Users.ToListAsync();
+                logger.LogInformation("All user got from resource.");
                 return Ok(mapper.Map<IList<UserViewModel>>(result));
             }
             catch (Exception e)
@@ -68,7 +69,10 @@ namespace FrameAuth.Controllers
                 var user = await userManager.GetUserAsync(User);
 
                 if (user == null)
+                {
+                    logger.LogError("Can not resolve current user!");
                     throw new Exception("Can not resolve current user!");
+                }
 
                 // TODO: improve scope cheking
                 // Note: the complete list of standard claims supported by the OpenID Connect specification
@@ -76,6 +80,7 @@ namespace FrameAuth.Controllers
                 if (!User.HasClaim(OpenIdConnectConstants.Claims.Scope, OpenIdConnectConstants.Scopes.Email))
                     user.Email = "Not allowed";
                 // ...
+                logger.LogInformation("Scopes are checked.");
 
                 return Ok(mapper.Map<UserViewModel>(user));
             }
