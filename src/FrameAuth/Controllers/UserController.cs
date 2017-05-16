@@ -11,10 +11,7 @@ using System.Collections.Generic;
 using FrameAuth.Models.UserViewModels;
 using FrameSearch.Controllers;
 using FrameSearch.ElasticSearchProvider;
-using AspNet.Security.OAuth.Validation;
-using Newtonsoft.Json.Linq;
 using AspNet.Security.OpenIdConnect.Primitives;
-using OpenIddict.Core;
 
 namespace FrameAuth.Controllers
 {

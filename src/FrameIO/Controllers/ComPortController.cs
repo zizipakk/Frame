@@ -30,8 +30,15 @@ namespace FrameIO.Controllers
         {
             try
             {
-                logger.LogInformation("Try to read port.");
-                return Ok(await Task.Run(() => comPortService.ReadPort()));
+            
+                if (ModelState.IsValid)
+                {
+                    logger.LogInformation("Try to read port.");
+                    return Ok(await Task.Run(() => comPortService.ReadPort()));
+                }
+
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {
@@ -45,15 +52,21 @@ namespace FrameIO.Controllers
         {
             try
             {
-                var id = User?.Identity;
-                model.UserId = (id as ClaimsIdentity)?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? id?.Name;
-                logger.LogInformation("Get userinfo from Id.");
-                model.Location = Request?.Host.Host;
+                if (ModelState.IsValid)
+                {
+                    var id = User?.Identity;
+                    model.UserId = (id as ClaimsIdentity)?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? id?.Name;
+                    logger.LogInformation("Get userinfo from Id.");
+                    model.Location = Request?.Host.Host;
 
-                logger.LogInformation("Try to write port with userid and location info.");
-                return await Task.Run(() => comPortService.WritePort(model)) 
-                    ? Ok() 
-                    : throw new Exception("Can not write COM port");
+                    logger.LogInformation("Try to write port with userid and location info.");
+                    return await Task.Run(() => comPortService.WritePort(model))
+                        ? Ok()
+                        : throw new Exception("Can not write COM port");
+                }
+
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {

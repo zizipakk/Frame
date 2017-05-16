@@ -82,18 +82,8 @@ namespace FrameAuth.Controllers
                         .ForEach(error => ModelState.AddModelError(string.Empty, error.Description));
                 }
 
-                // TODO: error-hunting to helper class => return ModelErrorResponse(modelstate);
-                var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(error => new { Error = error.ErrorMessage, ErrorDescription = error.Exception?.StackTrace }));
-                var errorRaw = string.Empty;
-                var descriptionRaw = string.Empty;
-                errorList.ToList().ForEach(error =>
-                {
-                    errorRaw = string.Join(" | ", error.Error);
-                    descriptionRaw = string.Join(" | ", error.ErrorDescription);
-                });
-
-                logger.LogError($"Model is invalid: {errorRaw}");
-                return BadRequest(new { Error = errorRaw, ErrorDescription = descriptionRaw });
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {

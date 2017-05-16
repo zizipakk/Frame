@@ -47,10 +47,16 @@ namespace FrameIO.Controllers
         {
             try
             {
-                logger.LogInformation("Try to save portype.");
-                return await comConfigService.SetPortType(model) > 0
+                if (ModelState.IsValid)
+                {
+                    logger.LogInformation("Try to save portype.");
+                    return await comConfigService.SetPortType(model) > 0
                     ? Ok()
                     : throw new Exception("Can not write port type!");
+                }
+
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {
@@ -80,10 +86,16 @@ namespace FrameIO.Controllers
         {
             try
             {
-                logger.LogInformation("Try to save portconfig into resource.");
-                return await comConfigService.SetPortConfig(model) > 0
-                    ? Ok() 
-                    : throw new Exception("Can not write port configuration!");
+                if (ModelState.IsValid)
+                {
+                    logger.LogInformation("Try to save portconfig into resource.");
+                    return await comConfigService.SetPortConfig(model) > 0
+                        ? Ok()
+                        : throw new Exception("Can not write port configuration!");
+                }
+
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {
@@ -113,10 +125,16 @@ namespace FrameIO.Controllers
         {
             try
             {
-                logger.LogInformation("Try to save deviceconfig into resource.");
-                return await comConfigService.SetDeviceConfig(model) > 0
-                    ? Ok() 
-                    : throw new Exception("Can not write device configuration!");
+                if (ModelState.IsValid)
+                {
+                    logger.LogInformation("Try to save deviceconfig into resource.");
+                    return await comConfigService.SetDeviceConfig(model) > 0
+                        ? Ok()
+                        : throw new Exception("Can not write device configuration!");
+                }
+
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {
@@ -130,9 +148,15 @@ namespace FrameIO.Controllers
         {
             try
             {
-                var result = await Task.Run(() => comConfigService.GetComLogs(filter));
-                logger.LogInformation("Query of logs are catched from resource.");
-                return Ok(mapper.Map<IList<ComLogView>>(result));
+                if (ModelState.IsValid)
+                {
+                    var result = await Task.Run(() => comConfigService.GetComLogs(filter));
+                    logger.LogInformation("Query of logs are catched from resource.");
+                    return Ok(mapper.Map<IList<ComLogView>>(result));
+                }
+
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {

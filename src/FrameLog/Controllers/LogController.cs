@@ -25,14 +25,6 @@ namespace FrameLog.Controllers
             this.mapper = mapper;
         }
 
-        // TODO: Test
-        //[HttpGet]
-        //public async Task<IEnumerable<string>> Get()
-        //{
-
-        //    return await Task.Run(() => new string[] { "value1", "value2" });
-        //}
-
         // GET api/log/id
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
@@ -56,9 +48,15 @@ namespace FrameLog.Controllers
         {
             try
             {
-                var result = await logService.GetListByUserIdAsync(userid);
-                logger.LogInformation("Logs got from resource by userid.");
-                return Ok(mapper.Map<IEnumerable<ILogView>>(result));
+                if (ModelState.IsValid)
+                {
+                    var result = await logService.GetListByUserIdAsync(userid);
+                    logger.LogInformation("Logs got from resource by userid.");
+                    return Ok(mapper.Map<IEnumerable<ILogView>>(result));
+                }
+
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {
@@ -73,15 +71,21 @@ namespace FrameLog.Controllers
         {
             try
             {
-                var model = mapper.Map<ILogDTO>(log);
-                if (await logService.SetAsync(model) == 1)
+                if (ModelState.IsValid)
                 {
-                    logger.LogInformation("Log is saved into resource.");
-                    return Ok();
+                    var model = mapper.Map<ILogDTO>(log);
+                    if (await logService.SetAsync(model) == 1)
+                    {
+                        logger.LogInformation("Log is saved into resource.");
+                        return Ok();
+                    }
+
+                    logger.LogError("Log not saved!");
+                    throw new Exception("Badly db handling.");
                 }
 
-                logger.LogError("Log not saved!");
-                throw new Exception("Badly db handling.");                
+                logger.LogError($"Model is invalid!");
+                return await ModelErrorResponse();
             }
             catch (Exception e)
             {
