@@ -23,15 +23,11 @@ export class AppHeaders {
         return headers; 
     }
 
-    private static get TOKEN() {
-        /** Set token if available */
-        return sessionStorage.getItem("authorizationData"); //localStorage
-    }
-
     public static AddToken(headers: Headers) {
-        let token = AppHeaders.TOKEN.replace(new RegExp("\"", 'g'), "");
+        let token = sessionStorage.getItem("authorizationData"); //localStorage
 
         if (token !== "" && token !== '""') {
+            token.replace(new RegExp("\"", 'g'), "");
             headers.append('Authorization', 'Bearer ' + token);            
         }
         return headers; 

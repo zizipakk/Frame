@@ -6,6 +6,7 @@ import { OperationResult } from '../models/operationResult'
 import { IloginViewModel, LoginViewModel } from '../models/LoginViewModel';
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
+import { Validator } from "validator.ts/Validator";
 
 @Component({
     selector: 'register-modal',
@@ -51,6 +52,19 @@ export class Register implements AfterViewInit {
     }
 
     register(): void {
+        //TODO: on submit
+        let validator = new Validator();
+        let test = validator.validate(this.newUser);
+        this.message.concat(test.map(
+            m => 
+            { 
+                return { 
+                    severity: "error",
+                    summary: m.errorName,
+                    detail: m.errorMessage
+                };
+            }));
+
         this.user = new LoginViewModel();
         this.user.email = this.newUser.email;
         this.user.password = this.newUser.password;

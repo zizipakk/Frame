@@ -1,4 +1,4 @@
-
+﻿import {Contains, IsInt, IsLength, IsEmail, IsFQDN, IsDate} from "validator.ts/decorator/Validation";
 
 export interface IregisterViewModel {
     email: string;
@@ -9,13 +9,14 @@ export interface IregisterViewModel {
 }
 
 export class RegisterViewModel implements IregisterViewModel {
+    @IsEmail()
     public email: string;
     public password: string;
     public confirmPassword: string;
     public isAdmin: boolean;
     
     constructor(model?: IregisterViewModel) {
-        if(model) {
+        if (model) {
             this.email = model.email;
             this.password = model.password;
             this.confirmPassword = model.confirmPassword;
@@ -24,4 +25,3 @@ export class RegisterViewModel implements IregisterViewModel {
         }
     }
 }
- 
