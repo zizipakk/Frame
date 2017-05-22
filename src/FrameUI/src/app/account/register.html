@@ -1,4 +1,4 @@
-﻿<p-dialog [(visible)]="display" width="600" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)"> 
+﻿<p-dialog [(visible)]="display" width="600" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)" (keyup.enter)="register()"> 
     <header>
         <h1 class="text-center">
             <span class="fa-stack fa-1x">
@@ -11,24 +11,30 @@
         <p-messages [value]="message"></p-messages>
         <div class="ui-g-12">
             <input class="ui-g-12" type="email" pInputText placeholder="Email" [(ngModel)]="newUser.email"
-                    name="email" required #email="ngModel">
-            <div [hidden]="email.valid || email.untouched" class="ui-message ui-messages-error ui-corner-all">
-                <i class="fa fa-close"></i> Email is required
+                   name="email" #email="ngModel" 
+                   error (keyup)="email.error = validate(this.newUser, email.name)" 
+                   (focusout)="email.error = validate(this.newUser, email.name)">
+            <div *ngIf="email.error" class="ui-message ui-messages-error ui-corner-all">
+              <i class="fa fa-close"></i> {{email.error}}
             </div>
         </div>
         <div class="ui-g-12">
             <input class="ui-g-12" type="password" pInputText placeholder="Password" [(ngModel)]="newUser.password"
-                    name="password" required #password="ngModel">
-            <div [hidden]="password.valid || password.untouched" class="ui-message ui-messages-error ui-corner-all">
-                <i class="fa fa-close"></i> Password is required
-            </div>
+                   name="password" #password="ngModel"
+                   error (keyup)="password.error = validate(this.newUser, password.name)" 
+                   (focusout)="password.error = validate(this.newUser, password.name)">
+          <div *ngIf="password.error" class="ui-message ui-messages-error ui-corner-all">
+            <i class="fa fa-close"></i> {{password.error}}
+          </div>
         </div>
         <div class="ui-g-12">
             <input class="ui-g-12" type="password" pPassword placeholder="Confirm Password" [(ngModel)]="newUser.confirmPassword"
-                    name="confirmPassword" pattern={{newUser.password}} required #confirmPassword="ngModel">
-            <div [hidden]="password.untouched && (confirmPassword.valid || confirmPassword.untouched)" class="ui-message ui-messages-error ui-corner-all">
-                <i class="fa fa-close"></i> Confirm password is required and equal with password
-            </div>
+                   name="confirmPassword" #confirmPassword="ngModel"
+                   error (keyup)="confirmPassword.error = validate(this.newUser, confirmPassword.name)" 
+                   (focusout)="confirmPassword.error = validate(this.newUser, confirmPassword.name)">
+          <div *ngIf="confirmPassword.error" class="ui-message ui-messages-error ui-corner-all">
+            <i class="fa fa-close"></i> {{confirmPassword.error}}
+          </div>
         </div>        
         <div class="ui-g-12">
             <button class="ui-g-12" type="button" pButton [disabled]="!hf.form.valid" (click)="register()" label="Register"></button>

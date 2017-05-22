@@ -1,4 +1,5 @@
-﻿import {Contains, IsInt, IsLength, IsEmail, IsFQDN, IsDate} from "validator.ts/decorator/Validation";
+﻿import { IsLength, IsEmail } from "validator.ts/decorator/Validation";
+import { SameAs } from "./validators/validators";
 
 export interface IregisterViewModel {
     email: string;
@@ -9,9 +10,11 @@ export interface IregisterViewModel {
 }
 
 export class RegisterViewModel implements IregisterViewModel {
-    @IsEmail()
+    @IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
     public email: string;
+    @IsLength(6, 200, { message: 'This is not valid password!' })
     public password: string;
+    @Validate(SameAs, { message: 'This is not the same!' })
     public confirmPassword: string;
     public isAdmin: boolean;
     
