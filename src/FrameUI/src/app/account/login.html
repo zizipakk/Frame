@@ -11,27 +11,30 @@
         <p-messages [value]="message"></p-messages>
         <div class="ui-g-12">
             <input class="ui-g-12" type="text" pInputText placeholder="Email" [(ngModel)]="user.email"
-                    name="email" required #email="ngModel" />
-            <div [hidden]="email.valid || email.untouched" class="ui-message ui-messages-error ui-corner-all">
-                <i class="fa fa-close"></i> Email is required
+                    name="email" #email="ngModel"                   
+                    error (keyup)="email.error = validate(this.user, email.name)" 
+                    (focusout)="email.error = validate(this.user, email.name)">
+            <div *ngIf="email.error | async" class="ui-message ui-messages-error ui-corner-all">
+              <i class="fa fa-close"></i> {{email.error | async}}
             </div>
+
         </div>
         <div class="ui-g-12">
             <input class="ui-g-12" type="password" pPassword placeholder="Password" [(ngModel)]="user.password"
-                    name="password" required #passWord="ngModel" />
-            <div [hidden]="passWord.valid || passWord.untouched" class="ui-message ui-messages-error ui-corner-all">
-                <i class="fa fa-close"></i> Password is required
+                    name="password" #password="ngModel"                   
+                    error (keyup)="password.error = validate(this.user, password.name)" 
+                   (focusout)="password.error = validate(this.user, password.name)">
+            <div *ngIf="password.error | async" class="ui-message ui-messages-error ui-corner-all">
+              <i class="fa fa-close"></i> {{password.error | async}}
             </div>
+
         </div>
         <div class="ui-g-12">
-            <button class="ui-g-12" type="button" pButton [disabled]="!hf.form.valid" (click)="login()" label="Sign In"></button>
+            <button class="ui-g-12" type="button" pButton [disabled]="validationErrors.length > 0" (click)="login()" label="Sign In"></button>
             <span class="float-right">
                 <a class="nav-link" [routerLink]="['/account/register']"><h4>Register</h4></a>
             </span>
         </div>        
-        <!--<div class="ui-g-12">
-            <p-checkbox name="remember" [(ngModel)]="user.rememberLogin" binary="true" label="Remember me"></p-checkbox>
-        </div>-->
     </form>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">

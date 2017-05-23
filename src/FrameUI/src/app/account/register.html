@@ -14,8 +14,8 @@
                    name="email" #email="ngModel" 
                    error (keyup)="email.error = validate(this.newUser, email.name)" 
                    (focusout)="email.error = validate(this.newUser, email.name)">
-            <div *ngIf="email.error" class="ui-message ui-messages-error ui-corner-all">
-              <i class="fa fa-close"></i> {{email.error}}
+            <div *ngIf="email.error | async" class="ui-message ui-messages-error ui-corner-all">
+              <i class="fa fa-close"></i> {{email.error | async}}
             </div>
         </div>
         <div class="ui-g-12">
@@ -23,8 +23,8 @@
                    name="password" #password="ngModel"
                    error (keyup)="password.error = validate(this.newUser, password.name)" 
                    (focusout)="password.error = validate(this.newUser, password.name)">
-          <div *ngIf="password.error" class="ui-message ui-messages-error ui-corner-all">
-            <i class="fa fa-close"></i> {{password.error}}
+          <div *ngIf="password.error | async" class="ui-message ui-messages-error ui-corner-all">
+            <i class="fa fa-close"></i> {{password.error | async}}
           </div>
         </div>
         <div class="ui-g-12">
@@ -32,12 +32,12 @@
                    name="confirmPassword" #confirmPassword="ngModel"
                    error (keyup)="confirmPassword.error = validate(this.newUser, confirmPassword.name)" 
                    (focusout)="confirmPassword.error = validate(this.newUser, confirmPassword.name)">
-          <div *ngIf="confirmPassword.error" class="ui-message ui-messages-error ui-corner-all">
-            <i class="fa fa-close"></i> {{confirmPassword.error}}
+          <div *ngIf="confirmPassword.error | async" class="ui-message ui-messages-error ui-corner-all">
+            <i class="fa fa-close"></i> {{confirmPassword.error | async}}
           </div>
         </div>        
         <div class="ui-g-12">
-            <button class="ui-g-12" type="button" pButton [disabled]="!hf.form.valid" (click)="register()" label="Register"></button>
+            <button class="ui-g-12" type="button" pButton [disabled]="validationErrors.length > 0" (click)="register()" label="Register"></button>
         </div>
     </form>
     <footer>
