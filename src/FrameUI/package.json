@@ -26,13 +26,13 @@
     "@angular/router": "^4.1.0",
     "@ngrx/core": "^1.2.0",
     "@ngrx/store": "^2.2.1",
+    "class-validator": "^0.7.0",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
     "moment": "^2.17.1",
     "primeng": "^4.0.0",
     "redux": "^3.6.0",
     "rxjs": "^5.1.0",
-    "validator.ts": "^0.2.2",
     "zone.js": "^0.8.9"
   },
   "devDependencies": {
