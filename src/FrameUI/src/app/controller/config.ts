@@ -58,13 +58,12 @@ export class ControllerConfig {
                     portTypes => {
                         this.portTypes = portTypes;
                         this.names = [{label: 'All', value: null}] // default filter
-                                        .concat(
-                                            [...new Set( // distinct
-                                                this.portTypes.map(
-                                                    m => { return {label: m.portType.toString(), value: m.portType.toString()};}
-                                                )
-                                            )
-                            ]);
+                          .concat(
+                              [...new Set( // distinct
+                                  this.portTypes.map(
+                                      m => { return {label: m.portType.toString(), value: m.portType.toString()};}
+                                  )
+                              )]);
                         // TODO: intermediate solution
                         if (this.portTypes)
                             this.cols = Object.getOwnPropertyNames(this.portTypes[0]).map(name => { return { field: name, header: name.charAt(0).toUpperCase() + name.slice(1) }; });          

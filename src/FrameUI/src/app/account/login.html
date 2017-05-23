@@ -1,4 +1,4 @@
-﻿<p-dialog [(visible)]="display" width="600" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)"> 
+﻿<p-dialog [(visible)]="display" width="600" modal="true" responsive="true" (onAfterHide)="onAfterHide($event)" (keyup.enter)="login()"> 
     <header>
         <h1>
             <span class="fa-stack fa-1x">
