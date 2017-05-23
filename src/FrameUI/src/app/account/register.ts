@@ -6,8 +6,8 @@ import { OperationResult } from '../models/operationResult'
 import { IloginViewModel, LoginViewModel } from '../models/LoginViewModel';
 import { MembershipService } from '../services/membershipService';
 import { NotificationService } from '../services/notificationService';
-import { Validator } from "validator.ts/Validator";
-import { ValidationErrorInterface } from "validator.ts/ValidationErrorInterface";
+import { Validator } from "class-validator";
+import { ValidationError } from "class-validator";
 
 @Component({
     selector: 'register-modal',
@@ -21,7 +21,7 @@ export class Register implements AfterViewInit {
 
     message: Message[];
     validator: Validator;
-    validationErrors: ValidationErrorInterface[];
+    validationErrors: ValidationError[];
 
     newUser: IregisterViewModel;
     user: IloginViewModel;
@@ -39,7 +39,7 @@ export class Register implements AfterViewInit {
         });
         this.message = new Array<Message>();
         this.validator = new Validator();
-        this.validationErrors = new Array<ValidationErrorInterface>();
+        this.validationErrors = new Array<ValidationError>();
     }
 
     /** ng event */
@@ -81,8 +81,8 @@ export class Register implements AfterViewInit {
         }
     }
 
-    validateForm(obj: any): boolean {
-        this.validationErrors = this.validator.validate(obj);
+    validateForm(obj: any): boolean {        
+        this.validator.validate(obj).then(val => { this.validationErrors =  val;});
 
         if (this.validationErrors.length > 0) {
             let classValidation: Message[] =
@@ -90,8 +90,8 @@ export class Register implements AfterViewInit {
                     .map(m => {
                         return { //TODO: localization
                             severity: 'error',
-                            summary: m.errorName,
-                            detail: m.errorMessage ? ' ' + m.errorMessage : ''
+                            summary: m.property,
+                            detail: m.constraints.toString()
                         };
                     });
             this.message = [...classValidation];
@@ -103,9 +103,11 @@ export class Register implements AfterViewInit {
     }
 
     validate(obj: any, property: string): string {
-        let errors = this.validator.validate(obj).find(f => f.property === property);
-        if (errors) {
-            return errors.errorMessage; //TODO: localization
+        let errors: ValidationError[] = [];
+        this.validator.validate(obj).then(val => errors = val);
+        let error = errors.find(f => f.property === property);
+        if (error) {
+            return error.constraints.toString(); //TODO: localization
         }
 
         return null;
