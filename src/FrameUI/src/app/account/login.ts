@@ -59,35 +59,28 @@ export class Login extends ClassValidator implements AfterViewInit
         this.router.navigate(['account/register']);
     }
 
+    /** template submit event */
     async login() {
-        await this.validateForm(this.user);
-        if (this.validationErrors.length === 0) {
-            this.message = [];
-
-            this.membershipService.login(this.user)
-                .subscribe(res => {
-                        this.membershipService.loginCallback(res);
-                        this.notificationService.printSuccessNotification(new Array<string>('Welcome back ' + this.user.email + '!'));
-                        this.router.navigate(['/']);
-                    },
-                    error => {
-                        this.membershipService.resetAuthorizationData();
-                        this.message.push({severity: 'error', summary: 'Error Message', detail: error}); // Only on dialog
-                    },
-                    () => {}
-                );
-        } else {
-            let classValidation: Message[] =
-                this.validationErrors
-                    .map(m => {
-                        return { //TODO: localization
-                            severity: 'error',
-                            summary: m.property,
-                            detail: JSON.stringify(m.constraints)
-                        };
-                    });
-            this.message = [...classValidation];
-        }
+        this.message = 
+            await this.callAction // prevalidation befor call server side
+            (
+                this.user, 
+                this.message, 
+                () => this.callLogin()
+            );
     };
 
+    /** serverside action */
+    private callLogin() {
+        this.membershipService.login(this.user)
+            .subscribe(res => {
+                    this.membershipService.loginCallback(res);
+                    this.notificationService.printSuccessNotification(new Array<string>('Welcome back ' + this.user.email + '!'));
+                    this.router.navigate(['/']);
+                },
+                error => {
+                    this.membershipService.resetAuthorizationData();
+                    this.message.push({severity: 'error', summary: 'Error Message', detail: error}); // Only on dialog
+                });
+    }    
 }

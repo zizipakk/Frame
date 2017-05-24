@@ -20,7 +20,6 @@ export class Register extends ClassValidator implements AfterViewInit {
     message: Message[];
 
     newUser: IregisterViewModel;
-    user: IloginViewModel;
 
     constructor(
         private membershipService: MembershipService,
@@ -58,37 +57,38 @@ export class Register extends ClassValidator implements AfterViewInit {
         this.router.navigate(['/account/login']);
     }
 
+    /** template submit event */
     async register() {
-        await this.validateForm(this.newUser);
-        if (this.validationErrors.length === 0) {
-            this.message = [];
-
-            this.user = new LoginViewModel();
-            this.user.email = this.newUser.email;
-            this.user.password = this.newUser.password;
-            this.membershipService.register(this.newUser)
-                .mergeMap(() => this.membershipService.login(this.user)) //this is the way for chained http observables usage
-                .subscribe(res => {
-                    this.notificationService.printSuccessNotification(new Array<string>('Dear ' + this.newUser.email + ', your gracefull registered and logged in!'));
-                    this.membershipService.loginCallback(res);
-                    this.router.navigate(['/']);
-                },
-                error => {
-                    this.membershipService.resetAuthorizationData();
-                    this.message.push({ severity: 'error', summary: 'Error Message', detail: error });
-                });
-        } else {
-            let classValidation: Message[] =
-                this.validationErrors
-                    .map(m => {
-                        return { //TODO: localization
-                            severity: 'error',
-                            summary: m.property,
-                            detail: JSON.stringify(m.constraints)
-                        };
-                    });
-            this.message = [...classValidation];
-        }
+        this.message = 
+            await this.callAction // prevalidation befor call server side
+            (
+                this.newUser, 
+                this.message, 
+                () => this.callRegister()
+            );
     }
 
+    /** serverside action */
+    private callRegister() {
+        let user = 
+            new LoginViewModel({
+                email: this.newUser.email,
+                password: this.newUser.password,
+                enableLocalLogin: false,
+                externalProviders: null,
+                rememberMe: false,
+                returnUrl: ""
+            });
+        this.membershipService.register(this.newUser)
+            .mergeMap(() => this.membershipService.login(user)) //this is the way for chained http observables usage
+            .subscribe(res => {
+                this.notificationService.printSuccessNotification(new Array<string>('Dear ' + this.newUser.email + ', your gracefull registered and logged in!'));
+                this.membershipService.loginCallback(res);
+                this.router.navigate(['/']);
+            },
+            error => {
+                this.membershipService.resetAuthorizationData();
+                this.message.push({ severity: 'error', summary: 'Error Message', detail: error });
+            });
+    }    
 }

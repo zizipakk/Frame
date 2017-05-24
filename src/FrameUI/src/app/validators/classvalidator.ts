@@ -32,4 +32,26 @@ export class ClassValidator {
             return JSON.stringify(e);
         }
     }
+
+    async callAction(obj: any, message: any, doit?: () => void): Promise<any> {
+        await this.validateForm(obj);
+        if (this.validationErrors.length === 0) {
+            if (message instanceof Array) message = [];
+            if (doit) doit();
+        } else {            
+            let classValidation = 
+                this.validationErrors
+                    .map(m => {
+                        return { //TODO: localization
+                            severity: 'error',
+                            summary: m.property,
+                            detail: JSON.stringify(m.constraints)
+                        };
+                    }) as typeof message;
+            message = [...classValidation];
+        }
+
+        return message;
+    }
+
 }
