@@ -8,6 +8,7 @@ import { ActionTypes } from './reducers/reducer.settings'
 import { IuserModel } from './models/userModel';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-root',
@@ -23,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy
     message: Message[];
     blocked: boolean;
     subscriptions: Subscription[];
+    localizedKeys: any;
 
     // 2. init seq
     constructor(
@@ -30,10 +32,19 @@ export class AppComponent implements OnInit, OnDestroy
         private store: Store<IappState>,
         private membershipService: MembershipService,
         private notificationService: NotificationService,
-        private router: Router) 
+        private router: Router,
+        private translate: TranslateService) 
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
+
+        // syncron
+        // this language will be used as a fallback when a translation isn't found in the current language
+        this.translate.setDefaultLang('en');
+         // the lang to use, if the lang isn't available, it will use the current loader to get them
+        this.translate.use('en');
+
+        this.menuItems = [];
     }
 
     // 3. init seq
@@ -42,10 +53,14 @@ export class AppComponent implements OnInit, OnDestroy
         this.subscriptions.push(
             this.store
                 .select(s => s.UserReducer)
-                .subscribe((user) => {
-                        this.user = user;
-                        this.menuItems = this.refreshMenu();
-                })
+                .subscribe((user) => this.user = user)
+        );        
+        this.subscriptions.push(
+            this.translate.get(["MainMenu"])
+            .subscribe(res => { 
+                this.localizedKeys = res;
+                this.menuItems = this.refreshMenu();
+            })
         );
         this.subscriptions.push(
             this.store
@@ -78,19 +93,20 @@ export class AppComponent implements OnInit, OnDestroy
     }
 
     public refreshMenu(): MenuItem[] {
-        let menuItems = 
-            [{
-                label: 'Home',
-                icon: '',
-                routerLink: ['/'],
-                command: (event) => {},
-                items: null
-            }];
+        // let menuItems = 
+        //     [{
+        //         label: 'HOME',
+        //         icon: '',
+        //         routerLink: ['/'],
+        //         command: (event) => {},
+        //         items: null
+        //     }];
+        let menuItems = [];
 
         if (!this.isUserLoggedIn()) {
             menuItems.push(
                 {
-                    label: 'Log In',
+                    label: this.localizedKeys.MainMenu.logIn,
                     icon: 'fa-unlock-alt fa-fw',
                     routerLink: ['/account/login'],
                     command: (event) => {},
@@ -100,7 +116,7 @@ export class AppComponent implements OnInit, OnDestroy
         } else {
             menuItems.push(
                 {
-                    label: 'Controller Configuration',
+                    label: this.localizedKeys.MainMenu.controllerConfiguration,
                     icon: 'fa-signal',
                     routerLink: ['/controller/config'],
                     command: (event) => {},
@@ -114,10 +130,10 @@ export class AppComponent implements OnInit, OnDestroy
                     routerLink: null,
                     command: (event) => {},
                     items: [
-                        { label: ' Profile', icon: 'fa-fw fa-user', routerLink: null, command: (event) => {} },
-                        { label: ' Inbox', icon: 'fa-fw fa-envelope', routerLink: null, command: (event) => {} },
-                        { label: ' Settings', icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} },
-                        { label: ' Log Out', icon: 'fa-fw fa-lock', routerLink: null, command: (event) => { this.logOut(); } }
+                        { label: this.localizedKeys.MainMenu.loggedUser.profile, icon: 'fa-fw fa-user', routerLink: null, command: (event) => {} },
+                        { label: this.localizedKeys.MainMenu.loggedUser.inbox, icon: 'fa-fw fa-envelope', routerLink: null, command: (event) => {} },
+                        { label: this.localizedKeys.MainMenu.loggedUser.settings, icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} },
+                        { label: this.localizedKeys.MainMenu.loggedUser.logOut, icon: 'fa-fw fa-lock', routerLink: null, command: (event) => { this.logOut(); } }
                     ]
                 }
             );

@@ -3,7 +3,7 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
+import { HttpModule, Http } from '@angular/http';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 // 3rd party
 import { 
@@ -24,6 +24,8 @@ import {
   SliderModule
 } from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { 
   UserReducer, 
   NotificationReducer,
@@ -44,6 +46,11 @@ import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 import { AuthGuard } from './app.guard';
 import { AppErrorHandler } from './app.error';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(http: Http) {
+    return new TranslateHttpLoader(http);
+}
 
 @NgModule({
   entryComponents: [ // prebuild
@@ -86,7 +93,14 @@ import { AppErrorHandler } from './app.error';
       NotificationReducer,
       MessageReducer,
       BlockerReducer
-     })
+     }),
+    TranslateModule.forRoot({
+            loader: { // Loader for on.demand translator-sources 
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [Http]
+            }
+        })
   ],
 
   // Singletons in whole app.

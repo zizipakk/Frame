@@ -14,6 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\FrameUI\src\app\models\RegisterViewModel.ts" Link="RegisterViewModel.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="1.1.2" />
@@ -50,6 +54,12 @@
     <ProjectReference Include="..\FrameAudit\FrameAudit.csproj" />
     <ProjectReference Include="..\FrameHelper\FrameHelper.csproj" />
     <ProjectReference Include="..\FrameSearch\FrameSearch.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\RegisterViewModel.en.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
