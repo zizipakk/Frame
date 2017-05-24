@@ -20,6 +20,8 @@ export class Login extends ClassValidator implements AfterViewInit
     display: boolean = false;
     message: Message[];
 
+    localizedKeys: any;
+    
     user: IloginViewModel;
 
     constructor(

@@ -53,7 +53,11 @@ export class AppComponent implements OnInit, OnDestroy
         this.subscriptions.push(
             this.store
                 .select(s => s.UserReducer)
-                .subscribe((user) => this.user = user)
+                .subscribe((user) => {
+                    this.user = user;
+                    if (this.localizedKeys)
+                        this.menuItems = this.refreshMenu();
+                })
         );        
         this.subscriptions.push(
             this.translate.get(["MainMenu"])
@@ -93,14 +97,6 @@ export class AppComponent implements OnInit, OnDestroy
     }
 
     public refreshMenu(): MenuItem[] {
-        // let menuItems = 
-        //     [{
-        //         label: 'HOME',
-        //         icon: '',
-        //         routerLink: ['/'],
-        //         command: (event) => {},
-        //         items: null
-        //     }];
         let menuItems = [];
 
         if (!this.isUserLoggedIn()) {

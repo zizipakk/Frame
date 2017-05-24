@@ -27,7 +27,7 @@ export class AppHeaders {
         let token = sessionStorage.getItem("authorizationData"); //localStorage
 
         if (token && token !== '""') {
-            token.replace(new RegExp("\"", 'g'), "");
+            token = token.replace(new RegExp("\"", 'g'), "");
             headers.append('Authorization', 'Bearer ' + token);            
         }
         return headers; 
