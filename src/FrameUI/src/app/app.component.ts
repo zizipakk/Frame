@@ -8,6 +8,7 @@ import { ActionTypes } from './reducers/reducer.settings'
 import { IuserModel } from './models/userModel';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-root',
@@ -30,10 +31,16 @@ export class AppComponent implements OnInit, OnDestroy
         private store: Store<IappState>,
         private membershipService: MembershipService,
         private notificationService: NotificationService,
-        private router: Router) 
+        private router: Router,
+        translate: TranslateService) 
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
+
+        // this language will be used as a fallback when a translation isn't found in the current language
+        translate.setDefaultLang('en');
+         // the lang to use, if the lang isn't available, it will use the current loader to get them
+        translate.use('en');
     }
 
     // 3. init seq
