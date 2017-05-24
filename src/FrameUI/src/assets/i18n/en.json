@@ -1,5 +1,24 @@
 ﻿{
-  "HOME": {
-    "HELLO": "hello {{value}}"
+  "RegisterViewModel": {
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "isAdmin": "Has admin-role?"
+  },
+  "LoginInputModel": {
+    "email": "Email address",
+    "password": "Password",
+    "rememberMe": "Remember my login?",
+    "returnUrl": "Return URL"
+  },
+  "MainMenu": {
+    "logIn": "Log In",
+    "controllerConfiguration": "Controller Configuration",
+    "loggedUser": {
+      "profile": " Profile",
+      "inbox": " Inbox",
+      "settings": " Settings",
+      "logOut": "Log Out"
+    }
   }
 }

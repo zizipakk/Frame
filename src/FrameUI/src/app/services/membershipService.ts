@@ -107,7 +107,7 @@ export class MembershipService {
             this.resetAuthorizationData();
         } else {
             this.store('authNonce', '');
-            this.store('authStateControl', '');
+            // this.store('authStateControl', '');
 
             console.log('AuthorizedCallback state and nonce validated, returning access token');
             this.setAuthorizationData(result.access_token, result.id_token, dataIdToken);
@@ -165,6 +165,7 @@ export class MembershipService {
         this.store('HasAdminRole', false);
         this.store('IsAuthorized', false);
         this.store('UserName', '');
+        this.store('UserId', '');
 
         this.appStore.dispatch({ type: ActionTypes.RESET_User });
     }
