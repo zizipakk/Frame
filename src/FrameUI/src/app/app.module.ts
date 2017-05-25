@@ -1,5 +1,5 @@
 ﻿// ng
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { FormsModule } from '@angular/forms';
@@ -52,6 +52,10 @@ import { AppErrorHandler } from './app.error';
 export function HttpLoaderFactory(http: Http) {
     return new TranslateHttpLoader(http);
 }
+// TODO: not necessary, because model-loading is before app init
+//export function StaticLoaderFactory(service: ErrorMessages) {
+//    return () => service.load();
+//}
 
 @NgModule({
   entryComponents: [ // prebuild
@@ -59,12 +63,12 @@ export function HttpLoaderFactory(http: Http) {
     Register
   ],
   declarations: [
-    AppComponent,
-    Home,
-    Account,
-    Login,
-    Register,
-    ControllerConfig
+      AppComponent,
+      Home,
+      Account,
+      Login,
+      Register,
+      ControllerConfig
   ],
   imports: [
     AppRouting, // inherited from ModuleWithProviders, so it is singleton, and have instance in first steps
@@ -103,21 +107,25 @@ export function HttpLoaderFactory(http: Http) {
             }
         })
   ],
-
   // Singletons in whole app.
   // * Instantiate sequence like dependency or first usage (AppGuard)
   providers: [ 
       { provide: LocationStrategy, useClass: PathLocationStrategy }, // ?. Maybe with a common framework
-
-      ErrorMessages,
+      // TODO: not necessary, because model-loading is before app init
+      //ErrorMessages, // 0. Load static error messages before other
+      //{
+      //    provide: APP_INITIALIZER,
+      //    multi: true,
+      //    useFactory: StaticLoaderFactory,
+      //    deps: [ErrorMessages]
+      //},
 
       NotificationService, // 1. : dep in AppErrorHandler
       { provide: ErrorHandler, useClass: AppErrorHandler }, // 2. : dep in framework
       DataService, // 3. : dep in MembershipService
       MembershipService, // 4. : dep in ...
-      AuthGuard, // 5. : First usage in MembershipService with routing
+      AuthGuard // 5. : First usage in MembershipService with routing
   ],
-  
   bootstrap: [ // The instantiate follows the singletons
     AppComponent 
   ]

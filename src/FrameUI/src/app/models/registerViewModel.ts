@@ -11,7 +11,7 @@ export interface IregisterViewModel {
 }
 
 export class RegisterViewModel implements IregisterViewModel {
-    @cust.Required({ message: getText("Required") })
+    @cust.Required({ message: res.getErrorText("Required") })
 	@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
     public email: string;
     
@@ -34,13 +34,3 @@ export class RegisterViewModel implements IregisterViewModel {
         }
     }
 }
-
-export function getText(key: string): string {
-        if (res.ErrorMessages.localizedKeys)
-            return res.ErrorMessages.localizedKeys.ValdationErrors[key];
-        else
-            return key;
-}
-
-
- 
