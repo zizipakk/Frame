@@ -10,14 +10,14 @@ namespace FrameAuth.Models.AccountViewModels
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessageResourceType = typeof(RegisterViewModel), ErrorMessageResourceName = nameof(Password) + "_StringLength", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = nameof(Password))]
+        [Display(Name = nameof(Password))] // .net core lookup for resource automatic, if not validation annotation
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = nameof(ConfirmPassword))]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Compare("Password", ErrorMessageResourceType = typeof(RegisterViewModel), ErrorMessageResourceName = nameof(ConfirmPassword) + "_Compare")]
         public string ConfirmPassword { get; set; }
 
         [Display(Name = nameof(IsAdmin))]

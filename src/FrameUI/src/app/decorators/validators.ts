@@ -20,3 +20,19 @@ export function IsEqualThan(property: string, validationOptions?: ValidationOpti
         });
    };
 }
+
+export function Required(validationOptions?: ValidationOptions) {
+   return function (object: Object, propertyName: string) {
+        registerDecorator({
+            name: "Required",
+            target: object.constructor,
+            propertyName: propertyName,
+            options: validationOptions,
+            validator: {
+                validate(value: any, args: ValidationArguments) {
+                    return value ? true : false;
+                }
+            }
+        });
+   };
+}

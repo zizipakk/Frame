@@ -24,7 +24,7 @@ import {
   SliderModule
 } from 'primeng/primeng';
 import { StoreModule } from '@ngrx/store';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { 
   UserReducer, 
@@ -33,6 +33,7 @@ import {
   BlockerReducer 
 } from './reducers/index';
 // custom components
+import { ErrorMessages } from './app.staticResources';
 import { AppComponent } from './app.component';
 import { Home } from './home/home';
 import { Account } from './account/account';
@@ -107,6 +108,8 @@ export function HttpLoaderFactory(http: Http) {
   // * Instantiate sequence like dependency or first usage (AppGuard)
   providers: [ 
       { provide: LocationStrategy, useClass: PathLocationStrategy }, // ?. Maybe with a common framework
+
+      ErrorMessages,
 
       NotificationService, // 1. : dep in AppErrorHandler
       { provide: ErrorHandler, useClass: AppErrorHandler }, // 2. : dep in framework
