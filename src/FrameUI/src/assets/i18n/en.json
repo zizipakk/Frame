@@ -20,5 +20,8 @@
       "settings": " Settings",
       "logOut": "Log Out"
     }
+  },
+  "ValdationErrors": {
+    "Required": "This is required!"
   }
 }

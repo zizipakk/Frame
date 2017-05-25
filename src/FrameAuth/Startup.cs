@@ -25,6 +25,8 @@ using System.Threading;
 using System.Threading.Tasks;
 //using AspNet.Security.OpenIdConnect.Primitives;
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Localization;
 
 namespace FrameAuth
 {
@@ -146,11 +148,15 @@ namespace FrameAuth
 
                 //.AddSigningCertificate(GetCert());
 
+            services.AddLocalization(options => options.ResourcesPath = "Resources");
+
             services
                 .AddMvc()
                 //.AddApplicationPart(typeof(EntitySearchController<,,>).GetTypeInfo().Assembly)
                 //.AddControllersAsServices();
-                ;
+                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+                .AddDataAnnotationsLocalization();
+            ;
 
             services.AddAutoMapper();
 
@@ -175,24 +181,6 @@ namespace FrameAuth
             UserManager<ApplicationUser> userManager,
             OpenIddictApplicationManager<OpenIddictApplication> appManager)
         {
-            // TODO: Maybe obsolate
-            //// .Net Core 1.1 could'nt use in same pipeline more CORS, so we change headers manual for auth server CORS
-            //// So the response status codes will be right for Angular HTTP
-            //app.Use(async (context, next) =>
-            //{
-            //    if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin")
-            //        && context.Request.Headers.ContainsKey("Origin"))
-            //    {
-            //        context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers["Origin"]);
-            //        context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Client, Authorization, X-Auth-Token, X-Requested-With");
-            //    }
-
-            //    //    if (context.Request.Method == "OPTIONS")
-            //    //        context.Response.StatusCode = (int)HttpStatusCode.OK;
-
-            //    await next();
-            //});
-
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -212,6 +200,15 @@ namespace FrameAuth
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("en-US")
+                //// Formatting numbers, dates, etc.
+                //SupportedCultures = supportedCultures,
+                //// UI strings that we have localized.
+                //SupportedUICultures = supportedCultures
+            });
 
             app.UseStaticFiles();
 

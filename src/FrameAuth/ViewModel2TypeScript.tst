@@ -16,25 +16,46 @@
     }
 
     string ConstructorAddExtends(Class c) {
-        return c.BaseClass != null ?  "super(model);" : "";
+        return c.BaseClass != null ?  "\r\n\tsuper(model);\r\n" : "";
+    }
+
+    static readonly string[] classesIn = 
+            { "LoginInputModel", "ExternalProvider" };
+
+    static readonly string[] classesOut = 
+            { "ManageLoginsViewModel", "SendCodeViewModel", "ConfigureTwoFactorViewModel" };
+
+    static readonly Dictionary<string, string> validationDict = 
+        new Dictionary<string, string>
+        {
+            { "EmailAddress", "@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })" },
+            { "StringLength", "@def.Length(6, 200, { message: 'This is not valid password!' })" },
+            { "Compare", "@cust.IsEqualThan('password', { message: 'This is not the same!' })" },
+            { "Required", "@cust.Required({ message: 'This is required!' })" }
+        };
+
+    string ImportOther(Class c) {        
+        return c.Properties.Any(a => a.Attributes.Select(s => s.Name).Intersect(validationDict.Select(ss => ss.Key)).Any())
+            ? "import * as def from 'class-validator';\r\nimport * as cust from '../decorators/validators';\r\n" 
+            : "";
+    }    
+
+    string MapValidationAttributes(Attribute a) {
+        var dict = validationDict.FirstOrDefault(f => f.Key == a.Name);
+        return dict.Equals(default(KeyValuePair<string, string>)) ? string.Empty : $"\r\n\t{dict.Value}"; 
     }
 }$Classes(c => 
-    (c.Name.EndsWith("ViewModel") 
-    || c.Name == "LoginInputModel" 
-    || c.Name == "ExternalProvider")
-    && 
-    (c.Name != "ManageLoginsViewModel" //this contains external dll refs
-    && c.Name != "SendCodeViewModel"
-    && c.Name != "ConfigureTwoFactorViewModel"))[export interface $InterfaceNameWithExtends {
+    (c.Name.EndsWith("ViewModel") || classesIn.Contains(c.Name))
+    && !classesOut.Contains(c.Name))[$ImportOther
+export interface $InterfaceNameWithExtends {
     $Properties[$name: $Type;
     ]
 }
 
-export class $ClassNameWithExtends implements I$name {
-    $Properties[public $name: $Type;
+export class $ClassNameWithExtends implements I$name {$Properties[$Attributes[$MapValidationAttributes]
+    public $name: $Type;
     ]
-    constructor(model?: I$name) {
-        $ConstructorAddExtends
+    constructor(model?: I$name) {$ConstructorAddExtends
         if(model) {
             $Properties[this.$name = model.$name;
             ]
