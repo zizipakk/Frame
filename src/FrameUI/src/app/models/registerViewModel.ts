@@ -11,7 +11,9 @@ export interface IregisterViewModel {
 }
 
 export class RegisterViewModel implements IregisterViewModel {
-    @cust.Required({ message: res.getErrorText("Required") })
+    @cust.Required(res.getErrorText("Required").then(m => {  // TODO: wont works, compailer run away
+        return m;
+    }))
 	@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
     public email: string;
     
