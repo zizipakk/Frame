@@ -1,6 +1,5 @@
 ﻿import * as def from 'class-validator';
 import * as cust from '../decorators/validators';
-import * as res from '../app.staticResources';
 
 export interface IregisterViewModel {
     email: string;
@@ -11,13 +10,11 @@ export interface IregisterViewModel {
 }
 
 export class RegisterViewModel implements IregisterViewModel {
-    @cust.Required(res.getErrorText("Required").then(m => {  // TODO: wont works, compailer run away
-        return m;
-    }))
+    @cust.Required()
 	@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
     public email: string;
     
-	@cust.Required({ message: 'This is required!' })
+	@cust.Required()
 	@def.Length(6, 200, { message: 'This is not valid password!' })
     public password: string;
     

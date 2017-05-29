@@ -61,12 +61,12 @@ export class ErrorMessages {
  * Get resource
  * @param key
  */
-export async function getErrorText(key: string): Promise<ValidationOptions> {
-    let resource: ValidationOptions = { message: "" } ;
+export async function getErrorText(key: string): Promise<string> {
+    let resource =  "";
 
     if (!ErrorMessages.localizedKeys) {
         await ErrorMessages.load();
-        resource.message = ErrorMessages.localizedKeys["ValdationErrors"][key];
+        resource = ErrorMessages.localizedKeys["ValdationErrors"][key];
     }
 
     return resource;
@@ -112,4 +112,3 @@ function getTranslate(): TranslateService {
     return injector.get(TranslateService);
 }
 /** Helpers for instantiate translate service before load app */
-

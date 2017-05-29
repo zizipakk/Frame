@@ -9,7 +9,6 @@ import { IuserModel } from './models/userModel';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 import { TranslateService } from '@ngx-translate/core';
-//import { ErrorMessages } from './app.staticResources';
 
 @Component({
     selector: 'app-root',
@@ -30,8 +29,6 @@ export class AppComponent implements OnInit, OnDestroy
     // 2. init seq
     constructor(
         // 2.1. init seq
-        //private errorMessages: ErrorMessages, //this i sonly for init static resources
-        
         private store: Store<IappState>,
         private membershipService: MembershipService,
         private notificationService: NotificationService,

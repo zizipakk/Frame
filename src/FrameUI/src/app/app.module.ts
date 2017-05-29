@@ -23,7 +23,8 @@ import {
   DropdownModule,
   SliderModule
 } from 'primeng/primeng';
-import { StoreModule } from '@ngrx/store';
+import { StoreModule, Store } from '@ngrx/store';
+import { IappState } from './models/appState';
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { 
@@ -33,7 +34,6 @@ import {
   BlockerReducer 
 } from './reducers/index';
 // custom components
-import { ErrorMessages } from './app.staticResources';
 import { AppComponent } from './app.component';
 import { Home } from './home/home';
 import { Account } from './account/account';
@@ -42,6 +42,7 @@ import { Register } from './account/register';
 import { ControllerConfig } from './controller/config';
 import { AppRouting } from './app.routes';
 // custom singleton services
+import { ConfigService } from './services/configService';
 import { DataService } from './services/dataService';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
@@ -52,10 +53,10 @@ import { AppErrorHandler } from './app.error';
 export function HttpLoaderFactory(http: Http) {
     return new TranslateHttpLoader(http);
 }
-// TODO: not necessary, because model-loading is before app init
-//export function StaticLoaderFactory(service: ErrorMessages) {
-//    return () => service.load();
-//}
+
+export function ConfigLoaderFactory(store: Store<IappState>, translate: TranslateService) {
+    return new ConfigService(store, translate);
+}
 
 @NgModule({
   entryComponents: [ // prebuild
@@ -111,15 +112,13 @@ export function HttpLoaderFactory(http: Http) {
   // * Instantiate sequence like dependency or first usage (AppGuard)
   providers: [ 
       { provide: LocationStrategy, useClass: PathLocationStrategy }, // ?. Maybe with a common framework
-      // TODO: not necessary, because model-loading is before app init
-      //ErrorMessages, // 0. Load static error messages before other
-      //{
-      //    provide: APP_INITIALIZER,
-      //    multi: true,
-      //    useFactory: StaticLoaderFactory,
-      //    deps: [ErrorMessages]
-      //},
-
+      ConfigService, // 0. Load eg. static error-messages before other
+      {
+          provide: APP_INITIALIZER,
+          multi: true,
+          useFactory: ConfigLoaderFactory,
+          deps: [Store, TranslateService]
+      },
       NotificationService, // 1. : dep in AppErrorHandler
       { provide: ErrorHandler, useClass: AppErrorHandler }, // 2. : dep in framework
       DataService, // 3. : dep in MembershipService
