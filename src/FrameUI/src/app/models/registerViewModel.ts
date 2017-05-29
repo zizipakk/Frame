@@ -18,7 +18,7 @@ export class RegisterViewModel implements IregisterViewModel {
 	@def.Length(6, 200, { message: 'This is not valid password!' })
     public password: string;
     
-	@cust.IsEqualThan('password', { message: 'This is not the same!' })
+	//@cust.IsEqualThan('password', { message: 'This is not the same!' })
     public confirmPassword: string;
     
     public isAdmin: boolean;

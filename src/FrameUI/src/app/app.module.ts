@@ -113,12 +113,12 @@ export function ConfigLoaderFactory(store: Store<IappState>, translate: Translat
   providers: [ 
       { provide: LocationStrategy, useClass: PathLocationStrategy }, // ?. Maybe with a common framework
       ConfigService, // 0. Load eg. static error-messages before other
-      {
-          provide: APP_INITIALIZER,
-          multi: true,
-          useFactory: ConfigLoaderFactory,
-          deps: [Store, TranslateService]
-      },
+      //{
+      //    provide: APP_INITIALIZER,
+      //    multi: true,
+      //    useFactory: ConfigLoaderFactory,
+      //    deps: [Store, TranslateService]
+      //},
       NotificationService, // 1. : dep in AppErrorHandler
       { provide: ErrorHandler, useClass: AppErrorHandler }, // 2. : dep in framework
       DataService, // 3. : dep in MembershipService

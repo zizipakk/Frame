@@ -22,55 +22,35 @@ class NoopCookieXSRFStrategy extends CookieXSRFStrategy {
     }
 }
 
-//// TODO: maybe generic step is get config
-// import { AppComponent } from './app.component';
-// import { Configuration } from './configuration';
-//function getAppModule(conf) {
-//    @NgModule({
-//        declarations: [AppComponent],
-//        imports: [BrowserModule],
-//        bootstrap: [AppComponent],
-//        providers: [
-//            { provide: Configuration, useValue: conf }
-//        ]
-//    })
-//    class AppModule {
-//    }
-//    return AppModule;
-//}
-
 /**
  * Absolutly static class for get observable localized error messages
  */
 export class ErrorMessages {
 
-    public static localizedKeys: string | any;
+    public static localizedKeys: any;
+    static semafor: boolean = false;
 
-    static translate: TranslateService = getTranslate();
+    static translateService: TranslateService = getTranslate();       
 
+    static load() {
+        ErrorMessages.translateService.get(["ValdationErrors"])
+            .catch(error => {
+                ErrorMessages.semafor = true;
+                return Observable.throw(error);
+            })
+            .finally(() => {
+                ErrorMessages.semafor = false;
+            })
+            .subscribe(res => ErrorMessages.localizedKeys = res);
+        while (!ErrorMessages.localizedKeys && !ErrorMessages.semafor ) {};
+    }
 
-    // At first laod, then get resource
-    static async load(): Promise<any> {
-        this.translate.setDefaultLang('en');
-        this.translate.use('en');
-        this.localizedKeys = await this.translate.get(["ValdationErrors"]).toPromise();
+    public static getMessage(key: string): string {
+        if (!ErrorMessages.localizedKeys)
+            ErrorMessages.load();
+        return ErrorMessages.localizedKeys["ValdationErrors"][key];
     }
 } 
-
-/**
- * Get resource
- * @param key
- */
-export async function getErrorText(key: string): Promise<string> {
-    let resource =  "";
-
-    if (!ErrorMessages.localizedKeys) {
-        await ErrorMessages.load();
-        resource = ErrorMessages.localizedKeys["ValdationErrors"][key];
-    }
-
-    return resource;
-}
 
 /** Helpers for instantiate translate service before load app */
 function getHttp(): Http {
@@ -109,6 +89,15 @@ function getTranslate(): TranslateService {
         { provide: MissingTranslationHandler, useClass: FakeMissingTranslationHandler }
     ];
     let injector = ReflectiveInjector.resolveAndCreate(providers);
-    return injector.get(TranslateService);
+
+    let translateService = injector.get(TranslateService);
+
+    if (!translateService.getDefaultLang()) {
+      let lang = "en";//this.translateService.getBrowserLang();
+      translateService.setDefaultLang(lang);
+      translateService.use(lang);
+    }
+    
+    return translateService;
 }
 /** Helpers for instantiate translate service before load app */
