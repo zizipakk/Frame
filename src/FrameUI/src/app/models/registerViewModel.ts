@@ -15,10 +15,10 @@ export class RegisterViewModel implements IregisterViewModel {
     public email: string;
     
 	@cust.Required()
-	@def.Validate(cust.Length, [{ min: {1}, max: 100 }])
+	@def.Validate(cust.Length, [{ min: 6, max: 100 }])
     public password: string;
     
-	@cust.IsEqualThan('"password"')
+	@cust.IsEqualThan("password")
     public confirmPassword: string;
     
     public isAdmin: boolean;

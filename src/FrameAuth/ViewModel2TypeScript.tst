@@ -30,7 +30,7 @@
         {
             { "EmailAddress", "@def.Validate(cust.IsEmail)" },
             { "StringLength", "@def.Validate(cust.Length, [{ min: {1}, max: {0} }])" },
-            { "Compare", "@cust.IsEqualThan('{0}')" },
+            { "Compare", "@cust.IsEqualThan({0})" },
             { "Required", "@cust.Required()" }
         };
 
@@ -46,7 +46,6 @@
         var value = a.Value;
         var i = 0;
         while (dictText.Contains("{" + i.ToString() + "}")) {
-        //if (dictText.Contains("{0}")) {
             var first = "";
             if (value != null && value.IndexOf(",") != -1)
             {
