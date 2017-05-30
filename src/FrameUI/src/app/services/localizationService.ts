@@ -5,16 +5,12 @@ import { TranslateFakeLoader } from "@ngx-translate/core/src/translate.loader";
 import { FakeMissingTranslationHandler } from "@ngx-translate/core/src/missing-translation-handler";
 import { TranslateDefaultParser } from "@ngx-translate/core/src/translate.parser";
 import { ReflectiveInjector, Injectable, OpaqueToken, Injector } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/toPromise';
 import {
     Http, CookieXSRFStrategy, XSRFStrategy, RequestOptions, BaseRequestOptions,
     ResponseOptions, BaseResponseOptions, XHRBackend, BrowserXhr, Response
 } from '@angular/http';
-import { ValidationOptions } from 'class-validator';
 
 class NoopCookieXSRFStrategy extends CookieXSRFStrategy {
     configureRequest(request) {
@@ -23,33 +19,43 @@ class NoopCookieXSRFStrategy extends CookieXSRFStrategy {
 }
 
 /**
- * Absolutly static class for get observable localized error messages
+ * Absolutly static methods for get observable localized error messages
+ * Injecable also for dynamic usage of tranlatetion
  */
-export class ErrorMessages {
+@Injectable()
+export class LocalizationService {
 
-    public static localizedKeys: any;
-    static semafor: boolean = false;
+    // Static usage: preloading is spacial, because no reactive usage in validator messages
+    private static semafor: boolean = false;
+    private static translateService: TranslateService = getTranslate();       
 
-    static translateService: TranslateService = getTranslate();       
-
-    static load() {
-        ErrorMessages.translateService.get(["ValdationErrors"])
+    public static localizedValdationErrors: any;
+    private static loadValdationErrors() {
+        LocalizationService.translateService.get(["ValdationErrors"])
             .catch(error => {
-                ErrorMessages.semafor = true;
+                LocalizationService.semafor = true;
                 return Observable.throw(error);
             })
             .finally(() => {
-                ErrorMessages.semafor = false;
+                LocalizationService.semafor = false;
             })
-            .subscribe(res => ErrorMessages.localizedKeys = res);
-        while (!ErrorMessages.localizedKeys && !ErrorMessages.semafor ) {};
+            .subscribe(res => { LocalizationService.localizedValdationErrors = res; }, error => { LocalizationService.semafor = false; });
+        while (!LocalizationService.localizedValdationErrors && !LocalizationService.semafor ) {}; // Fake waiting
+    }
+    public static getValdationErrorMessage(key: string): string {
+        if (!LocalizationService.localizedValdationErrors)
+            LocalizationService.loadValdationErrors();
+        return LocalizationService.localizedValdationErrors["ValdationErrors"][key];
+    }
+    //
+
+    // Dynamic usage
+    public translator: TranslateService;
+
+    constructor() {
+        this.translator = LocalizationService.translateService;
     }
 
-    public static getMessage(key: string): string {
-        if (!ErrorMessages.localizedKeys)
-            ErrorMessages.load();
-        return ErrorMessages.localizedKeys["ValdationErrors"][key];
-    }
 } 
 
 /** Helpers for instantiate translate service before load app */

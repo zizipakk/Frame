@@ -8,7 +8,7 @@ import { ActionTypes } from './reducers/reducer.settings'
 import { IuserModel } from './models/userModel';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
-import { TranslateService } from '@ngx-translate/core';
+import { LocalizationService } from './services/localizationService';
 
 @Component({
     selector: 'app-root',
@@ -33,17 +33,11 @@ export class AppComponent implements OnInit, OnDestroy
         private membershipService: MembershipService,
         private notificationService: NotificationService,
         private router: Router,
-        private translate: TranslateService) 
+        private localize: LocalizationService) 
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
-
-        // syncron
-        // this language will be used as a fallback when a translation isn't found in the current language
-        this.translate.setDefaultLang('en');
-         // the lang to use, if the lang isn't available, it will use the current loader to get them
-        this.translate.use('en');
-
+                
         this.menuItems = [];
     }
 
@@ -60,7 +54,7 @@ export class AppComponent implements OnInit, OnDestroy
                 })
         );        
         this.subscriptions.push(
-            this.translate.get(["MainMenu"])
+            this.localize.translator.get(["MainMenu"])
             .subscribe(res => { 
                 this.localizedKeys = res;
                 this.menuItems = this.refreshMenu();

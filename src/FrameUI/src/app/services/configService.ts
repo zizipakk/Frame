@@ -1,44 +1,26 @@
 ﻿import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { ValidationOptions } from "class-validator";
-import { IappState } from '../models/appState';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
+import { IappState } from '../models/appState';
+import { DataService } from './dataService';
+import { API } from '../app.settings';
 
 @Injectable()
 export class ConfigService {
 
-    public static localizedKeys: string | any;
-    static translateService: TranslateService;
-
-    constructor(private store: Store<IappState>, private translateService: TranslateService) {
-        this.translateService = translateService;
-        this.load();
+    constructor(private store: Store<IappState>, private dataService: DataService) {
     }
 
-    load() {
-        // TODO: get http config at first
-        if (!this.translateService.getDefaultLang()) {
-            let lang = "en";//this.translateService.getBrowserLang();
-            this.translateService.setDefaultLang(lang);
-            this.translateService.use(lang);
-        }        
-
-        this.translateService.get(["ValdationErrors"])
-            .subscribe(res => ConfigService.localizedKeys = res);
-    }
-
-    public static resolveMessage(key: string, validationOptions?: ValidationOptions): ValidationOptions {
-        let localizedMessage = ConfigService.localizedKeys ? ConfigService.localizedKeys[key] : "";
-        if (!validationOptions)
-            validationOptions = { message: localizedMessage };
-        else
-            validationOptions.message = localizedMessage;
-        return validationOptions;
-    }
-
-    public getMessage(key: string, validationOptions?: ValidationOptions): Observable<ValidationOptions> {
-        return this.translateService.get(["ValdationErrors." + key])
-            .map(m => ({ message: m } as ValidationOptions));
+    loadConfig() {        
+        this.dataService.get(API.CONFIG)
+            .subscribe(res => {
+                if (res) {
+                    API.AUTH = res["server.urls"]["authHostPath"];
+                    API.APP = res["server.urls"]["apiHostPath"];
+                    API.LOG = res["server.urls"]["logHostPath"];
+                }
+                else
+                  throw Error("Init config error!");
+            });
     }
 }

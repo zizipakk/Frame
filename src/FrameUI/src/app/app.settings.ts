@@ -1,14 +1,27 @@
 ﻿import { Headers, BaseRequestOptions } from '@angular/http';
 
-// TODO: better get this from unauth API, and put in redux store 
-const apiHostPath = 'http://localhost:7200/'; //URI scheme + host + main path 
-const authHostPath = 'http://localhost:5200/';
-const logHostPath = 'http://localhost:6200/api/';
+//const apiHostPath = 'http://localhost:7200/'; //URI scheme + host + main path 
+//const authHostPath = 'http://localhost:5200/';
+//const logHostPath = 'http://localhost:6200/api/';
 
+const configFullPath = './assets/appSettings.json';
+
+/**
+ * This setting changed only one, at bootstrapping, so dont need for redux
+ */
 export class API {
-    public static get AUTH(): string { return authHostPath; }
-    public static get APP(): string { return apiHostPath; }
-    public static get LOG(): string { return logHostPath; }
+    public static get CONFIG(): string { return configFullPath; }
+
+    static apiHostPath: string;
+    static authHostPath: string;
+    static logHostPath: string;
+
+    public static get AUTH(): string { return API.authHostPath; }
+    public static set AUTH(value) { API.authHostPath = value; }
+    public static get APP(): string { return API.apiHostPath; }
+    public static set APP(value: string) { API.apiHostPath = value; }
+    public static get LOG(): string { return API.logHostPath; }
+    public static set LOG(value: string) { API.logHostPath = value; }
 } 
 
 export class AppHeaders {

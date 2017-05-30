@@ -1,4 +1,4 @@
-﻿import { Injectable, Type } from '@angular/core';
+﻿import { Injectable, Type, Injector } from '@angular/core';
 import { Http, Response, Headers, RequestOptionsArgs, RequestMethod } from '@angular/http';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -19,9 +19,16 @@ export class DataService {
 
     constructor(
         private store: Store<IappState>,
-        private http: Http, 
-        private router: Router) {
+        private http: Http,
+        private injector: Injector) {
         this.blockerSemafor = new Array<string>();
+    }
+
+    /**
+    * this creates router property on your service, because cycling deps with http
+    */
+    get router(): Router { 
+        return this.injector.get(Router);
     }
 
     getById<T>(baseUri: string, id: number, pageSize?: number) {

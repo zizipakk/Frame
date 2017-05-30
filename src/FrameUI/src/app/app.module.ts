@@ -27,6 +27,7 @@ import { StoreModule, Store } from '@ngrx/store';
 import { IappState } from './models/appState';
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+// reducers
 import { 
   UserReducer, 
   NotificationReducer,
@@ -42,6 +43,7 @@ import { Register } from './account/register';
 import { ControllerConfig } from './controller/config';
 import { AppRouting } from './app.routes';
 // custom singleton services
+import { LocalizationService } from './services/localizationService';
 import { ConfigService } from './services/configService';
 import { DataService } from './services/dataService';
 import { MembershipService } from './services/membershipService';
@@ -54,8 +56,8 @@ export function HttpLoaderFactory(http: Http) {
     return new TranslateHttpLoader(http);
 }
 
-export function ConfigLoaderFactory(store: Store<IappState>, translate: TranslateService) {
-    return new ConfigService(store, translate);
+export function ConfigLoaderFactory(store: Store<IappState>, service: DataService) {
+    return () => new ConfigService(store, service).loadConfig();
 }
 
 @NgModule({
@@ -95,35 +97,38 @@ export function ConfigLoaderFactory(store: Store<IappState>, translate: Translat
     SliderModule,
 
     StoreModule.provideStore({  // singleton the whole store with reducers
-      UserReducer,
-      NotificationReducer,
-      MessageReducer,
-      BlockerReducer
-     }),
+        UserReducer,
+        NotificationReducer,
+        MessageReducer,
+        BlockerReducer
+      }),
     TranslateModule.forRoot({
-            loader: { // Loader for on.demand translator-sources 
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [Http]
-            }
-        })
+        loader: { // Loader for on.demand translator-sources 
+            provide: TranslateLoader,
+            useFactory: HttpLoaderFactory,
+            deps: [Http]
+        }
+      })
   ],
   // Singletons in whole app.
-  // * Instantiate sequence like dependency or first usage (AppGuard)
+  // Instantiate sequence like dependency or first usage (AppGuard)
   providers: [ 
       { provide: LocationStrategy, useClass: PathLocationStrategy }, // ?. Maybe with a common framework
-      ConfigService, // 0. Load eg. static error-messages before other
-      //{
-      //    provide: APP_INITIALIZER,
-      //    multi: true,
-      //    useFactory: ConfigLoaderFactory,
-      //    deps: [Store, TranslateService]
-      //},
+      LocalizationService, // -1. Load before eachothers for static error-messages, and injectable independent
       NotificationService, // 1. : dep in AppErrorHandler
+      ConfigService, // 0.
+      { // 0. Load waiter for app.settings
+          provide: APP_INITIALIZER,
+          multi: true,
+          useFactory: ConfigLoaderFactory,
+          deps: [Store, DataService]
+      },
       { provide: ErrorHandler, useClass: AppErrorHandler }, // 2. : dep in framework
       DataService, // 3. : dep in MembershipService
       MembershipService, // 4. : dep in ...
-      AuthGuard // 5. : First usage in MembershipService with routing
+      AuthGuard, // 5. : First usage in MembershipService with routing
+      
+      
   ],
   bootstrap: [ // The instantiate follows the singletons
     AppComponent 
