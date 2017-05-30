@@ -1,23 +1,56 @@
-﻿import { registerDecorator, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments } from "class-validator";
+﻿import * as def from "class-validator";
 import { LocalizationService } from '../services/localizationService';
+
+// CUSTOM
  
-export function IsEqualThan(property: string, validationOptions?: ValidationOptions) {
+// TODO: async validator
+@def.ValidatorConstraint({ name: "Required", async: true })
+export class RequiredConstraint implements def.ValidatorConstraintInterface {
+    validate(value: any, args: def.ValidationArguments) {
+        return value ? true : false;
+    }
+
+    defaultMessage(args: def.ValidationArguments) {
+        return LocalizationService.getValdationErrorMessage("Required");
+    }
+}
+
+export function Required(validationOptions?: def.ValidationOptions) {
     return function (object: Object, propertyName: string) {
-        registerDecorator({
+        def.registerDecorator({
+            name: "Required",
+            target: object.constructor,
+            propertyName: propertyName,
+            options: validationOptions,
+            validator: {
+                validate(value: any, args: def.ValidationArguments) {
+                    return value ? true : false;
+                },
+                defaultMessage(args: def.ValidationArguments) {
+                    return LocalizationService.getValdationErrorMessage("Required");
+                }
+            } //RequiredConstraint
+        })
+   };
+}
+
+export function IsEqualThan(property: string, validationOptions?: def.ValidationOptions) {
+    return function (object: Object, propertyName: string) {
+        def.registerDecorator({
             name: "IsEqualThan",
             target: object.constructor,
             propertyName: propertyName,
             constraints: [property],
             options: validationOptions,
             validator: {
-                validate(value: any, args: ValidationArguments) {
+                validate(value: any, args: def.ValidationArguments) {
                     const [relatedPropertyName] = args.constraints;
                     const relatedValue = (args.object as any)[relatedPropertyName];
-                    return  typeof value === "string" &&
-                            typeof relatedValue === "string" &&
-                            value === relatedValue;
+                    return typeof value === "string" &&
+                        typeof relatedValue === "string" &&
+                        value === relatedValue;
                 },
-                defaultMessage(args: ValidationArguments) {
+                defaultMessage(args: def.ValidationArguments) {
                     return LocalizationService.getValdationErrorMessage("IsEqualThan");
                 }
             }
@@ -25,34 +58,31 @@ export function IsEqualThan(property: string, validationOptions?: ValidationOpti
     };
 }
 
-// TODO: async validator
-//@ValidatorConstraint({ name: "Required", async: true })
-//export class RequiredConstraint implements ValidatorConstraintInterface {
-//    validate(value: any, args: ValidationArguments) {
-//        return value ? true : false;
-//    }
+// LEGACY wrapper
+const validator = new def.Validator();
 
-//    defaultMessage(args: ValidationArguments) {
-//        return LocalizationService.getValdationErrorMessage("Required");
-//    }
-//}
+@def.ValidatorConstraint({ name: "IsEmail", async: false })
+export class IsEmail implements def.ValidatorConstraintInterface {
 
-export function Required(validationOptions?: ValidationOptions) {
-    return function (object: Object, propertyName: string) {
-        registerDecorator({
-            name: "Required",
-            target: object.constructor,
-            propertyName: propertyName,
-            options: validationOptions,
-            //constraints: [],
-            validator: {
-                validate(value: any, args: ValidationArguments) {
-                    return value ? true : false;
-                },
-                defaultMessage(args: ValidationArguments) {
-                    return LocalizationService.getValdationErrorMessage("Required");
-                }
-            } //RequiredConstraint
-        })
-   };
+    validate(value: any, args: def.ValidationArguments) {
+        return validator.isEmail(value, args);
+    }
+
+    defaultMessage(args: def.ValidationArguments) {
+        return LocalizationService.getValdationErrorMessage("IsEmail");
+    }
+
+}
+
+@def.ValidatorConstraint({ name: "Length", async: false })
+export class Length implements def.ValidatorConstraintInterface {
+
+    validate(value: any, args: def.ValidationArguments) {
+        return validator.length(value, args.constraints[0]["min"], args.constraints[0]["max"]);
+    }
+
+    defaultMessage(args: def.ValidationArguments) {
+        return LocalizationService.getValdationErrorMessage("Length");
+    }
+
 }

@@ -14,8 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\FrameUI\src\app\models\AddPhoneNumberViewModel.ts" Link="AddPhoneNumberViewModel.ts" />
     <None Include="..\FrameUI\src\app\models\ExternalLoginConfirmationViewModel.ts" Link="ExternalLoginConfirmationViewModel.ts" />
     <None Include="..\FrameUI\src\app\models\RegisterViewModel.ts" Link="RegisterViewModel.ts" />
+    <None Include="..\FrameUI\src\app\models\VerifyCodeViewModel.ts" Link="VerifyCodeViewModel.ts" />
   </ItemGroup>
 
   <ItemGroup>

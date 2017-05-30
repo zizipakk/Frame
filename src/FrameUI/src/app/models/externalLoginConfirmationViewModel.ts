@@ -7,8 +7,8 @@ export interface IexternalLoginConfirmationViewModel {
 }
 
 export class ExternalLoginConfirmationViewModel implements IexternalLoginConfirmationViewModel {
-	@cust.Required({ message: 'This is required!' })
-	@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
+	@cust.Required()
+	@def.Validate(cust.IsEmail)
     public email: string;
     
     constructor(model?: IexternalLoginConfirmationViewModel) {

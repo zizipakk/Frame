@@ -1,8 +1,7 @@
-import * as def from "class-validator";
-import * as cust from "../decorators/validators";
+import * as def from 'class-validator';
+import * as cust from '../decorators/validators';
 
-import { PortType } from './ComConfigModels';
-    export interface IloginInputModel {
+export interface IloginInputModel {
     email: string;
     password: string;
     rememberMe: boolean;
@@ -11,9 +10,11 @@ import { PortType } from './ComConfigModels';
 }
 
 export class LoginInputModel implements IloginInputModel {
-    @def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
+	@cust.Required()
+	@def.Validate(cust.IsEmail)
     public email: string;
     
+	@cust.Required()
     public password: string;
     
     public rememberMe: boolean;
@@ -21,7 +22,6 @@ export class LoginInputModel implements IloginInputModel {
     public returnUrl: string;
     
     constructor(model?: IloginInputModel) {
-        
         if(model) {
             this.email = model.email;
             this.password = model.password;
@@ -32,20 +32,20 @@ export class LoginInputModel implements IloginInputModel {
     }
 }
 
-    export interface IloginViewModel extends IloginInputModel {
+export interface IloginViewModel extends IloginInputModel {
     enableLocalLogin: boolean;
     externalProviders: ExternalProvider[];
     
 }
 
 export class LoginViewModel extends LoginInputModel implements IloginViewModel {
-    
     public enableLocalLogin: boolean;
     
     public externalProviders: ExternalProvider[];
     
     constructor(model?: IloginViewModel) {
-        super(model);
+	super(model);
+
         if(model) {
             this.enableLocalLogin = model.enableLocalLogin;
             this.externalProviders = model.externalProviders;
@@ -54,20 +54,18 @@ export class LoginViewModel extends LoginInputModel implements IloginViewModel {
     }
 }
 
-    export interface IexternalProvider {
+export interface IexternalProvider {
     displayName: string;
     authenticationScheme: string;
     
 }
 
 export class ExternalProvider implements IexternalProvider {
-    
     public displayName: string;
     
     public authenticationScheme: string;
     
     constructor(model?: IexternalProvider) {
-        
         if(model) {
             this.displayName = model.displayName;
             this.authenticationScheme = model.authenticationScheme;

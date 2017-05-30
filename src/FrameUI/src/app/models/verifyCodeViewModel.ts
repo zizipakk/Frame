@@ -1,4 +1,5 @@
-
+import * as def from 'class-validator';
+import * as cust from '../decorators/validators';
 
 export interface IverifyCodeViewModel {
     provider: string;
@@ -10,10 +11,16 @@ export interface IverifyCodeViewModel {
 }
 
 export class VerifyCodeViewModel implements IverifyCodeViewModel {
+	@cust.Required()
     public provider: string;
+    
+	@cust.Required()
     public code: string;
+    
     public returnUrl: string;
+    
     public rememberBrowser: boolean;
+    
     public rememberMe: boolean;
     
     constructor(model?: IverifyCodeViewModel) {

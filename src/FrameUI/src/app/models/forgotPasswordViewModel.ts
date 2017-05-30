@@ -7,8 +7,8 @@ export interface IforgotPasswordViewModel {
 }
 
 export class ForgotPasswordViewModel implements IforgotPasswordViewModel {
-	
-	@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
+	@cust.Required()
+	@def.Validate(cust.IsEmail)
     public email: string;
     
     constructor(model?: IforgotPasswordViewModel) {

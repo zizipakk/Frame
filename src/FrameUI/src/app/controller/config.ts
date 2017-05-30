@@ -14,14 +14,8 @@ import { SelectItem } from 'primeng/primeng';
     templateUrl: 'config.html',
 })
 export class ControllerConfig {
-    
-    readonly apiActionGetPortTypes = 'comconfig/getporttypes';
-    readonly apiActionSetPortType = 'comconfig/setporttype';
-    readonly apiActionGetPortConfigs = 'comconfig/getportconfigs';
-    readonly apiActionSetPortConfig = 'comconfig/setportconfig';
-    readonly apiActionGetDeviceConfigs = 'comconfig/getdeviceconfigs';
-    readonly apiActionSetDeviceConfig = 'comconfig/setdeviceconfig';
-    readonly apiActionGetComLogs = 'comconfig/getcomlogs';
+
+    readonly apiAction = 'user';    
     user: IuserModel;
     subscriptions: Subscription[];
     portTypes: IcomPortTypeView[];
@@ -51,9 +45,7 @@ export class ControllerConfig {
             )
         );
        this.subscriptions.push(
-            this.dataService.get<IcomPortTypeView>(
-                    API.APP + this.apiActionGetPortTypes
-                )
+            this.dataService.get<IcomPortTypeView>(API.APP + this.apiAction + '/getporttypes')
                 .subscribe(
                     portTypes => {
                         this.portTypes = portTypes;
@@ -75,6 +67,15 @@ export class ControllerConfig {
         // TODO: stable with distributed resource cache
         //this.cols = this.resourceService.Getresource<IcomPortTypeView>().map(name => { return { field: name, header: name.charAt(0).toUpperCase() + name.slice(1) }; });     
     }
+
+    //readonly apiActionSetPortType = 'comconfig/setporttype';
+    //readonly apiActionGetPortConfigs = 'comconfig/getportconfigs';
+    //readonly apiActionSetPortConfig = 'comconfig/setportconfig';
+    //readonly apiActionGetDeviceConfigs = 'comconfig/getdeviceconfigs';
+    //readonly apiActionSetDeviceConfig = 'comconfig/setdeviceconfig';
+    //readonly apiActionGetComLogs = 'comconfig/getcomlogs';
+
+
 
     ngOnDestroy() {
         this.subscriptions.forEach(sub => sub.unsubscribe());

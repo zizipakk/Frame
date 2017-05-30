@@ -15,8 +15,8 @@ import { SelectItem } from 'primeng/primeng';
 })
 export class Home {
     
-    readonly apiAction = 'user/getusers';
-    apiPath = API.AUTH + this.apiAction;
+    readonly apiAction = 'user';
+    apiPath: string;
     user: IuserModel;
     subscriptions: Subscription[];
     users: IuserViewModel[];
@@ -54,9 +54,7 @@ export class Home {
             )
         );
         this.subscriptions.push(
-            this.dataService.get<IuserViewModel>(
-                    this.apiPath
-                )
+            this.dataService.get<IuserViewModel>(API.AUTH + this.apiAction + '/getusers')
                 .subscribe(
                     users => {
                         this.users = users;

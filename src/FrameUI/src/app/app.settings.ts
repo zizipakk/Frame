@@ -1,9 +1,5 @@
 ﻿import { Headers, BaseRequestOptions } from '@angular/http';
 
-//const apiHostPath = 'http://localhost:7200/'; //URI scheme + host + main path 
-//const authHostPath = 'http://localhost:5200/';
-//const logHostPath = 'http://localhost:6200/api/';
-
 const configFullPath = './assets/appSettings.json';
 
 /**

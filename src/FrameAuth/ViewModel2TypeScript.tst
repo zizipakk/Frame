@@ -28,10 +28,10 @@
     static readonly Dictionary<string, string> validationDict = 
         new Dictionary<string, string>
         {
-            { "EmailAddress", "@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })" },
-            { "StringLength", "@def.Length(6, 200, { message: 'This is not valid password!' })" },
-            { "Compare", "@cust.IsEqualThan('password', { message: 'This is not the same!' })" },
-            { "Required", "@cust.Required({ message: 'This is required!' })" }
+            { "EmailAddress", "@def.Validate(cust.IsEmail)" },
+            { "StringLength", "@def.Validate(cust.Length, [{ min: {1}, max: {0} }])" },
+            { "Compare", "@cust.IsEqualThan('{0}')" },
+            { "Required", "@cust.Required()" }
         };
 
     string ImportOther(Class c) {        
@@ -42,7 +42,24 @@
 
     string MapValidationAttributes(Attribute a) {
         var dict = validationDict.FirstOrDefault(f => f.Key == a.Name);
-        return dict.Equals(default(KeyValuePair<string, string>)) ? string.Empty : $"\r\n\t{dict.Value}"; 
+        var dictText = dict.Equals(default(KeyValuePair<string, string>)) ? string.Empty : $"\r\n\t{dict.Value}"; 
+        var value = a.Value;
+        var i = 0;
+        while (dictText.Contains("{" + i.ToString() + "}")) {
+        //if (dictText.Contains("{0}")) {
+            var first = "";
+            if (value != null && value.IndexOf(",") != -1)
+            {
+                var comma = value.IndexOf(",");
+                first = value.Substring(0,comma);
+                var equal = first.IndexOf("= ");
+                first = equal != -1 ? first.Substring(equal + 2) : first;
+                value =value.Substring(comma + 1);
+            }
+            dictText = dictText.Replace("{" + i.ToString() + "}", first.ToLower());
+            ++i;
+        }
+        return dictText;
     }
 }$Classes(c => 
     (c.Name.EndsWith("ViewModel") || classesIn.Contains(c.Name))

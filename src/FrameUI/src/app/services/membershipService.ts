@@ -19,9 +19,6 @@ import { IuserModel, UserModel } from '../models/userModel';
 export class MembershipService {
 
     readonly idAction = 'connect'
-    idLogin = API.AUTH + this.idAction + '/token';
-    idRegister = API.AUTH + this.idAction + '/register';
-    idLogout = API.AUTH + this.idAction + '/logoff';
     storage: any;
     
     constructor(
@@ -58,7 +55,7 @@ export class MembershipService {
 
     register(newUser: IregisterViewModel) {
         //return this.dataService.post(this.idRegister, JSON.stringify(newUser));
-        return this.dataService.post(this.idRegister, newUser);
+        return this.dataService.post(API.AUTH + this.idAction + '/register', newUser);
     }
 
     private encodeQueryData(data) {
@@ -89,7 +86,7 @@ export class MembershipService {
             scope: scope
         };
 
-        return this.dataService.postAuth<IsignInResult>(this.idLogin, this.encodeQueryData(model));
+        return this.dataService.postAuth<IsignInResult>(API.AUTH + this.idAction + '/token', this.encodeQueryData(model));
     }
 
     loginCallback(result: IsignInResult) {
@@ -199,7 +196,7 @@ export class MembershipService {
     }
 
     logout() {
-        return this.dataService.postAuthhWithToken<any>(this.idLogout);
+        return this.dataService.postAuthhWithToken<any>(API.AUTH + this.idAction + '/logoff');
     }
 
     logoutCallback() {

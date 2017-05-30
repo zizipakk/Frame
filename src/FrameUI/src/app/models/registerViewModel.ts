@@ -1,4 +1,4 @@
-﻿import * as def from 'class-validator';
+import * as def from 'class-validator';
 import * as cust from '../decorators/validators';
 
 export interface IregisterViewModel {
@@ -10,15 +10,15 @@ export interface IregisterViewModel {
 }
 
 export class RegisterViewModel implements IregisterViewModel {
-    @cust.Required()
-	@def.IsEmail({ allow_display_name: true }, { message: 'This is not valid email!' })
+	@cust.Required()
+	@def.Validate(cust.IsEmail)
     public email: string;
     
 	@cust.Required()
-	@def.Length(6, 200, { message: 'This is not valid password!' })
+	@def.Validate(cust.Length, [{ min: {1}, max: 100 }])
     public password: string;
     
-	//@cust.IsEqualThan('password', { message: 'This is not the same!' })
+	@cust.IsEqualThan('"password"')
     public confirmPassword: string;
     
     public isAdmin: boolean;
@@ -33,3 +33,4 @@ export class RegisterViewModel implements IregisterViewModel {
         }
     }
 }
+ 

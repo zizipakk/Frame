@@ -22,6 +22,9 @@
     }
   },
   "ValdationErrors": {
-    "Required": "This is required!"
+    "Required": "This is required!",
+    "IsEmail": "This is not valid email!",
+    "IsEqualThan": "It's not the same!",
+    "Length": "Text ($value) is too short or too long!"
   }
 }

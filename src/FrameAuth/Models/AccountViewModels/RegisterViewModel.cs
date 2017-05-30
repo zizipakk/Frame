@@ -10,7 +10,7 @@ namespace FrameAuth.Models.AccountViewModels
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessageResourceType = typeof(RegisterViewModel), ErrorMessageResourceName = nameof(Password) + "_StringLength", MinimumLength = 6)]
+        [StringLength(100, MinimumLength = 6, ErrorMessageResourceType = typeof(RegisterViewModel), ErrorMessageResourceName = nameof(Password) + "_StringLength")]
         [DataType(DataType.Password)]
         [Display(Name = nameof(Password))] // .net core lookup for resource automatic, if not validation annotation
         public string Password { get; set; }
