@@ -45,8 +45,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="src\app\models\AddPhoneNumberViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\AddPhoneNumberViewModel.cs</CustomToolNamespace>
+    </None>
     <None Update="src\app\models\ChangePasswordViewModel.ts">
       <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\ChangePasswordViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\ComConfigModels.ts">
+      <CustomToolNamespace>..\FrameIO\Data\ComConfigModels.cs</CustomToolNamespace>
     </None>
     <None Update="src\app\models\ComDeviceConfigModels.ts">
       <CustomToolNamespace>..\FrameIO\Models\ComDeviceConfigModels.cs</CustomToolNamespace>
@@ -60,20 +66,38 @@
     <None Update="src\app\models\ComPortTypeModels.ts">
       <CustomToolNamespace>..\FrameIO\Models\ComPortTypeModels.cs</CustomToolNamespace>
     </None>
+    <None Update="src\app\models\externalLoginConfirmationViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\AccountViewModels\ExternalLoginConfirmationViewModel.cs</CustomToolNamespace>
+    </None>
     <None Update="src\app\models\FactorViewModel.ts">
       <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\FactorViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\forgotPasswordViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\AccountViewModels\ForgotPasswordViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\loginViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\AccountViewModels\LoginViewModel.cs</CustomToolNamespace>
     </None>
     <None Update="src\app\models\LogModels.ts">
       <CustomToolNamespace>..\FrameLog\Models\LogModels.cs</CustomToolNamespace>
     </None>
+    <None Update="src\app\models\registerViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\AccountViewModels\RegisterViewModel.cs</CustomToolNamespace>
+    </None>
     <None Update="src\app\models\RemoveLoginViewModel.ts">
       <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\RemoveLoginViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\resetPasswordViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\AccountViewModels\ResetPasswordViewModel.cs</CustomToolNamespace>
     </None>
     <None Update="src\app\models\SetPasswordViewModel.ts">
       <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\SetPasswordViewModel.cs</CustomToolNamespace>
     </None>
     <None Update="src\app\models\UserViewModel.ts">
       <CustomToolNamespace>..\FrameAuth\Models\UserViewModels\UserViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\verifyCodeViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\AccountViewModels\VerifyCodeViewModel.cs</CustomToolNamespace>
     </None>
     <None Update="src\app\models\VerifyPhoneNumberViewModel.ts">
       <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\VerifyPhoneNumberViewModel.cs</CustomToolNamespace>

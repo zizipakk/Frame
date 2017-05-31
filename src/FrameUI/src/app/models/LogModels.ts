@@ -1,4 +1,5 @@
 
+
 export interface IlogDTO {
     id: string;
     timeStamp: Date;

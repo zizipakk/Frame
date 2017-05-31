@@ -66,7 +66,12 @@
         return dictText;
     }
 
-}$Classes(c => 
+}$Enums(e => e.Name.EndsWith("PortType") || e.Name == "LanguageIso")[
+export enum $Name {
+    $Values[$Name = $Value][,
+    ]    
+}]
+$Classes(c => 
     (c.Name.EndsWith("ViewModel") || c.Name.EndsWith("View") || c.Name.EndsWith("DTO") || classesIn.Contains(c.Name))
     && !classesOut.Contains(c.Name))[$ImportOther
 export interface $InterfaceNameWithExtends {

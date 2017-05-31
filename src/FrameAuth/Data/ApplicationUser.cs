@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FrameAudit;
 using ElasticsearchCRUD.ContextAddDeleteUpdate.CoreTypeAttributes;
-using System.ComponentModel.DataAnnotations;
 using static FrameHelper.EntityHelpers;
-using System.Collections.Generic;
 using FrameSearch.ElasticSearchProvider;
+using FrameAuth.Models.UserViewModels;
 
 namespace FrameAuth.Data
 {
@@ -13,6 +12,7 @@ namespace FrameAuth.Data
     public class ApplicationUser : IdentityUser, IEntityWithId<string>
     {
         public bool IsAdmin { get; set; }
+        public virtual LanguageIso Language { get; set; }
     }
 
     public interface IApplicationUserLog : IWithIdAndTimeStamp
@@ -31,6 +31,7 @@ namespace FrameAuth.Data
         string Email { get; set; }
         string NormalizedUserName { get; set; }
         string UserName { get; set; }
+        LanguageIso Language { get; set; }
     }
 
     public class ApplicationUserLog : LogModelExtension, IWithIdAndTimeStamp, IApplicationUserLog
@@ -50,6 +51,7 @@ namespace FrameAuth.Data
         public string Email { get; set; }
         public string NormalizedUserName { get; set; }
         public string UserName { get; set; }
+        public LanguageIso Language { get; set; }
     }
 
     public class ApplicationUserSearch : ApplicationUser
@@ -68,5 +70,9 @@ namespace FrameAuth.Data
 
         [ElasticsearchString(CopyToList = new[] { "autocomplete", "searchfield" })]
         public override string UserName { get; set; }
+
+        [ElasticsearchString(CopyToList = new[] { "autocomplete", "searchfield" })]
+        public override LanguageIso Language { get; set; }
+
     }
 }

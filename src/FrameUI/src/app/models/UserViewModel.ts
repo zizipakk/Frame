@@ -1,4 +1,10 @@
 
+export enum LanguageIso {
+    en = 0,
+    hu = 1,
+    de = 2    
+}
+
 export interface IuserViewModel {
     accessFailedCount: number;
     email: string;
@@ -13,6 +19,7 @@ export interface IuserViewModel {
     twoFactorEnabled: boolean;
     userName: string;
     isAdmin: boolean;
+    language: LanguageIso;
     
 }
 
@@ -43,6 +50,8 @@ export class UserViewModel implements IuserViewModel {
     
     public isAdmin: boolean;
     
+    public language: LanguageIso;
+    
     constructor(model?: IuserViewModel) {
         if(model) {
             this.accessFailedCount = model.accessFailedCount;
@@ -58,6 +67,7 @@ export class UserViewModel implements IuserViewModel {
             this.twoFactorEnabled = model.twoFactorEnabled;
             this.userName = model.userName;
             this.isAdmin = model.isAdmin;
+            this.language = model.language;
             
         }
     }

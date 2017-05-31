@@ -40,7 +40,8 @@ export class LocalizationService {
                 LocalizationService.semafor = false;
             })
             .subscribe(res => { LocalizationService.localizedValdationErrors = res; }, error => { LocalizationService.semafor = false; });
-        while (!LocalizationService.localizedValdationErrors && !LocalizationService.semafor ) {}; // Fake waiting
+        // Very poor antipattern: waiting for result
+        while (!LocalizationService.localizedValdationErrors && !LocalizationService.semafor) { };
     }
     public static getValdationErrorMessage(key: string): string {
         if (!LocalizationService.localizedValdationErrors)
@@ -54,6 +55,12 @@ export class LocalizationService {
 
     constructor() {
         this.translator = LocalizationService.translateService;
+    }
+
+    public changeLanguage(lang: string) {
+        LocalizationService.translateService.setDefaultLang(lang);
+        LocalizationService.translateService.use(lang);
+        LocalizationService.loadValdationErrors();
     }
 
 } 

@@ -1,4 +1,5 @@
 
+
 export interface IcomLogDTO {
     id: string;
     timeStamp: Date;

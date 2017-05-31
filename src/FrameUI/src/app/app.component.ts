@@ -81,13 +81,17 @@ export class AppComponent implements OnInit, OnDestroy
                 })
         );
     }
-
+    
     ngOnDestroy() {
         this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
     isUserLoggedIn() {
         return this.user.isAuthorized;
+    }
+
+    changeLanguage() {
+        this.localize.changeLanguage(this.user.language);
     }
 
     public refreshMenu(): MenuItem[] {

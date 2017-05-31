@@ -2,6 +2,13 @@
 
 namespace FrameAuth.Models.UserViewModels
 {
+    public enum LanguageIso
+    {
+        en = 0,
+        hu,
+        de
+    }
+
     public interface IUserViewModel
     {
         int AccessFailedCount { get; set; }
@@ -17,9 +24,10 @@ namespace FrameAuth.Models.UserViewModels
         bool TwoFactorEnabled { get; set; }
         string UserName { get; set; }
         bool isAdmin { get; set; }
+        LanguageIso Language { get; set; }
     }
 
-    public class UserViewModel
+    public class UserViewModel: IUserViewModel
     {
         public int AccessFailedCount { get; set; }
         public string Email { get; set; }
@@ -34,5 +42,6 @@ namespace FrameAuth.Models.UserViewModels
         public bool TwoFactorEnabled { get; set; }
         public string UserName { get; set; }
         public bool isAdmin { get; set; }
+        public LanguageIso Language { get; set; }
     }
 }

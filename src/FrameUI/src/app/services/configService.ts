@@ -12,7 +12,8 @@ export class ConfigService {
     }
 
     loadConfig() {        
-        this.dataService.get(API.CONFIG)
+        this.dataService.get(API.CONFIG) // TODO: if hybrid app, this comes from input to store/local store
+            .catch(error => { return Observable.throw("Wrong url, or unaccessable!") })
             .subscribe(res => {
                 if (res) {
                     API.AUTH = res["server.urls"]["authHostPath"];

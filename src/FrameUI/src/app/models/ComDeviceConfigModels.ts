@@ -1,4 +1,5 @@
 
+
 export interface IcomDeviceConfigDTO {
     id: string;
     timeStamp: Date;

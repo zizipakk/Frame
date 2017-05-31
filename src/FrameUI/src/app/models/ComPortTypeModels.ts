@@ -1,3 +1,4 @@
+
 import { PortType } from './ComConfigModels';
 
 export interface IcomPortTypeDTO {

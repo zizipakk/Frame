@@ -1,4 +1,5 @@
 
+
 export interface IcomPortConfigDTO {
     id: string;
     timeStamp: Date;
