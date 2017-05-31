@@ -1,4 +1,5 @@
-﻿import { PortType } from './ComConfigModels';
+import { PortType } from './ComConfigModels';
+
 export interface IcomPortTypeDTO {
     id: string;
     timeStamp: Date;
@@ -11,14 +12,18 @@ export interface IcomPortTypeDTO {
 
 export class ComPortTypeDTO implements IcomPortTypeDTO {
     public id: string;
+    
     public timeStamp: Date;
+    
     public portType: PortType;
+    
     public addressFormat: string;
+    
     public readProtocol: string;
+    
     public writeProtocol: string;
     
     constructor(model?: IcomPortTypeDTO) {
-        
         if(model) {
             this.id = model.id;
             this.timeStamp = model.timeStamp;
@@ -36,11 +41,12 @@ export interface IcomPortTypeView extends IcomPortTypeDTO {
 }
 
 export class ComPortTypeView extends ComPortTypeDTO implements IcomPortTypeView {
-    
     constructor(model?: IcomPortTypeView) {
-        super(model);
+	super(model);
+
         if(model) {
             
         }
     }
 }
+ 

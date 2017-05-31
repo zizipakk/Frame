@@ -1,5 +1,4 @@
 
-
 export interface IcomPortConfigDTO {
     id: string;
     timeStamp: Date;
@@ -12,14 +11,18 @@ export interface IcomPortConfigDTO {
 
 export class ComPortConfigDTO implements IcomPortConfigDTO {
     public id: string;
+    
     public timeStamp: Date;
+    
     public number: number;
+    
     public portName: string;
+    
     public comPortTypeId: string;
+    
     public comDeviceConfigId: string;
     
     constructor(model?: IcomPortConfigDTO) {
-        
         if(model) {
             this.id = model.id;
             this.timeStamp = model.timeStamp;
@@ -37,9 +40,9 @@ export interface IcomPortConfigView extends IcomPortConfigDTO {
 }
 
 export class ComPortConfigView extends ComPortConfigDTO implements IcomPortConfigView {
-    
     constructor(model?: IcomPortConfigView) {
-        super(model);
+	super(model);
+
         if(model) {
             
         }

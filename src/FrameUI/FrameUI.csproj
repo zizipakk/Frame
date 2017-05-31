@@ -44,4 +44,40 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="src\app\models\ChangePasswordViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\ChangePasswordViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\ComDeviceConfigModels.ts">
+      <CustomToolNamespace>..\FrameIO\Models\ComDeviceConfigModels.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\ComLogModels.ts">
+      <CustomToolNamespace>..\FrameIO\Models\ComLogModels.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\ComPortConfigModels.ts">
+      <CustomToolNamespace>..\FrameIO\Models\ComPortConfigModels.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\ComPortTypeModels.ts">
+      <CustomToolNamespace>..\FrameIO\Models\ComPortTypeModels.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\FactorViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\FactorViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\LogModels.ts">
+      <CustomToolNamespace>..\FrameLog\Models\LogModels.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\RemoveLoginViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\RemoveLoginViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\SetPasswordViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\SetPasswordViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\UserViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\UserViewModels\UserViewModel.cs</CustomToolNamespace>
+    </None>
+    <None Update="src\app\models\VerifyPhoneNumberViewModel.ts">
+      <CustomToolNamespace>..\FrameAuth\Models\ManageViewModels\VerifyPhoneNumberViewModel.cs</CustomToolNamespace>
+    </None>
+  </ItemGroup>
+
 </Project>

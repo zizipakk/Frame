@@ -8,11 +8,12 @@ export interface IcomDeviceConfigDTO {
 
 export class ComDeviceConfigDTO implements IcomDeviceConfigDTO {
     public id: string;
+    
     public timeStamp: Date;
+    
     public deviceName: string;
     
     constructor(model?: IcomDeviceConfigDTO) {
-        
         if(model) {
             this.id = model.id;
             this.timeStamp = model.timeStamp;
@@ -27,11 +28,12 @@ export interface IcomDeviceConfigView extends IcomDeviceConfigDTO {
 }
 
 export class ComDeviceConfigView extends ComDeviceConfigDTO implements IcomDeviceConfigView {
-    
     constructor(model?: IcomDeviceConfigView) {
-        super(model);
+	super(model);
+
         if(model) {
             
         }
     }
 }
+ 

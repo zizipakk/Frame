@@ -1,5 +1,4 @@
 
-
 export interface IuserViewModel {
     accessFailedCount: number;
     email: string;
@@ -19,17 +18,29 @@ export interface IuserViewModel {
 
 export class UserViewModel implements IuserViewModel {
     public accessFailedCount: number;
+    
     public email: string;
+    
     public emailConfirmed: boolean;
+    
     public id: string;
+    
     public lockoutEnabled: boolean;
+    
     public lockoutEnd: Date;
+    
     public normalizedEmail: string;
+    
     public normalizedUserName: string;
+    
     public phoneNumber: string;
+    
     public phoneNumberConfirmed: boolean;
+    
     public twoFactorEnabled: boolean;
+    
     public userName: string;
+    
     public isAdmin: boolean;
     
     constructor(model?: IuserViewModel) {

@@ -1,4 +1,5 @@
-
+import * as def from 'class-validator';
+import * as cust from '../decorators/validators';
 
 export interface IresetPasswordViewModel {
     email: string;
@@ -9,9 +10,17 @@ export interface IresetPasswordViewModel {
 }
 
 export class ResetPasswordViewModel implements IresetPasswordViewModel {
+	@cust.Required()
+	@def.Validate(cust.IsEmail)
     public email: string;
+    
+	@cust.Required()
+	@def.Validate(cust.Length, [{ min: "the {0} must be at least  and at max {1} characters long.", max: 100 }])
     public password: string;
+    
+	@cust.IsEqualThan("password")
     public confirmPassword: string;
+    
     public code: string;
     
     constructor(model?: IresetPasswordViewModel) {

@@ -1,5 +1,4 @@
 
-
 export interface IcomLogDTO {
     id: string;
     timeStamp: Date;
@@ -12,14 +11,18 @@ export interface IcomLogDTO {
 
 export class ComLogDTO implements IcomLogDTO {
     public id: string;
+    
     public timeStamp: Date;
+    
     public userId: string;
+    
     public port: string;
+    
     public action: string;
+    
     public location: string;
     
     constructor(model?: IcomLogDTO) {
-        
         if(model) {
             this.id = model.id;
             this.timeStamp = model.timeStamp;
@@ -37,9 +40,9 @@ export interface IcomLogView extends IcomLogDTO {
 }
 
 export class ComLogView extends ComLogDTO implements IcomLogView {
-    
     constructor(model?: IcomLogView) {
-        super(model);
+	super(model);
+
         if(model) {
             
         }

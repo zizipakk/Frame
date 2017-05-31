@@ -1,5 +1,4 @@
 
-
 export interface IremoveLoginViewModel {
     loginProvider: string;
     providerKey: string;
@@ -8,6 +7,7 @@ export interface IremoveLoginViewModel {
 
 export class RemoveLoginViewModel implements IremoveLoginViewModel {
     public loginProvider: string;
+    
     public providerKey: string;
     
     constructor(model?: IremoveLoginViewModel) {

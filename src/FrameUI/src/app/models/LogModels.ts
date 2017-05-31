@@ -1,3 +1,4 @@
+
 export interface IlogDTO {
     id: string;
     timeStamp: Date;
@@ -11,15 +12,20 @@ export interface IlogDTO {
 
 export class LogDTO implements IlogDTO {
     public id: string;
+    
     public timeStamp: Date;
+    
     public userId: string;
+    
     public type: string;
+    
     public message: string;
+    
     public stack: string;
+    
     public location: string;
     
     constructor(model?: IlogDTO) {
-        
         if(model) {
             this.id = model.id;
             this.timeStamp = model.timeStamp;
@@ -32,14 +38,15 @@ export class LogDTO implements IlogDTO {
         }
     }
 }
+
 export interface IlogView extends IlogDTO {
     
 }
 
 export class LogView extends LogDTO implements IlogView {
-    
     constructor(model?: IlogView) {
-        super(model);
+	super(model);
+
         if(model) {
             
         }

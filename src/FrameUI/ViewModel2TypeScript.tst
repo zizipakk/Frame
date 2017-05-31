@@ -1,9 +1,11 @@
 ﻿${
     Template(Settings settings) {
-        settings.IncludeCurrentProject();
+        settings.IncludeProject("FrameAuth");
+        settings.IncludeProject("FrameIO");
+        settings.IncludeProject("FrameLog");
         settings.OutputFilenameFactory = file =>
         {
-            return $"..\\FrameUI\\src\\app\\models\\{file.Name.Replace(".cs", ".ts")}"; //2.0 will be great for foreign project output
+            return $".\\src\\app\\models\\{file.Name.Replace(".cs", ".ts")}"; //2.0 will be great for foreign project output
         };
     }
 
@@ -23,7 +25,7 @@
             { "LoginInputModel", "ExternalProvider" };
 
     static readonly string[] classesOut = 
-            { "ManageLoginsViewModel", "SendCodeViewModel", "ConfigureTwoFactorViewModel" };
+            { "ManageLoginsViewModel", "SendCodeViewModel", "ConfigureTwoFactorViewModel", "IndexViewModel", "LoggedOutViewModel", "LogoutViewModel" };
 
     static readonly Dictionary<string, string> validationDict = 
         new Dictionary<string, string>
@@ -35,9 +37,12 @@
         };
 
     string ImportOther(Class c) {        
-        return c.Properties.Any(a => a.Attributes.Select(s => s.Name).Intersect(validationDict.Select(ss => ss.Key)).Any())
+        var ret = c.Properties.Any(a => a.Attributes.Select(s => s.Name).Intersect(validationDict.Select(ss => ss.Key)).Any())
             ? "import * as def from 'class-validator';\r\nimport * as cust from '../decorators/validators';\r\n" 
             : "";
+        if (c.Name == "ComPortTypeDTO")
+          ret = ret + "import { PortType } from './ComConfigModels';\r\n";
+        return ret;
     }    
 
     string MapValidationAttributes(Attribute a) {
@@ -60,8 +65,9 @@
         }
         return dictText;
     }
+
 }$Classes(c => 
-    (c.Name.EndsWith("ViewModel") || classesIn.Contains(c.Name))
+    (c.Name.EndsWith("ViewModel") || c.Name.EndsWith("View") || c.Name.EndsWith("DTO") || classesIn.Contains(c.Name))
     && !classesOut.Contains(c.Name))[$ImportOther
 export interface $InterfaceNameWithExtends {
     $Properties[$name: $Type;
