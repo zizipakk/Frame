@@ -6,6 +6,7 @@ import { MenuItem, Message } from 'primeng/primeng';
 import { IappState } from './models/appState';
 import { ActionTypes } from './reducers/reducer.settings'
 import { IuserModel } from './models/userModel';
+import { LanguageIso } from './models/UserViewModel';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
 import { LocalizationService } from './services/localizationService';
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy
     blocked: boolean;
     subscriptions: Subscription[];
     localizedKeys: any;
+    languages: MenuItem[];
 
     // 2. init seq
     constructor(
@@ -54,13 +56,6 @@ export class AppComponent implements OnInit, OnDestroy
                 })
         );        
         this.subscriptions.push(
-            this.localize.translator.get(["MainMenu"])
-            .subscribe(res => { 
-                this.localizedKeys = res;
-                this.menuItems = this.refreshMenu();
-            })
-        );
-        this.subscriptions.push(
             this.store
                 .select(s => s.NotificationReducer)
                 .subscribe((notification) => { 
@@ -80,6 +75,28 @@ export class AppComponent implements OnInit, OnDestroy
                     this.blocked = blocked; 
                 })
         );
+        this.subscriptions.push(
+            this.getLocalizedMenu()
+                .subscribe(res => {
+                    this.localizedKeys = res;
+                    this.menuItems = this.refreshMenu();
+                })
+        );
+        this.subscriptions.push(
+            this.getLocalizedLang()
+                .subscribe(props => {
+                    this.languages = [];
+                    for (let key in props)
+                        this.languages.push(
+                            {
+                                label: props[key],
+                                icon: null,
+                                routerLink: null,
+                                command: (event) => this.changeLanguage(key),
+                                items: null
+                            });
+                })
+        );
     }
     
     ngOnDestroy() {
@@ -90,8 +107,20 @@ export class AppComponent implements OnInit, OnDestroy
         return this.user.isAuthorized;
     }
 
-    changeLanguage() {
-        this.localize.changeLanguage(this.user.language.toString());
+    getLocalizedMenu() {
+        return this.localize.translator.get(["MainMenu"])
+    }
+
+    getLocalizedLang() {
+        return this.localize.translator.get("LanguageIso");
+    }
+
+    changeLanguage(lang: string) {
+        this.localize.changeLanguage(lang);
+        this.getLocalizedLang();
+        this.user.language = LanguageIso[lang];
+        this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });
+        this.getLocalizedMenu()
     }
 
     public refreshMenu(): MenuItem[] {

@@ -1,11 +1,17 @@
-<p-toolbar name="menuOptions">
+﻿<p-toolbar name="menuOptions">
     <div class="ui-toolbar-group-left" [routerLink]="['/']">
         <img src="favicon.ico">
     </div>
     <div class="ui-toolbar-group-left">
         <p-menubar [model]="menuItems"></p-menubar>
     </div>
-    <div class="ui-toolbar-group-right" *ngIf="!isUserLoggedIn()">
+    <!--<ul class="btn-group">
+      <li *ngFor="let lang of languages" (click)="changeLanguage(lang.value)" class="btn btn-default" [class.btn-primary]="user.language == lang.value">
+        {{ lang.display }}
+      </li>
+    </ul>-->
+    <div class="ui-toolbar-group-right" *ngIf="isUserLoggedIn()">
+        <p-menubar [model]="languages"></p-menubar>
         <input type="text" pInputText placeholder="Search">
         <button class="button-red" type="button" pButton icon="fa-search" label="Search"></button>
     </div>
