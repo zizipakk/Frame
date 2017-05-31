@@ -91,7 +91,7 @@ export class AppComponent implements OnInit, OnDestroy
     }
 
     changeLanguage() {
-        this.localize.changeLanguage(this.user.language);
+        this.localize.changeLanguage(this.user.language.toString());
     }
 
     public refreshMenu(): MenuItem[] {
