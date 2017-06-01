@@ -26,27 +26,23 @@ class NoopCookieXSRFStrategy extends CookieXSRFStrategy {
 export class LocalizationService {
 
     // Static usage: preloading is spacial, because no reactive usage in validator messages
-    private static semafor: boolean = false;
     private static translateService: TranslateService = getTranslate();       
 
     public static localizedValdationErrors: any;
-    private static loadValdationErrors() {
-        LocalizationService.translateService.get(["ValdationErrors"])
+    private static async loadValdationErrors() {
+        await this.translateService.get(["ValdationErrors"])
             .catch(error => {
-                LocalizationService.semafor = true;
                 return Observable.throw(error);
             })
-            .finally(() => {
-                LocalizationService.semafor = false;
-            })
-            .subscribe(res => { LocalizationService.localizedValdationErrors = res; }, error => { LocalizationService.semafor = false; });
-        // Very poor antipattern: waiting for result
-        while (!LocalizationService.localizedValdationErrors && !LocalizationService.semafor) { };
+            .toPromise()
+            .then(res => { 
+                    this.localizedValdationErrors = res;
+                });
     }
     public static getValdationErrorMessage(key: string): string {
-        if (!LocalizationService.localizedValdationErrors)
-            LocalizationService.loadValdationErrors();
-        return LocalizationService.localizedValdationErrors["ValdationErrors"][key];
+        if (!this.localizedValdationErrors)
+            this.loadValdationErrors();
+        return this.localizedValdationErrors["ValdationErrors"][key];
     }
     //
 
@@ -62,7 +58,7 @@ export class LocalizationService {
         LocalizationService.translateService.use(lang);
         LocalizationService.loadValdationErrors();
     }
-
+    //
 } 
 
 /** Helpers for instantiate translate service before load app */

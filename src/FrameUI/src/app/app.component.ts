@@ -2,6 +2,7 @@
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 import { MenuItem, Message } from 'primeng/primeng';
 import { IappState } from './models/appState';
 import { ActionTypes } from './reducers/reducer.settings'
@@ -27,6 +28,8 @@ export class AppComponent implements OnInit, OnDestroy
     subscriptions: Subscription[];
     localizedKeys: any;
     languages: MenuItem[];
+    localizedMenu: Observable<MenuItem[]>;
+    localizedLang: Observable<any>;
 
     // 2. init seq
     constructor(
@@ -39,6 +42,8 @@ export class AppComponent implements OnInit, OnDestroy
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
+        this.localizedMenu = new Observable<MenuItem[]>();
+        this.localizedLang = new Observable<any>();
         this.user = new UserModel();        
         this.menuItems = [];
     }
@@ -76,8 +81,12 @@ export class AppComponent implements OnInit, OnDestroy
                     this.blocked = blocked; 
                 })
         );
+
+        this.getLocalizedMenu();
+        this.getLocalizedLang();
+
         this.subscriptions.push(
-            this.getLocalizedMenu()
+            this.localizedMenu
                 .subscribe(res => {
                     this.localizedKeys = res;
                     if (!this.menuItems || this.menuItems.length == 0) {
@@ -93,7 +102,7 @@ export class AppComponent implements OnInit, OnDestroy
                 })
         );
         this.subscriptions.push(
-            this.getLocalizedLang()
+            this.localizedLang
                 .subscribe(props => {
                     if (!this.languages || this.languages.length == 0) {
                         this.languages = this.createRightMenu(props);   
@@ -101,10 +110,12 @@ export class AppComponent implements OnInit, OnDestroy
                         let i = 0;
                         for (let key in props) {
                             this.languages[i].label = props[key];
+                            ++i;
                         }
                     }
                 })
         );
+
     }
     
     ngOnDestroy() {
@@ -116,11 +127,11 @@ export class AppComponent implements OnInit, OnDestroy
     }
 
     getLocalizedMenu() {
-        return this.localize.translator.get(["MainMenu"])
+        this.localizedMenu = this.localize.translator.get(["MainMenu"]);
     }
 
     getLocalizedLang() {
-        return this.localize.translator.get("LanguageIso");
+        this.localizedLang = this.localize.translator.get("LanguageIso");
     }
 
     changeLanguage(lang: string) {
@@ -129,7 +140,7 @@ export class AppComponent implements OnInit, OnDestroy
         this.user.language = LanguageIso[lang];
         this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });
         this.getLocalizedMenu()
-    }
+    }y
 
     createRightMenu(props: any): MenuItem[] {
         let languages = [];
