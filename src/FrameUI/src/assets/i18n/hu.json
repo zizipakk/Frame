@@ -1,35 +1,35 @@
 ﻿{
   "RegisterViewModel": {
-    "email": "Email address",
-    "password": "Password",
-    "confirmPassword": "Confirm password",
-    "isAdmin": "Has admin-role?"
+    "email": "Email cím",
+    "password": "Jelszó",
+    "confirmPassword": "Jelszó megerősítése",
+    "isAdmin": "Adminisztrátori jogköröd van?"
   },
   "LoginInputModel": {
-    "email": "Email address",
-    "password": "Password",
-    "rememberMe": "Remember my login?",
-    "returnUrl": "Return URL"
+    "email": "Email cím",
+    "password": "Jelszó",
+    "rememberMe": "Megjegyzésre kerüljön a bejelentkezésed?",
+    "returnUrl": "Visszatérési URL"
   },
   "MainMenu": {
-    "logIn": "Log In",
-    "controllerConfiguration": "Controller Configuration",
+    "logIn": "Bejelentkezés",
+    "controllerConfiguration": "Kontroller beállításai",
     "loggedUser": {
-      "profile": " Profile",
-      "inbox": " Inbox",
-      "settings": " Settings",
-      "logOut": "Log Out"
+      "profile": " Profil",
+      "inbox": " Posta",
+      "settings": " Beállítások",
+      "logOut": "Kijelentkezés"
     }
   },
   "LanguageIso": {
-    "en": "English",
-    "hu": "Hungarian",
-    "de": "German"
+    "en": "Angol",
+    "hu": "Magyar",
+    "de": "Német"
   },
   "ValdationErrors": {
-    "Required": "This is required!",
-    "IsEmail": "This is not valid email!",
-    "IsEqualThan": "It's not the same!",
-    "Length": "Text ($value) is too short or too long!"
+    "Required": "Kötelező adat!",
+    "IsEmail": "Nem megfelelő email-cím!",
+    "IsEqualThan": "Nem egyezik meg!",
+    "Length": "A szöveg ($value) rövidebb vagy hosszabb az elvártnál!"
   }
 }

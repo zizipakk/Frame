@@ -11,10 +11,12 @@ export class ConfigService {
     constructor(private store: Store<IappState>, private dataService: DataService) {
     }
 
-    loadConfig() {        
-        this.dataService.get(API.CONFIG) // TODO: if hybrid app, this comes from input to store/local store
+    // async promise, because we waiting for love
+    async loadConfig() {        
+        await this.dataService.get(API.CONFIG) // TODO: if hybrid app, this comes from input to store/local store
             .catch(error => { return Observable.throw("Wrong url, or unaccessable!") })
-            .subscribe(res => {
+            .toPromise()
+            .then(res => {
                 if (res) {
                     API.AUTH = res["server.urls"]["authHostPath"];
                     API.APP = res["server.urls"]["apiHostPath"];

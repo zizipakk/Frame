@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Rx';
 import { MenuItem, Message } from 'primeng/primeng';
 import { IappState } from './models/appState';
 import { ActionTypes } from './reducers/reducer.settings'
-import { IuserModel } from './models/userModel';
+import { IuserModel, UserModel } from './models/userModel';
 import { LanguageIso } from './models/UserViewModel';
 import { MembershipService } from './services/membershipService';
 import { NotificationService } from './services/notificationService';
@@ -39,7 +39,7 @@ export class AppComponent implements OnInit, OnDestroy
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
-                
+        this.user = new UserModel();        
         this.menuItems = [];
     }
 
@@ -50,9 +50,10 @@ export class AppComponent implements OnInit, OnDestroy
             this.store
                 .select(s => s.UserReducer)
                 .subscribe((user) => {
-                    this.user = user;
-                    if (this.localizedKeys)
-                        this.menuItems = this.refreshMenu();
+                    if ((user && user.userName) || (this.user.userName)) {
+                        this.user = user;
+                        this.menuItems = this.createLeftMenu();
+                    }
                 })
         );        
         this.subscriptions.push(
@@ -79,22 +80,29 @@ export class AppComponent implements OnInit, OnDestroy
             this.getLocalizedMenu()
                 .subscribe(res => {
                     this.localizedKeys = res;
-                    this.menuItems = this.refreshMenu();
+                    if (!this.menuItems || this.menuItems.length == 0) {
+                        this.menuItems = this.createLeftMenu();   
+                    } else {
+                        if (!this.isUserLoggedIn()) {
+                            this.menuItems[0].label = this.localizedKeys.MainMenu.logIn;   
+                            this.menuItems[1].label = this.localizedKeys.MainMenu.controllerConfiguration;         
+                        } else {
+                            this.menuItems[0].label = this.localizedKeys.MainMenu.controllerConfiguration;
+                        }
+                    }
                 })
         );
         this.subscriptions.push(
             this.getLocalizedLang()
                 .subscribe(props => {
-                    this.languages = [];
-                    for (let key in props)
-                        this.languages.push(
-                            {
-                                label: props[key],
-                                icon: null,
-                                routerLink: null,
-                                command: (event) => this.changeLanguage(key),
-                                items: null
-                            });
+                    if (!this.languages || this.languages.length == 0) {
+                        this.languages = this.createRightMenu(props);   
+                    } else {
+                        let i = 0;
+                        for (let key in props) {
+                            this.languages[i].label = props[key];
+                        }
+                    }
                 })
         );
     }
@@ -117,49 +125,67 @@ export class AppComponent implements OnInit, OnDestroy
 
     changeLanguage(lang: string) {
         this.localize.changeLanguage(lang);
-        this.getLocalizedLang();
+        this.getLocalizedLang();        
         this.user.language = LanguageIso[lang];
         this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });
         this.getLocalizedMenu()
     }
 
-    public refreshMenu(): MenuItem[] {
+    createRightMenu(props: any): MenuItem[] {
+        let languages = [];
+
+        for (let key in props)
+            languages.push(
+                {
+                    label: props[key],
+                    icon: null,
+                    routerLink: null,
+                    command: (event) => { this.changeLanguage(key); },
+                    items: null
+                });
+
+        return languages;
+    }
+
+    createLeftMenu(): MenuItem[] {
         let menuItems = [];
 
-        if (!this.isUserLoggedIn()) {
-            menuItems.push(
-                {
-                    label: this.localizedKeys.MainMenu.logIn,
-                    icon: 'fa-unlock-alt fa-fw',
-                    routerLink: ['/account/login'],
-                    command: (event) => {},
-                    items: null
-                }
-            );
-        } else {
-            menuItems.push(
-                {
-                    label: this.localizedKeys.MainMenu.controllerConfiguration,
-                    icon: 'fa-signal',
-                    routerLink: ['/controller/config'],
-                    command: (event) => {},
-                    items: null
-                }
-            );
-            menuItems.push(
-                {
-                    label: this.user.userName,
-                    icon: 'fa-user',
-                    routerLink: null,
-                    command: (event) => {},
-                    items: [
-                        { label: this.localizedKeys.MainMenu.loggedUser.profile, icon: 'fa-fw fa-user', routerLink: null, command: (event) => {} },
-                        { label: this.localizedKeys.MainMenu.loggedUser.inbox, icon: 'fa-fw fa-envelope', routerLink: null, command: (event) => {} },
-                        { label: this.localizedKeys.MainMenu.loggedUser.settings, icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} },
-                        { label: this.localizedKeys.MainMenu.loggedUser.logOut, icon: 'fa-fw fa-lock', routerLink: null, command: (event) => { this.logOut(); } }
-                    ]
-                }
-            );
+        if (this.localizedKeys) {
+            if (!this.isUserLoggedIn()) {
+                menuItems.push(
+                    {
+                        label: this.localizedKeys.MainMenu.logIn,
+                        icon: 'fa-unlock-alt fa-fw',
+                        routerLink: ['/account/login'],
+                        command: (event) => {},
+                        items: null
+                    }
+                );
+            } else {
+                menuItems.push(
+                    {
+                        label: this.localizedKeys.MainMenu.controllerConfiguration,
+                        icon: 'fa-signal',
+                        routerLink: ['/controller/config'],
+                        command: (event) => {},
+                        items: null
+                    }
+                );
+                menuItems.push(
+                    {
+                        label: this.user.userName,
+                        icon: 'fa-user',
+                        routerLink: null,
+                        command: (event) => {},
+                        items: [
+                            { label: this.localizedKeys.MainMenu.loggedUser.profile, icon: 'fa-fw fa-user', routerLink: null, command: (event) => {} },
+                            { label: this.localizedKeys.MainMenu.loggedUser.inbox, icon: 'fa-fw fa-envelope', routerLink: null, command: (event) => {} },
+                            { label: this.localizedKeys.MainMenu.loggedUser.settings, icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} },
+                            { label: this.localizedKeys.MainMenu.loggedUser.logOut, icon: 'fa-fw fa-lock', routerLink: null, command: (event) => { this.logOut(); } }
+                        ]
+                    }
+                );
+            }
         }
 
         return menuItems;

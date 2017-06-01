@@ -56,8 +56,8 @@ export function HttpLoaderFactory(http: Http) {
     return new TranslateHttpLoader(http);
 }
 
-export function ConfigLoaderFactory(store: Store<IappState>, service: DataService) {
-    return () => new ConfigService(store, service).loadConfig();
+export function ConfigLoaderFactory(store: Store<IappState>, dataService: DataService) {
+    return () => new ConfigService(store, dataService).loadConfig();
 }
 
 @NgModule({
