@@ -31,5 +31,27 @@
     "IsEmail": "Nem megfelelő email-cím!",
     "IsEqualThan": "Nem egyezik meg!",
     "Length": "A szöveg ($value) rövidebb vagy hosszabb az elvártnál!"
+  },
+  "Label": {
+    "Search": "Keresés"
+  },
+  "Placeholder": {
+    "Search": "Keresés"
+  },
+  "UserViewModel": {
+    "accessFailedCount": "Hibás bejelentkezések",
+    "email": "Email cím",
+    "emailConfirmed": "Email megerősítve?",
+    "id": "Azonosító",
+    "lockoutEnabled": "Kizárható?",
+    "lockoutEnd": "Kizárás vége",
+    "normalizedEmail": "Normalizált email",
+    "normalizedUserName": "Normalizált név",
+    "phoneNumber": "Telefonszám",
+    "phoneNumberConfirmed": "Telefonszám megerősítve?",
+    "twoFactorEnabled": "Kétfaktoros auth engedélyezve?",
+    "userName": "Név",
+    "isAdmin": "Adminisztrátor?",
+    "language": "Nyelv ISO-kód"
   }
 }

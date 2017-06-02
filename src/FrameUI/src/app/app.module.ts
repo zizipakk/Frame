@@ -130,7 +130,7 @@ export function ConfigLoaderFactory(store: Store<IappState>, dataService: DataSe
       
       
   ],
-  bootstrap: [ // The instantiate follows the singletons
+bootstrap: [ // The instantiate follows the singletons
     AppComponent 
   ]
 })

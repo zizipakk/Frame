@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription, BehaviorSubject } from 'rxjs/Rx';
 import { Observable } from 'rxjs/Observable';
-import { MenuItem, Message } from 'primeng/primeng';
+import { MenuItem, Message, SelectItem } from 'primeng/primeng';
 import { IappState } from './models/appState';
 import { ActionTypes } from './reducers/reducer.settings'
 import { IuserModel, UserModel } from './models/userModel';
@@ -21,7 +21,8 @@ export class AppComponent implements OnInit, OnDestroy
 {
     // 1. App init secquent
     menuItems: MenuItem[];
-    languages: MenuItem[];
+    languages: SelectItem[];
+    selectedLanguage: string;
     user: IuserModel;
     notification: Message[];
     message: Message[];
@@ -44,14 +45,13 @@ export class AppComponent implements OnInit, OnDestroy
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
-
         this.localizedMenuSubject = new BehaviorSubject<any>(null);
         this.localizedMenu = this.localizedMenuSubject.asObservable();
         this.localizedLangSubject = new BehaviorSubject<any>(null);
-        this.localizedLang = this.localizedLangSubject.asObservable();
-        
+        this.localizedLang = this.localizedLangSubject.asObservable();        
         this.user = new UserModel();        
         this.menuItems = [];
+        this.languages = [];
     }
 
     // 3. init seq
@@ -88,21 +88,13 @@ export class AppComponent implements OnInit, OnDestroy
                 })
         );
 
+        // TDOD: only one loci for both
         this.subscriptions.push(
             this.localizedMenu
                 .subscribe(res => {
                     if (res) {                
                         this.localizedKeys = res;
-                        if (!this.menuItems || this.menuItems.length == 0) {
-                            this.menuItems = this.createLeftMenu();   
-                        } else {
-                            if (!this.isUserLoggedIn()) {
-                                this.menuItems[0].label = this.localizedKeys.MainMenu.logIn;   
-                                this.menuItems[1].label = this.localizedKeys.MainMenu.controllerConfiguration;         
-                            } else {
-                                this.menuItems[0].label = this.localizedKeys.MainMenu.controllerConfiguration;
-                            }
-                        }
+                        this.menuItems = this.createLeftMenu(); 
                     }
                 })
         );
@@ -112,15 +104,7 @@ export class AppComponent implements OnInit, OnDestroy
             this.localizedLang
                 .subscribe(props => {
                     if (props) {
-                        if (!this.languages || this.languages.length == 0) {
-                            this.languages = this.createRightMenu(props);   
-                        } else {
-                            let i = 0;
-                            for (let key in props) {
-                                this.languages[i].label = props[key];
-                                ++i;
-                            }
-                        }
+                        this.languages = this.createRightMenu(props);                         
                     }
                 })
         );
@@ -150,25 +134,22 @@ export class AppComponent implements OnInit, OnDestroy
             );
     }
 
-    changeLanguage(lang: string) {
-        this.localize.changeLanguage(lang);
+    changeLanguage() {
+        this.localize.changeLanguage(this.selectedLanguage);
         this.getLocalizedLang();        
-        this.user.language = LanguageIso[lang];
+        this.user.language = LanguageIso[this.selectedLanguage];
         this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });
         this.getLocalizedMenu()
     }y
 
-    createRightMenu(props: any): MenuItem[] {
+    createRightMenu(props: any): SelectItem[] {
         let languages = [];
 
         for (let key in props)
             languages.push(
                 {
                     label: props[key],
-                    icon: null,
-                    routerLink: null,
-                    command: (event) => { this.changeLanguage(key); },
-                    items: null
+                    value: key
                 });
 
         return languages;

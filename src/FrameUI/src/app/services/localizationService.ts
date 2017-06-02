@@ -54,9 +54,9 @@ export class LocalizationService {
     }
 
     public changeLanguage(lang: string) {
-        LocalizationService.translateService.setDefaultLang(lang);
         LocalizationService.translateService.use(lang);
         LocalizationService.loadValdationErrors();
+        this.translator.use(lang);
     }
     //
 } 
@@ -99,14 +99,18 @@ function getTranslate(): TranslateService {
     ];
     let injector = ReflectiveInjector.resolveAndCreate(providers);
 
-    let translateService = injector.get(TranslateService);
-
-    if (!translateService.getDefaultLang()) {
-      let lang = "en";//this.translateService.getBrowserLang();
-      translateService.setDefaultLang(lang);
-      translateService.use(lang);
-    }
+    let translateService = injector.get(TranslateService);   
     
+    setDefaultLanguage(translateService);
+
     return translateService;
+}
+
+function setDefaultLanguage(translateService: TranslateService) {
+    if (!translateService.getDefaultLang()) {
+        let lang = "en";//this.translateService.getBrowserLang();
+        translateService.setDefaultLang(lang);
+        translateService.use(lang);
+    }
 }
 /** Helpers for instantiate translate service before load app */

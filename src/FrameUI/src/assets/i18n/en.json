@@ -31,5 +31,27 @@
     "IsEmail": "This is not valid email!",
     "IsEqualThan": "It's not the same!",
     "Length": "Text ($value) is too short or too long!"
+  },
+  "Label": {
+    "Search": "Search"
+  },
+  "Placeholder": {
+    "Search": "Search"
+  },
+  "UserViewModel": {
+    "accessFailedCount": "Failed login",
+    "email": "Email address",
+    "emailConfirmed": "Email is confirmed?",
+    "id": "Identifier",
+    "lockoutEnabled": "Lockout is enabled?",
+    "lockoutEnd": "End of lockout",
+    "normalizedEmail": "Normalized email",
+    "normalizedUserName": "Normalized username",
+    "phoneNumber": "Phone number",
+    "phoneNumberConfirmed": "Phone number is confirmed?",
+    "twoFactorEnabled": "TwoFactor auth is enabled?",
+    "userName": "User name",
+    "isAdmin": "Has admin-role?",
+    "language": "Iso code of language"
   }
 }
