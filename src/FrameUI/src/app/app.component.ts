@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs/Rx';
+import { Subscription, BehaviorSubject } from 'rxjs/Rx';
 import { Observable } from 'rxjs/Observable';
 import { MenuItem, Message } from 'primeng/primeng';
 import { IappState } from './models/appState';
@@ -21,15 +21,17 @@ export class AppComponent implements OnInit, OnDestroy
 {
     // 1. App init secquent
     menuItems: MenuItem[];
+    languages: MenuItem[];
     user: IuserModel;
     notification: Message[];
     message: Message[];
     blocked: boolean;
     subscriptions: Subscription[];
-    localizedKeys: any;
-    languages: MenuItem[];
-    localizedMenu: Observable<MenuItem[]>;
+    localizedKeys: any;    
+    localizedMenu: Observable<any>;
+    localizedMenuSubject: BehaviorSubject<any>;
     localizedLang: Observable<any>;
+    localizedLangSubject: BehaviorSubject<any>;
 
     // 2. init seq
     constructor(
@@ -42,8 +44,12 @@ export class AppComponent implements OnInit, OnDestroy
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
-        this.localizedMenu = new Observable<MenuItem[]>();
-        this.localizedLang = new Observable<any>();
+
+        this.localizedMenuSubject = new BehaviorSubject<any>(null);
+        this.localizedMenu = this.localizedMenuSubject.asObservable();
+        this.localizedLangSubject = new BehaviorSubject<any>(null);
+        this.localizedLang = this.localizedLangSubject.asObservable();
+        
         this.user = new UserModel();        
         this.menuItems = [];
     }
@@ -82,39 +88,43 @@ export class AppComponent implements OnInit, OnDestroy
                 })
         );
 
-        this.getLocalizedMenu();
-        this.getLocalizedLang();
-
         this.subscriptions.push(
             this.localizedMenu
                 .subscribe(res => {
-                    this.localizedKeys = res;
-                    if (!this.menuItems || this.menuItems.length == 0) {
-                        this.menuItems = this.createLeftMenu();   
-                    } else {
-                        if (!this.isUserLoggedIn()) {
-                            this.menuItems[0].label = this.localizedKeys.MainMenu.logIn;   
-                            this.menuItems[1].label = this.localizedKeys.MainMenu.controllerConfiguration;         
+                    if (res) {                
+                        this.localizedKeys = res;
+                        if (!this.menuItems || this.menuItems.length == 0) {
+                            this.menuItems = this.createLeftMenu();   
                         } else {
-                            this.menuItems[0].label = this.localizedKeys.MainMenu.controllerConfiguration;
+                            if (!this.isUserLoggedIn()) {
+                                this.menuItems[0].label = this.localizedKeys.MainMenu.logIn;   
+                                this.menuItems[1].label = this.localizedKeys.MainMenu.controllerConfiguration;         
+                            } else {
+                                this.menuItems[0].label = this.localizedKeys.MainMenu.controllerConfiguration;
+                            }
                         }
                     }
                 })
         );
+        this.getLocalizedMenu();
+
         this.subscriptions.push(
             this.localizedLang
                 .subscribe(props => {
-                    if (!this.languages || this.languages.length == 0) {
-                        this.languages = this.createRightMenu(props);   
-                    } else {
-                        let i = 0;
-                        for (let key in props) {
-                            this.languages[i].label = props[key];
-                            ++i;
+                    if (props) {
+                        if (!this.languages || this.languages.length == 0) {
+                            this.languages = this.createRightMenu(props);   
+                        } else {
+                            let i = 0;
+                            for (let key in props) {
+                                this.languages[i].label = props[key];
+                                ++i;
+                            }
                         }
                     }
                 })
         );
+        this.getLocalizedLang();
 
     }
     
@@ -127,11 +137,17 @@ export class AppComponent implements OnInit, OnDestroy
     }
 
     getLocalizedMenu() {
-        this.localizedMenu = this.localize.translator.get(["MainMenu"]);
+        this.localize.translator.get(["MainMenu"])
+            .subscribe(sub =>
+                this.localizedMenuSubject.next(sub)
+            );
     }
 
     getLocalizedLang() {
-        this.localizedLang = this.localize.translator.get("LanguageIso");
+        this.localize.translator.get("LanguageIso")
+            .subscribe(sub =>
+                this.localizedLangSubject.next(sub)
+            );
     }
 
     changeLanguage(lang: string) {
