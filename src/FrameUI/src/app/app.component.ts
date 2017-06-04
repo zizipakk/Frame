@@ -31,8 +31,6 @@ export class AppComponent implements OnInit, OnDestroy
     localizedKeys: any;    
     localizedMenu: Observable<any>;
     localizedMenuSubject: BehaviorSubject<any>;
-    localizedLang: Observable<any>;
-    localizedLangSubject: BehaviorSubject<any>;
 
     // 2. init seq
     constructor(
@@ -47,8 +45,6 @@ export class AppComponent implements OnInit, OnDestroy
         this.subscriptions = new Array<Subscription>();
         this.localizedMenuSubject = new BehaviorSubject<any>(null);
         this.localizedMenu = this.localizedMenuSubject.asObservable();
-        this.localizedLangSubject = new BehaviorSubject<any>(null);
-        this.localizedLang = this.localizedLangSubject.asObservable();        
         this.user = new UserModel();        
         this.menuItems = [];
         this.languages = [];
@@ -63,7 +59,10 @@ export class AppComponent implements OnInit, OnDestroy
                 .subscribe((user) => {
                     if ((user && user.userName) || (this.user.userName)) {
                         this.user = user;
-                        this.menuItems = this.createLeftMenu();
+                        if (this.menuItems.length > 0 && this.languages.length > 0) {
+                            this.menuItems = this.createLeftMenu(this.localizedKeys.MainMenu);
+                            this.languages = this.createRightMenu(this.localizedKeys.LanguageIso);                         
+                        }
                     }
                 })
         );        
@@ -94,22 +93,16 @@ export class AppComponent implements OnInit, OnDestroy
                 .subscribe(res => {
                     if (res) {                
                         this.localizedKeys = res;
-                        this.menuItems = this.createLeftMenu(); 
+                        this.menuItems = this.createLeftMenu(res.MainMenu);
+                        this.languages = this.createRightMenu(res.LanguageIso);                         
                     }
                 })
         );
         this.getLocalizedMenu();
-
-        this.subscriptions.push(
-            this.localizedLang
-                .subscribe(props => {
-                    if (props) {
-                        this.languages = this.createRightMenu(props);                         
-                    }
-                })
-        );
-        this.getLocalizedLang();
-
+        this.localize.translator.onLangChange
+            .subscribe(() => { 
+                this.getLocalizedMenu();
+            });
     }
     
     ngOnDestroy() {
@@ -121,25 +114,16 @@ export class AppComponent implements OnInit, OnDestroy
     }
 
     getLocalizedMenu() {
-        this.localize.translator.get(["MainMenu"])
+        this.localize.translator.get(["MainMenu", "LanguageIso"])
             .subscribe(sub =>
                 this.localizedMenuSubject.next(sub)
             );
     }
 
-    getLocalizedLang() {
-        this.localize.translator.get("LanguageIso")
-            .subscribe(sub =>
-                this.localizedLangSubject.next(sub)
-            );
-    }
-
     changeLanguage() {
         this.localize.changeLanguage(this.selectedLanguage);
-        this.getLocalizedLang();        
         this.user.language = LanguageIso[this.selectedLanguage];
-        this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });
-        this.getLocalizedMenu()
+        this.store.dispatch({ type: ActionTypes.SET_User, payload: this.user });        
     }y
 
     createRightMenu(props: any): SelectItem[] {
@@ -155,14 +139,14 @@ export class AppComponent implements OnInit, OnDestroy
         return languages;
     }
 
-    createLeftMenu(): MenuItem[] {
+    createLeftMenu(props: any): MenuItem[] {
         let menuItems = [];
 
-        if (this.localizedKeys) {
+        if (props) {
             if (!this.isUserLoggedIn()) {
                 menuItems.push(
                     {
-                        label: this.localizedKeys.MainMenu.logIn,
+                        label: props.logIn,
                         icon: 'fa-unlock-alt fa-fw',
                         routerLink: ['/account/login'],
                         command: (event) => {},
@@ -172,7 +156,7 @@ export class AppComponent implements OnInit, OnDestroy
             } else {
                 menuItems.push(
                     {
-                        label: this.localizedKeys.MainMenu.controllerConfiguration,
+                        label: props.controllerConfiguration,
                         icon: 'fa-signal',
                         routerLink: ['/controller/config'],
                         command: (event) => {},
@@ -186,10 +170,10 @@ export class AppComponent implements OnInit, OnDestroy
                         routerLink: null,
                         command: (event) => {},
                         items: [
-                            { label: this.localizedKeys.MainMenu.loggedUser.profile, icon: 'fa-fw fa-user', routerLink: null, command: (event) => {} },
-                            { label: this.localizedKeys.MainMenu.loggedUser.inbox, icon: 'fa-fw fa-envelope', routerLink: null, command: (event) => {} },
-                            { label: this.localizedKeys.MainMenu.loggedUser.settings, icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} },
-                            { label: this.localizedKeys.MainMenu.loggedUser.logOut, icon: 'fa-fw fa-lock', routerLink: null, command: (event) => { this.logOut(); } }
+                            { label: props.loggedUser.profile, icon: 'fa-fw fa-user', routerLink: null, command: (event) => {} },
+                            { label: props.loggedUser.inbox, icon: 'fa-fw fa-envelope', routerLink: null, command: (event) => {} },
+                            { label: props.loggedUser.settings, icon: 'fa-fw fa-gear', routerLink: null, command: (event) => {} },
+                            { label: props.loggedUser.logOut, icon: 'fa-fw fa-lock', routerLink: null, command: (event) => { this.logOut(); } }
                         ]
                     }
                 );
