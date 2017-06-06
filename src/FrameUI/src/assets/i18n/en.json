@@ -53,5 +53,14 @@
     "userName": "User name",
     "isAdmin": "Has admin-role?",
     "language": "Iso code of language"
-  }
+  },
+  "ComPortTypeView": {
+    "id": "Identifier",
+    "timeStamp": "Created",
+    "portType": "Porttype",
+    "addressFormat": "Format of address",
+    "readProtocol": "Read protocol",
+    "writeProtocol": "Write protocol"
+  },
+  "Register": "Regisztráció"
 }

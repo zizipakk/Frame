@@ -53,5 +53,14 @@
     "userName": "Név",
     "isAdmin": "Adminisztrátor?",
     "language": "Nyelv ISO-kód"
-  }
+  },
+  "ComPortTypeView": {
+    "id": "Azonosító",
+    "timeStamp": "Létrejött",
+    "portType": "Porttípus",
+    "addressFormat": "Címzési formátum",
+    "readProtocol": "Olvasás",
+    "writeProtocol": "Írás"
+  },
+  "Register": "Regisztráció"
 }

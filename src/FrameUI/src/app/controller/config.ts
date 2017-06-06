@@ -1,11 +1,11 @@
 ﻿import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs/Rx';
+import { Subscription, BehaviorSubject, Observable } from 'rxjs/Rx';
 import { API } from '../app.settings';
 import { IappState } from '../models/appState';
 import { SelectItem } from 'primeng/primeng';
 import { IuserModel } from '../models/userModel';
-import { IcomPortTypeView } from '../models/ComPortTypeModels';
+import { IcomPortTypeView, ComPortTypeView } from '../models/ComPortTypeModels';
 import { DataService } from '../services/dataService';
 import { NotificationService } from '../services/notificationService';
 import { LocalizationService } from '../services/localizationService';
@@ -16,7 +16,7 @@ import { LocalizationService } from '../services/localizationService';
 })
 export class ControllerConfig {
 
-    readonly apiAction = 'user';    
+    readonly apiAction = 'comconfig';    
     user: IuserModel;
     subscriptions: Subscription[];
     portTypes: IcomPortTypeView[];
@@ -25,6 +25,8 @@ export class ControllerConfig {
     locks: number;
     locksMin: number;
     locksMax: number;
+    localizedTextObserver: Observable<any>;
+    localizedTextSubject: BehaviorSubject<any>;    
 
     constructor(
         private store: Store<IappState>,
@@ -35,17 +37,12 @@ export class ControllerConfig {
         this.portTypes = new Array<IcomPortTypeView>();
         this.cols = null;
         this.names = new Array<SelectItem>();
+        this.localizedTextSubject = new BehaviorSubject<any>(null);
+        this.localizedTextObserver = this.localizedTextSubject.asObservable();
+
     }
 
     ngOnInit() {        
-        this.subscriptions.push(            
-            this.store.select(s => s.UserReducer)
-                .subscribe(
-                (user) => { 
-                    this.user = user; 
-                } 
-            )
-        );
        this.subscriptions.push(
             this.dataService.get<IcomPortTypeView>(API.APP + this.apiAction + '/getporttypes')
                 .subscribe(
@@ -58,16 +55,47 @@ export class ControllerConfig {
                                       m => { return {label: m.portType.toString(), value: m.portType.toString()};}
                                   )
                               )]);
-                        // // TODO: intermediate solution
-                        // if (this.portTypes)
-                        //     this.cols = Object.getOwnPropertyNames(this.portTypes[0]).map(name => { return { field: name, header: name.charAt(0).toUpperCase() + name.slice(1) }; });          
                     },
                     error => this.notificationService.printErrorMessage(new Array<string>(error))                    
                 )
         );
 
-        this.cols = Object.getOwnPropertyNames(this.portTypes).map(name => { return { field: name, header: name.charAt(0).toUpperCase() + name.slice(1) }; });     
+        let classProps =  
+            new ComPortTypeView({
+                addressFormat: "",
+                id: "",
+                portType: 0,
+                readProtocol: "",
+                timeStamp: null,
+                writeProtocol: ""});
+        this.subscriptions.push(
+            this.localizedTextObserver
+                .subscribe(res => {
+                    if (res) {                
+                        this.cols = Object.keys(classProps)
+                            .map(name => {
+                                return { 
+                                    field: name, 
+                                    header:  res["ComPortTypeView"][name]}; 
+                            }); 
+                    }
+                })
+        );
+        this.getLocalizedText();
+        this.localize.translator.onLangChange
+            .subscribe(() => { 
+                this.getLocalizedText();
+            });
+
     }
+
+    getLocalizedText() {
+        this.localize.translator.get(["ComPortTypeView"])
+            .subscribe(sub =>
+                this.localizedTextSubject.next(sub)
+            );
+    }
+
 
     //readonly apiActionSetPortType = 'comconfig/setporttype';
     //readonly apiActionGetPortConfigs = 'comconfig/getportconfigs';
@@ -82,7 +110,4 @@ export class ControllerConfig {
         this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
-    isUserLoggedIn(): boolean {
-        return this.user.isAuthorized;
-    }
 }

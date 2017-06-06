@@ -37,5 +37,29 @@
   },
   "Placeholder": {
     "Search": "Search"
+  },
+  "UserViewModel": {
+    "accessFailedCount": "Failed login",
+    "email": "Email address",
+    "emailConfirmed": "Email is confirmed?",
+    "id": "Identifier",
+    "lockoutEnabled": "Lockout is enabled?",
+    "lockoutEnd": "End of lockout",
+    "normalizedEmail": "Normalized email",
+    "normalizedUserName": "Normalized username",
+    "phoneNumber": "Phone number",
+    "phoneNumberConfirmed": "Phone number is confirmed?",
+    "twoFactorEnabled": "TwoFactor auth is enabled?",
+    "userName": "User name",
+    "isAdmin": "Has admin-role?",
+    "language": "Iso code of language"
+  },
+  "ComPortTypeView": {
+    "id": "Identifier",
+    "timeStamp": "Created",
+    "portType": "Porttype",
+    "addressFormat": "Format of address",
+    "readProtocol": "Read protocol",
+    "writeProtocol": "Write protocol"
   }
 }

@@ -27,7 +27,6 @@ export class Home {
     locks: number;
     locksMin: number;
     locksMax: number;
-    localizedText: any;
     localizedTextObserver: Observable<any>;
     localizedTextSubject: BehaviorSubject<any>;
 
@@ -43,7 +42,6 @@ export class Home {
         this.locks = null;
         this.locksMin = null;
         this.locksMax = null;
-        this.localizedText = null;
         this.localizedTextSubject = new BehaviorSubject<any>(null);
         this.localizedTextObserver = this.localizedTextSubject.asObservable();
     }
@@ -82,37 +80,41 @@ export class Home {
                         this.notificationService.printErrorMessage(new Array<string>(error))
                 )
         );
+
+        let classProps =  
+            new UserViewModel({
+                accessFailedCount: 0, 
+                email: "", 
+                emailConfirmed: false, 
+                id: "", 
+                isAdmin: false, 
+                language: 0, 
+                lockoutEnabled: false, 
+                lockoutEnd: null, 
+                normalizedEmail: "", 
+                normalizedUserName: "", 
+                phoneNumber: "", 
+                phoneNumberConfirmed: false, 
+                twoFactorEnabled: false, 
+                userName: ""});
         this.subscriptions.push(
             this.localizedTextObserver
                 .subscribe(res => {
                     if (res) {                
-                        this.localizedText = res;
-                        let props = new UserViewModel({
-                            accessFailedCount: 0, 
-                            email: "", 
-                            emailConfirmed: false, 
-                            id: "", 
-                            isAdmin: false, 
-                            language: 0, 
-                            lockoutEnabled: false, 
-                            lockoutEnd: null, 
-                            normalizedEmail: "", 
-                            normalizedUserName: "", 
-                            phoneNumber: "", 
-                            phoneNumberConfirmed: false, 
-                            twoFactorEnabled: false, 
-                            userName: ""});
-                        this.cols = Object.keys(props)
+                        this.cols = Object.keys(classProps)
                             .map(name => {
                                 return { 
                                     field: name, 
-                                    header:  this.localizedText["UserViewModel"][name]}; 
+                                    header:  res["UserViewModel"][name]}; 
                             }); 
                     }
                 })
         );
         this.getLocalizedText();
-
+        this.localize.translator.onLangChange
+            .subscribe(() => { 
+                this.getLocalizedText();
+            });
     }
 
     getLocalizedText() {

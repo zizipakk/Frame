@@ -54,9 +54,9 @@ export class LocalizationService {
     }
 
     public changeLanguage(lang: string) {
-        LocalizationService.translateService.use(lang);
+        LocalizationService.translateService.use(lang); //TODO: double event 
         LocalizationService.loadValdationErrors();
-        this.translator.use(lang);
+        this.translator.use(lang); //TODO: double event 
     }
     //
 } 
