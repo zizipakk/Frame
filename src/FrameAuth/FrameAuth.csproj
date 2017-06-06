@@ -14,6 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="Resources\RegisterViewModel.en.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\RegisterViewModel.en.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\FrameUI\src\app\models\AddPhoneNumberViewModel.ts" Link="AddPhoneNumberViewModel.ts" />
   </ItemGroup>
 
@@ -59,6 +69,8 @@
   <ItemGroup>
     <EmbeddedResource Update="Resources\RegisterViewModel.en.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CustomToolNamespace>Resources</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
 

@@ -126,6 +126,9 @@
   <data name="Email" xml:space="preserve">
     <value>Email address</value>
   </data>
+  <data name="Email_EmailAddress" xml:space="preserve">
+    <value>Invalid email</value>
+  </data>
   <data name="IsAdmin" xml:space="preserve">
     <value>Has admin-role?</value>
   </data>

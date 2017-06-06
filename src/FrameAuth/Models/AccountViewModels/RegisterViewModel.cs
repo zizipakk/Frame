@@ -5,7 +5,7 @@ namespace FrameAuth.Models.AccountViewModels
     public class RegisterViewModel
     {
         [Required]
-        [EmailAddress(ErrorMessageResourceType = typeof(RegisterViewModel), ErrorMessageResourceName = nameof(Email) + "_EmailAddress")]
+       // [EmailAddress(ErrorMessageResourceType = typeof(RegisterViewModel), ErrorMessageResourceName = nameof(Email) + "_EmailAddress")]
         [Display(Name = nameof(Email))]
         public string Email { get; set; }
 

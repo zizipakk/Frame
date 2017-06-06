@@ -12,7 +12,6 @@ export interface IregisterViewModel {
 
 export class RegisterViewModel implements IregisterViewModel {
 	@cust.Required()
-	@def.Validate(cust.IsEmail)
     public email: string;
     
 	@cust.Required()
