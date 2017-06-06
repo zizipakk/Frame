@@ -46,11 +46,10 @@ export class LocalizationService {
     }
     //
 
-    // Dynamic usage
-    public translator: TranslateService;
-
-    constructor() {
-        this.translator = LocalizationService.translateService;
+    // Dynamic usage (eg. pipes)
+    constructor(public translator: TranslateService) {
+        translator.setDefaultLang(LocalizationService.translateService.getDefaultLang());
+        translator.use(LocalizationService.translateService.currentLang);
     }
 
     public changeLanguage(lang: string) {

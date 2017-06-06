@@ -40,9 +40,7 @@ export class AppComponent implements OnInit, OnDestroy
         private membershipService: MembershipService,
         private notificationService: NotificationService,
         private router: Router,
-        private localize: LocalizationService,
-
-        private translate: TranslateService) 
+        private localize: LocalizationService) 
     {
         // 2.2. init seq
         this.subscriptions = new Array<Subscription>();
@@ -51,9 +49,6 @@ export class AppComponent implements OnInit, OnDestroy
         this.user = new UserModel();        
         this.menuItems = [];
         this.languages = [];
-
-        translate.setDefaultLang(this.localize.translator.getDefaultLang());
-        translate.use(this.localize.translator.currentLang);
     }
 
     // 3. init seq

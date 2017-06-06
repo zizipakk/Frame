@@ -4,13 +4,13 @@
             <span class="fa-stack fa-1x">
                 <i class="fa fa-circle fa-stack-2x color-blue"></i>
                 <i class="fa fa-user fa-stack-1x fa-inverse"></i>
-            </span>Login
+            </span>{{'Title.Login' | translate}}
         </h1>
     </header>
     <form class="ui-g" #hf="ngForm">
         <p-messages [value]="message"></p-messages>
         <div class="ui-g-12">
-            <input class="ui-g-12" type="text" pInputText placeholder="Email" [(ngModel)]="user.email"
+            <input class="ui-g-12" type="text" pInputText placeholder="{{'Placeholder.Email' | translate}}" [(ngModel)]="user.email"
                     name="email" #email="ngModel"                   
                     error (keyup)="email.error = validate(this.user, email.name)" 
                     (focusout)="email.error = validate(this.user, email.name)">
@@ -20,7 +20,7 @@
 
         </div>
         <div class="ui-g-12">
-            <input class="ui-g-12" type="password" pPassword placeholder="Password" [(ngModel)]="user.password"
+            <input class="ui-g-12" type="password" pPassword placeholder="{{'Placeholder.Password' | translate}}" [(ngModel)]="user.password"
                     name="password" #password="ngModel"                   
                     error (keyup)="password.error = validate(this.user, password.name)" 
                    (focusout)="password.error = validate(this.user, password.name)">
@@ -30,7 +30,7 @@
 
         </div>
         <div class="ui-g-12">
-            <button class="ui-g-12" type="button" pButton [disabled]="validationErrors.length > 0" (click)="login()" label="Sign In"></button>
+            <button class="ui-g-12" type="button" pButton [disabled]="validationErrors.length > 0" (click)="login()" label="{{'Label.Login' | translate}}"></button>
             <span class="float-right">
                 <a class="nav-link" [routerLink]="['/account/register']"><h4>Register</h4></a>
             </span>
@@ -38,7 +38,7 @@
     </form>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button class="button-red" type="button" pButton icon="fa-close" (click)="onClose()" label="Cancel"></button>
+            <button class="button-red" type="button" pButton icon="fa-close" (click)="onClose()" label="{{'Label.Cancel' | translate}}"></button>
         </div>
     </footer> 
 </p-dialog>

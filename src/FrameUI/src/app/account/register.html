@@ -4,13 +4,13 @@
             <span class="fa-stack fa-1x">
                 <i class="fa fa-circle fa-stack-2x color-blue"></i>
                 <i class="fa fa-user-plus fa-stack-1x fa-inverse"></i>
-            </span> {{Title.Register | translate}}
+            </span> {{'Title.Register' | translate}}
         </h1>
     </header>
     <form class="ui-g" #hf="ngForm">
         <p-messages [value]="message"></p-messages>
         <div class="ui-g-12">
-            <input class="ui-g-12" type="email" pInputText placeholder="Email" [(ngModel)]="newUser.email"
+            <input class="ui-g-12" type="email" pInputText placeholder="{{'Placeholder.Email' | translate}}" [(ngModel)]="newUser.email"
                    name="email" #email="ngModel" 
                    error (keyup)="email.error = validate(this.newUser, email.name)" 
                    (focusout)="email.error = validate(this.newUser, email.name)">
@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="ui-g-12">
-            <input class="ui-g-12" type="password" pInputText placeholder="Password" [(ngModel)]="newUser.password"
+            <input class="ui-g-12" type="password" pInputText placeholder="{{'Placeholder.Password' | translate}}" [(ngModel)]="newUser.password"
                    name="password" #password="ngModel"
                    error (keyup)="password.error = validate(this.newUser, password.name)" 
                    (focusout)="password.error = validate(this.newUser, password.name)">
@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="ui-g-12">
-            <input class="ui-g-12" type="password" pPassword placeholder="Confirm Password" [(ngModel)]="newUser.confirmPassword"
+            <input class="ui-g-12" type="password" pPassword placeholder="{{'Placeholder.ConfirmPassword' | translate}}" [(ngModel)]="newUser.confirmPassword"
                    name="confirmPassword" #confirmPassword="ngModel"
                    error (keyup)="confirmPassword.error = validate(this.newUser, confirmPassword.name)" 
                    (focusout)="confirmPassword.error = validate(this.newUser, confirmPassword.name)">
@@ -37,12 +37,12 @@
           </div>
         </div>        
         <div class="ui-g-12">
-            <button class="ui-g-12" type="button" pButton [disabled]="validationErrors.length > 0" (click)="register()" label="Register"></button>
+            <button class="ui-g-12" type="button" pButton [disabled]="validationErrors.length > 0" (click)="register()" label="{{'Label.Register' | translate}}"></button>
         </div>
     </form>
     <footer>
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
-            <button class="button-red" type="button" pButton icon="fa-close" [routerLink]="['/account/login']" label="Cancel"></button>
+            <button class="button-red" type="button" pButton icon="fa-close" [routerLink]="['/account/login']" label="{{'Label.Cancel' | translate}}"></button>
         </div>
     </footer> 
 </p-dialog>

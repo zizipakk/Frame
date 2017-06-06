@@ -33,10 +33,20 @@
     "Length": "A szöveg ($value) rövidebb vagy hosszabb az elvártnál!"
   },
   "Label": {
-    "Search": "Keresés"
+    "Search": "Keresés",
+    "Register": "Register",
+    "Login": "Bejelentkezés",
+    "Cancel": "Mégsem"
   },
   "Placeholder": {
-    "Search": "Keresés"
+    "Search": "Keresés",
+    "Email": "Email",
+    "Password": "Jelszó",
+    "ConfirmPassword": "Jelszó megerősítése"
+  },
+  "Title": {
+    "Register": "Regisztráció",
+    "Login": "Bejelentkezés"
   },
   "UserViewModel": {
     "accessFailedCount": "Hibás bejelentkezések",
@@ -61,6 +71,5 @@
     "addressFormat": "Címzési formátum",
     "readProtocol": "Olvasás",
     "writeProtocol": "Írás"
-  },
-  "Register": "Regisztráció"
+  }
 }

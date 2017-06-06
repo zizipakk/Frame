@@ -33,10 +33,20 @@
     "Length": "Text ($value) is too short or too long!"
   },
   "Label": {
-    "Search": "Search"
+    "Search": "Search",
+    "Register": "Register",
+    "Login": "Sign In",
+    "Cancel": "Cancel"
   },
   "Placeholder": {
-    "Search": "Search"
+    "Search": "Search",
+    "Email": "Email",
+    "Password": "Password",
+    "ConfirmPassword": "Confirm password"
+  },
+  "Title": {
+    "Register": "Register",
+    "Login": "Sign In"
   },
   "UserViewModel": {
     "accessFailedCount": "Failed login",
@@ -61,6 +71,5 @@
     "addressFormat": "Format of address",
     "readProtocol": "Read protocol",
     "writeProtocol": "Write protocol"
-  },
-  "Register": "Regisztráció"
+  }
 }
