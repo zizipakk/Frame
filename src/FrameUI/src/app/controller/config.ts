@@ -16,7 +16,7 @@ import { LocalizationService } from '../services/localizationService';
 })
 export class ControllerConfig {
 
-    readonly apiAction = 'user';    
+    readonly apiAction = 'comconfig';    
     user: IuserModel;
     subscriptions: Subscription[];
     portTypes: IcomPortTypeView[];
@@ -43,14 +43,6 @@ export class ControllerConfig {
     }
 
     ngOnInit() {        
-        this.subscriptions.push(            
-            this.store.select(s => s.UserReducer)
-                .subscribe(
-                (user) => { 
-                    this.user = user; 
-                } 
-            )
-        );
        this.subscriptions.push(
             this.dataService.get<IcomPortTypeView>(API.APP + this.apiAction + '/getporttypes')
                 .subscribe(
@@ -118,7 +110,4 @@ export class ControllerConfig {
         this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
-    isUserLoggedIn(): boolean {
-        return this.user.isAuthorized;
-    }
 }
