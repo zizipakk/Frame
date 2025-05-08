@@ -1,0 +1,17 @@
+Tue Feb 18 15:54:14 2025 OpenVPN 2.3.11 x86_64-w64-mingw32 [SSL (OpenSSL)] [LZO] [PKCS11] [IPv6] built on May 10 2016
+Tue Feb 18 15:54:14 2025 Windows version 6.2 (Windows 8 or greater) 64bit
+Tue Feb 18 15:54:14 2025 library versions: OpenSSL 1.0.1t  3 May 2016, LZO 2.09
+Tue Feb 18 15:54:15 2025 PKCS#11: Adding PKCS#11 provider 'C:\windows\system32\eTpkcs11.dll'
+Tue Feb 18 15:54:15 2025 WARNING: normally if you use --mssfix and/or --fragment, you should also set --tun-mtu 1500 (currently it is 1200)
+Tue Feb 18 15:54:15 2025 UDPv4 link local (bound): [undef]
+Tue Feb 18 15:54:15 2025 UDPv4 link remote: [AF_INET]193.91.72.250:11941
+Tue Feb 18 15:54:15 2025 WARNING: this configuration may cache passwords in memory -- use the auth-nocache option to prevent this
+Tue Feb 18 15:54:16 2025 WARNING: 'link-mtu' is used inconsistently, local='link-mtu 1270', remote='link-mtu 1570'
+Tue Feb 18 15:54:16 2025 WARNING: 'tun-mtu' is used inconsistently, local='tun-mtu 1200', remote='tun-mtu 1500'
+Tue Feb 18 15:54:16 2025 [EARNG-DC2S-01] Peer Connection Initiated with [AF_INET]193.91.72.250:11941
+Tue Feb 18 15:54:18 2025 do_ifconfig, tt->ipv6=0, tt->did_ifconfig_ipv6_setup=0
+Tue Feb 18 15:54:18 2025 open_tun, tt->ipv6=0
+Tue Feb 18 15:54:18 2025 TAP-WIN32 device [Ethernet 4] opened: \\.\Global\{8DC49484-6E5D-429A-9484-DF8CEB79D794}.tap
+Tue Feb 18 15:54:18 2025 Notified TAP-Windows driver to set a DHCP IP/netmask of 10.33.21.58/255.255.255.252 on interface {8DC49484-6E5D-429A-9484-DF8CEB79D794} [DHCP-serv: 10.33.21.57, lease-time: 31536000]
+Tue Feb 18 15:54:18 2025 Successful ARP Flush on interface [16] {8DC49484-6E5D-429A-9484-DF8CEB79D794}
+Tue Feb 18 15:54:23 2025 Initialization Sequence Completed
